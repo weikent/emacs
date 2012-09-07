@@ -35,11 +35,24 @@ class Player(object):
         self._book = {"theurgy1" : Theurgy.Theurgy1(self),
                       "theurgy2" : Theurgy.Theurgy2(self)
                       }
+        self._book = {"cancel": "",
+                       "earth" : {"Cancel" : "",
+                                  "Earth1" : "0",
+                                  "Earth2" : "0",
+                                  "Earth3" : "0"
+                                  },
+                        "fire" : {"Cancel" : "",
+                                  "Fire1" : "0",
+                                  "Fire2" : "0",
+                                  "Fire3" : "0"
+                                  }
+                        }
 
 
-    def player_up(self):
+    def player_up(self, exp):
         """
         """
+        self._exp += exp
         if self._exp >= self._maxExp:
             self._level += 1
             self._exp = 0
@@ -51,7 +64,8 @@ class Player(object):
             self._mp = self._maxHp / 2
             self._maxMp = self._maxHp / 2
 
-        print "Congratulation! you Level UP!"
+            print "Congratulation! you Level UP!"
+            print self._level, self._maxExp
 
     def player_damage(self, damage):
         """
@@ -73,3 +87,12 @@ class Player(object):
         self._mp -= mp
         if self._mp < 0:
             self._mp = 0
+
+
+    def player_learn_theurgy(self, theurgy):
+        """
+
+        Arguments:
+        - `self`:
+        - `theurgy`:
+        """

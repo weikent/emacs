@@ -3,6 +3,8 @@
 import types
 from Theurgy import *
 from Player import *
+from Menu import *
+
 
 player = Player("wei",10,10, 10,10,10,10,0,10,1)
 
@@ -64,9 +66,9 @@ listNum = [1, 2, [3, 4]]
 listStr = ["attack", "defend", "book"]
 
 dictNum = [1, 2, [3, 4]]
-dictStr = {"attack" : "0",
-           "defend" : "0",
-           "book" : {"cancel": "",
+dictStr = {"Attack" : "0",
+           "Defend" : "0",
+           "book" : {"Cancel": "",
                      "earth" : {"Cancel" : "",
                                "Earth1" : "0",
                                "Earth2" : "0",
@@ -79,6 +81,9 @@ dictStr = {"attack" : "0",
                                }
                      }
            }
+
+print Menu(dictStr).show()
+
 tempList = []
 flag = 1
 

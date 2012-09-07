@@ -1,7 +1,6 @@
 #-*- coding: utf-8 -*-
 
 
-
 class Attack(object):
     """
     """
@@ -25,6 +24,7 @@ class Attack(object):
         """
         print "%s use %s attack %s, damage is 8" %(self._user._name,self._name, enemy._name)
         enemy._hp -=8
+        self._user.player_up(5)
 
 
 class Defend(object):
@@ -43,12 +43,12 @@ class Defend(object):
 
     def use(self, enemy):
         """
-        
+
         Arguments:
         - `self`:
         - `enemy`:
         """
-        print "%s defend" %(sefl._name)
+        print "%s defend" %(self._name)
 
 
 
@@ -78,7 +78,7 @@ class Theurgy1(object):
         for enemy in enemys:
             print "%s Theurgy2 attack %s, damage is 8" % (self._user._name,enemy._name)
             enemy._hp -=10
-
+            self._user.player_up(5)
 
 
 class Theurgy2(object):
@@ -104,7 +104,7 @@ class Theurgy2(object):
         """
         print "%s use Theurgy2 attack %s, damage is 8" %(self._user._name, enemy._name)
         enemy._hp -=8
-
+        self._user.player_up(5)
 
 
 
@@ -132,7 +132,7 @@ class Fire1(object):
         """
         print "%s use Fire1 attach %s, damage is 8" %(self._user._name, enemy._name)
         enemy._hp -=8
-
+        self._user.player_up(5)
 
 
 
@@ -159,7 +159,7 @@ class Fire2(object):
         """
         print "%s use Fire1 attach %s, damage is 8" %(self._user._name, enemy._name)
         enemy._hp -=8
-
+        self._user.player_up(5)
 
 
 
@@ -186,7 +186,7 @@ class Fire3(object):
         """
         print "%s use Fire1 attach %s, damage is 8" %(self._user._name, enemy._name)
         enemy._hp -=8
-
+        self._user.player_up(5)
 
 
 
@@ -214,7 +214,7 @@ class Earth1(object):
         print "%s use Fire1 attach %s, damage is 8" %(self._user._name, enemy._name)
         enemy._hp -=8
 
-
+        self._user.player_up(5)
 
 
 class Earth2(object):
@@ -240,7 +240,7 @@ class Earth2(object):
         """
         print "%s use Fire1 attach %s, damage is 8" %(self._user._name, enemy._name)
         enemy._hp -=8
-
+        self._user.player_up(5)
 
 
 
@@ -256,6 +256,7 @@ class Earth3(object):
         """
         self._user = user
         self._attackSurface = "one"
+        print "b"
 
 
     def use(self, enemy):
@@ -267,3 +268,15 @@ class Earth3(object):
         """
         print "%s use Fire1 attach %s, damage is 8" %(self._user._name, enemy._name)
         enemy._hp -=8
+        self._user.player_up(5)
+
+
+# print "=========="
+
+# dddd = "1-"
+# print "----------------------------------------------------------------------------------------------------"
+# Earth3(dddd).use(dddd)
+# print "----------"
+# a = Earth3(dddd)
+# print "==========-"
+# a.use(dddd)

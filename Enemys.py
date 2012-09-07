@@ -1,5 +1,8 @@
 #-*- coding: utf-8 -*-
 
+from Theurgy import *
+
+
 class Enemy(object):
     """
     """
