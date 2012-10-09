@@ -1,4 +1,4 @@
-;;ddd-------------------------中文设定--------------------------
+;;-------------------------中文设定--------------------------
 ;; Setup GBK environment
 (set-terminal-coding-system 'euc-cn)
 (set-keyboard-coding-system 'euc-cn)
