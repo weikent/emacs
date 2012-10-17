@@ -54,6 +54,10 @@ class Enemy2(Enemy):
         super(Enemy2, self).__init__(name, hp)
         self._action = [Attack, Defend, Fire1, Earth3]
 
+    def action(self,num,to):
+        print self._action[num]
+        exec("magic = %s(to);magic.use(to)" % "Attack")
+
 
 class Enemy3(Enemy):
     """

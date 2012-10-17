@@ -26,7 +26,6 @@ print player._hp
 
 
 
-
 enemy = Enemys.Enemy1("a",10,0,0)
 enemy1 = Enemys.Enemy1("b",20,0,0)
 print enemy._hp
@@ -56,8 +55,6 @@ class A(object):
 
     def use(self, ):
         print self.user.name
-
-
 
 
 

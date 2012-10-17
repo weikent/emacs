@@ -157,7 +157,7 @@ class Fire2(object):
         - `self`:
         - `enemy`:
         """
-        print "%s use Fire1 attach %s, damage is 8" %(self._user._name, enemy._name)
+        print "%s use Fire2 attach %s, damage is 8" %(self._user._name, enemy._name)
         enemy._hp -=8
         self._user.player_up(5)
 
@@ -184,7 +184,7 @@ class Fire3(object):
         - `self`:
         - `enemy`:
         """
-        print "%s use Fire1 attach %s, damage is 8" %(self._user._name, enemy._name)
+        print "%s use Fire3 attach %s, damage is 8" %(self._user._name, enemy._name)
         enemy._hp -=8
         self._user.player_up(5)
 
@@ -211,7 +211,7 @@ class Earth1(object):
         - `self`:
         - `enemy`:
         """
-        print "%s use Fire1 attach %s, damage is 8" %(self._user._name, enemy._name)
+        print "%s use Earth1 attach %s, damage is 8" %(self._user._name, enemy._name)
         enemy._hp -=8
 
         self._user.player_up(5)
@@ -238,7 +238,7 @@ class Earth2(object):
         - `self`:
         - `enemy`:
         """
-        print "%s use Fire1 attach %s, damage is 8" %(self._user._name, enemy._name)
+        print "%s use Earth2 attach %s, damage is 8" %(self._user._name, enemy._name)
         enemy._hp -=8
         self._user.player_up(5)
 
@@ -266,7 +266,7 @@ class Earth3(object):
         - `self`:
         - `enemy`:
         """
-        print "%s use Fire1 attach %s, damage is 8" %(self._user._name, enemy._name)
+        print "%s use Earth3 attach %s, damage is 8" %(self._user._name, enemy._name)
         enemy._hp -=8
         self._user.player_up(5)
 
