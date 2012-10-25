@@ -14,6 +14,7 @@
 (require 'wdired)
 ;; (require 'dired-isearch)
 (require 'find-dired+)
+(require 'ls-lisp+)
 (require 'cl)
 
 (define-key dired-mode-map "r" 'wuxch-wdired-change-to-wdired-mode)
@@ -21,7 +22,7 @@
 (define-key wdired-mode-map [return]   'wuxch-wdired-finish-edit)
 (define-key wdired-mode-map [(control g)]    'wuxch-wdired-abort-changes)
 
-;; ÒÔÏÂÈı¸öº¯Êı£ºÔÚµ÷ÓÃÕæÕıµÄº¯ÊıÖ®Ç°¸Ä±ä¹â±êÑùÊ½
+;; ä»¥ä¸‹ä¸‰ä¸ªå‡½æ•°ï¼šåœ¨è°ƒç”¨çœŸæ­£çš„å‡½æ•°ä¹‹å‰æ”¹å˜å…‰æ ‡æ ·å¼
 (defun wuxch-set-cursor-wdired-mode ()
   (bar-cursor-mode -1)
   ;; (set-cursor-color "red")
@@ -46,8 +47,6 @@
   (interactive)
   (wuxch-reset-cursor-wdired-mode)
   (wdired-finish-edit)
-  (wuxch-dired-up-directory)
-  (diredp-find-file-reuse-dir-buffer)
   )
 
 (defun wuxch-wdired-abort-changes ()
@@ -59,15 +58,15 @@
 
 
 
-;; ½øÈë×ÓÄ¿Â¼µÄÊ±ºòÊ¹ÓÃÍ¬Ò»¸öbuffer
+;; è¿›å…¥å­ç›®å½•çš„æ—¶å€™ä½¿ç”¨åŒä¸€ä¸ªbuffer
 (toggle-dired-find-file-reuse-dir 1)
-;; ÈÃ dired ¿ÉÒÔµİ¹éµÄ¿½±´ºÍÉ¾³ıÄ¿Â¼
+;; è®© dired å¯ä»¥é€’å½’çš„æ‹·è´å’Œåˆ é™¤ç›®å½•
 (setq dired-recursive-copies 'always)
 (setq dired-recursive-deletes 'always)
-;; Ê×ÏÈÏÔÊ¾Ä¿Â¼
+;; é¦–å…ˆæ˜¾ç¤ºç›®å½•
 (setq ls-lisp-dirs-first t)
 
-;; ÒÔÏÂ¼¸¸ö²Ù×÷ºÍtotalcommandÒ»ÖÂ
+;; ä»¥ä¸‹å‡ ä¸ªæ“ä½œå’Œtotalcommandä¸€è‡´
 (define-key dired-mode-map [tab] 'wuxch-dired-tab-process)
 (define-key dired-mode-map [return] 'wuxch-dired-w32-browser)
 (define-key dired-mode-map [backspace] 'wuxch-dired-up-directory)
@@ -76,18 +75,18 @@
 (define-key dired-mode-map (kbd "<C-down-mouse-1>") 'ignore)
 (define-key dired-mode-map (kbd "<C-mouse-1>") 'ignore)
 (define-key dired-mode-map (kbd "<C-down-mouse-1>") 'diredp-mouse-mark/unmark)
-;; È±Ê¡µÄ*mºÍmÃüÁî¶¼ÊÇÒ»ÖÂµÄ£¬µ÷ÓÃmarkÃüÁî¡£ÏÖÔÚ°Ñ*mÃüÁîÓ³Éäµ½¶àÎÄ¼şmarkÃüÁî¡£
+;; ç¼ºçœçš„*må’Œmå‘½ä»¤éƒ½æ˜¯ä¸€è‡´çš„ï¼Œè°ƒç”¨markå‘½ä»¤ã€‚ç°åœ¨æŠŠ*må‘½ä»¤æ˜ å°„åˆ°å¤šæ–‡ä»¶markå‘½ä»¤ã€‚
 (define-key dired-mode-map "*m" 'ignore)
 (define-key dired-mode-map "*m" 'dired-mark-files-regexp)
 (define-key dired-mode-map "*n" 'ignore)
 (define-key dired-mode-map "*n" 'dired-mark-files-regexp)
 
-;; Õâ¸öÃüÁîºÃÏñÓĞÎÊÌâ¡£
+;; è¿™ä¸ªå‘½ä»¤å¥½åƒæœ‰é—®é¢˜ã€‚
 ;; (define-key dired-mode-map (kbd "C-s") 'dired-isearch-forward-regexp)
 ;; (define-key dired-mode-map (kbd "C-r") 'dired-isearch-backward-regexp)
 
-;; µ±Ä¿Â¼ÄÚÈİ¸Ä±äÖ®ºóĞèÒªÖØĞÂ¼ÆËã×î´óĞĞ£¬after-revert-hookºÃÏñÃ»ÓĞÔÚdiredÀïÃæÆğ×÷ÓÃ£¬¸É´à×Ô¼ºĞ´ÁËÒ»¸ö
-;; revert£¬Ç¿ÖÆ¼ÓÉÏ¸üĞÂ×î´óĞĞ±äÁ¿µÄ²Ù×÷¡£
+;; å½“ç›®å½•å†…å®¹æ”¹å˜ä¹‹åéœ€è¦é‡æ–°è®¡ç®—æœ€å¤§è¡Œï¼Œafter-revert-hookå¥½åƒæ²¡æœ‰åœ¨diredé‡Œé¢èµ·ä½œç”¨ï¼Œå¹²è„†è‡ªå·±å†™äº†ä¸€ä¸ª
+;; revertï¼Œå¼ºåˆ¶åŠ ä¸Šæ›´æ–°æœ€å¤§è¡Œå˜é‡çš„æ“ä½œã€‚
 (define-key dired-mode-map "g" 'ignore)
 (define-key dired-mode-map "g" 'wuxch-dired-revert-and-goto-marked-file)
 ;; (define-key dired-mode-map [(control o)] 'ignore)
@@ -101,7 +100,6 @@
 (define-key dired-mode-map [(control a)]    'wuxch-mark-all-files-directories)
 (define-key dired-mode-map "A"    'wuxch-mark-all-files-directories)
 (define-key dired-mode-map "I"  'wuxch-dired-open-info-file)
-;;(define-key dired-mode-map [return]  'wuxch-dired-open-info-file)
 ;; (define-key dired-mode-map "F"  'wuxch-foobar-add-to-list)
 ;; (define-key dired-mode-map "X"  'wuxch-uncompress-file)
 
@@ -115,8 +113,6 @@
 (define-key dired-mode-map [(control \2)] 'wuxch-get-file-name-without-path)
 (define-key dired-mode-map [(control \3)] 'ignore)
 (define-key dired-mode-map [(control \3)] 'wuxch-get-file-name-with-path)
-(define-key dired-mode-map [(control c)(control \3)] 'wuxch-get-file-name-with-path-with-double-slash)
-(define-key dired-mode-map [(control x)(control \3)] 'wuxch-get-file-name-with-path-with-unix-style)
 (define-key dired-mode-map [f5] 'wuxch-dired-do-copy)
 (define-key dired-mode-map [f6] 'wuxch-dired-do-rename)
 
@@ -137,169 +133,6 @@
 
 (define-key dired-mode-map "a"  'wuxch-dired-tag)
 
-(define-key dired-mode-map "P"  'ignore)
-(define-key dired-mode-map "P"  'wuxch-dired-play)
-
-(define-key dired-mode-map [(\ )]  'ignore)
-(define-key dired-mode-map [(\ )]  'wuxch-dired-play-concole)
-
-(define-key dired-mode-map [(control c)(\ )]  'ignore)
-(define-key dired-mode-map [(control c)(\ )]  'wuxch-dired-play-gui)
-
-(defun wuxch-do-dired-get-subtitle ()
-  "wuxch-do-dired-get-subtitle:"
-  (let ((subtitle-ext "srt")
-        (subtitle-files)
-        (single-subtitle-file)
-        (subtitle-string "")
-        (is-first-subtitle t)
-        (comma-string)
-        )
-    (dired-unmark-all-marks)
-    (when (diredp-mark/unmark-extension subtitle-ext nil)
-      (setq subtitle-files (dired-get-marked-files t))
-      (if (listp subtitle-files)
-          (progn
-            (setq subtitle-string " -sub ")
-            (dolist (element subtitle-files)
-
-              (setq single-subtitle-file
-                    (double-quote-file-name
-                     (convert-standard-filename
-                      (concat (dired-current-directory) element)))
-                    )
-
-              (if is-first-subtitle
-                  (progn
-                    (setq comma-string "")
-                    (setq is-first-subtitle nil))
-                (progn
-                  (setq comma-string ",")
-                  )
-                )
-              (setq subtitle-string (concat subtitle-string comma-string single-subtitle-file))
-              )
-            )
-        )
-      (dired-unmark-all-marks)
-      )
-    subtitle-string
-    )
-  )
-
-(defun wuxch-dired-file-is-video-file (file-name)
-  "wuxch-dired-file-is-video-file:"
-  (if (file-directory-p file-name)
-      nil
-    (let ((ext (downcase (file-name-extension file-name))))
-      (or (string= ext "avi")(string= ext "mkv")(string= ext "m4v")
-          (string= ext "mp4")(string= ext "mpg")(string= ext "mpeg")
-          (string= ext "rmvb")(string= ext "wmv")(string= ext "mp3")
-          (string= ext "flv")(string= ext "wma")(string= ext "wmv")
-          )
-      )
-    )
-  )
-
-(defun wuxch-dired-file-is-audio-file (file-name)
-  "wuxch-dired-file-is-video-file:"
-  (if (file-directory-p file-name)
-      nil
-    (let ((ext (file-name-extension file-name)))
-      (or (string= ext "mp3")
-          )
-      )
-    )
-  )
-
-;; file is f:/AUDIO_TS
-;; file is f:/VIDEO_TS
-
-(defun wuxch-dired-file-is-dvd-file (file-name)
-  "wuxch-dired-file-is-dvd-file:
-result-str = nil : the file-name is not a dvd directroy.
-result-str = not nil : the file-name is a dvd directory. and result-str is the driver str. for example: f:/
-"
-  (let* ((replace-str nil)
-         (result-str nil)
-         )
-    (setq replace-str (replace-regexp-in-string "\\(.*:/\\)\\(AUDIO_TS\\|VIDEO_TS\\)" "\\1" file-name))
-    (if (string= replace-str file-name)
-        (setq result-str nil)
-      (setq result-str replace-str)
-      )
-    result-str
-    )
-  )
-
-(defun wuxch-do-dired-play (concole)
-  "wuxch-do-dired-play:"
-  (let* ((play-command)
-         (player)
-         (movie-file (dired-get-file-for-visit))
-         (ext (file-name-extension movie-file))
-         ;; chinese support config
-         (coding-system-for-read (coding-system-from-name "chinese-gbk-dos"))
-         (coding-system-for-write (coding-system-from-name "chinese-gbk-dos"))
-         (coding-system-require-warning t)
-         )
-
-    (if concole
-        (setq player "mplayer")
-      (setq player "gmplayer")
-      )
-
-    (cond
-     ((wuxch-dired-file-is-video-file movie-file)
-      (progn
-        (setq movie-file (double-quote-file-name (convert-standard-filename movie-file)))
-        (setq play-command (concat player " " movie-file (wuxch-do-dired-get-subtitle) " &"))
-        ))
-
-     ((wuxch-dired-file-is-audio-file movie-file)
-      (progn
-        (setq movie-file (double-quote-file-name (convert-standard-filename movie-file)))
-        (setq play-command (concat "cmd " player " " movie-file ""))
-        ))
-     ((wuxch-dired-file-is-dvd-file movie-file)
-      (progn
-        (setq play-command (concat player " dvd://2 -dvd-device " (wuxch-dired-file-is-dvd-file movie-file) ""))
-        ))
-     (t
-      (setq play-command nil)
-      )
-     )
-
-    (if play-command
-        (progn
-          (message "command is :%s" play-command)
-          (shell-command play-command)
-          )
-      (progn
-        (message "%s can not be played by mplayer." (file-name-nondirectory movie-file))
-        )
-
-      )
-    )
-  )
-
-(defun double-quote-file-name (file-name)
-  "double-quote-file-name:"
-  (concat "\"" file-name "\"")
-  )
-
-(defun wuxch-dired-play-concole ()
-  "wuxch-dired-play:"
-  (interactive)
-  (wuxch-do-dired-play t)
-  )
-
-(defun wuxch-dired-play-gui ()
-  "wuxch-dired-play:"
-  (interactive)
-  (wuxch-do-dired-play nil)
-  )
-
 (defun wuxch-dired-open-info-file ()
   ""
   (interactive)
@@ -307,7 +140,7 @@ result-str = not nil : the file-name is a dvd directory. and result-str is the d
   )
 
 ;; (define-key dired-mode-map (kbd "?") 'dired-get-size)
-;; ¸²¸ÇÔ­ÓĞµÄº¯Êı£¬²»¸ßÁÁÏÔÊ¾µ±Ç°ĞĞ£¬Ô­º¯ÊıÔÚdired.elºÍdired+.el¶¼ÓĞ
+;; è¦†ç›–åŸæœ‰çš„å‡½æ•°ï¼Œä¸é«˜äº®æ˜¾ç¤ºå½“å‰è¡Œï¼ŒåŸå‡½æ•°åœ¨dired.elå’Œdired+.eléƒ½æœ‰
 (fset 'dired-insert-set-properties 'wuxch-dired-insert-set-properties)
 
 (defun wuxch-dired-insert-set-properties (beg end)
@@ -327,7 +160,7 @@ result-str = not nil : the file-name is a dvd directory. and result-str is the d
   ;; (dired-move-to-filename)
   )
 
-;; ¿½±´Ö®ºó£¬×îºÃ¹â±êÌøµ½Ä¿±êÄ¿Â¼£¬Òò´ËÔÚdired-do-copyÍâÃæÔÙ´òÒ»¸ö°ü
+;; æ‹·è´ä¹‹åï¼Œæœ€å¥½å…‰æ ‡è·³åˆ°ç›®æ ‡ç›®å½•ï¼Œå› æ­¤åœ¨dired-do-copyå¤–é¢å†æ‰“ä¸€ä¸ªåŒ…
 (defun wuxch-dired-do-copy(&optional arg)
   ""
   (interactive "P")
@@ -339,7 +172,7 @@ result-str = not nil : the file-name is a dvd directory. and result-str is the d
   ;;   (dired-previous-line 1)
   )
 
-;; ÒÆ¶¯Ö®ºó£¬×îºÃ¹â±êÌøµ½Ä¿±êÄ¿Â¼£¬Òò´ËÔÚdired-do-copyÍâÃæÔÙ´òÒ»¸ö°ü
+;; ç§»åŠ¨ä¹‹åï¼Œæœ€å¥½å…‰æ ‡è·³åˆ°ç›®æ ‡ç›®å½•ï¼Œå› æ­¤åœ¨dired-do-copyå¤–é¢å†æ‰“ä¸€ä¸ªåŒ…
 (defun wuxch-dired-do-rename(&optional arg)
   ""
   (interactive "P")
@@ -352,7 +185,7 @@ result-str = not nil : the file-name is a dvd directory. and result-str is the d
   ;; (dired-previous-line 1)
   )
 
-;; µ½ÉÏ¼¶Ä¿Â¼×ÜÊÇ´ò¿ªÒ»¸öĞÂµÄbuffer£¬ÕâÀï²ÉÓÃbuffer²Ù×÷ĞŞÕı
+;; åˆ°ä¸Šçº§ç›®å½•æ€»æ˜¯æ‰“å¼€ä¸€ä¸ªæ–°çš„bufferï¼Œè¿™é‡Œé‡‡ç”¨bufferæ“ä½œä¿®æ­£
 (defun wuxch-dired-up-directory ()
   "Dired to up directory, reuse the current buffer"
   (interactive)
@@ -361,7 +194,7 @@ result-str = not nil : the file-name is a dvd directory. and result-str is the d
     (setq temp-previous-buffer (current-buffer))
     (dired-up-directory nil)
     (setq up-directory-buffer (current-buffer))
-    ;; Èç¹ûÍ¬Ê±´ò¿ª¶à¸ö´°¿Ú£¬¶øÇÒÓĞ2¸ö´°¿ÚµÄbufferÄÚÈİÒ»Ñù£¬ÄÇÃ´¾Í²»±Ø°ÑÔ­Ä¿Â¼µÄbufferÉ¾µô
+    ;; å¦‚æœåŒæ—¶æ‰“å¼€å¤šä¸ªçª—å£ï¼Œè€Œä¸”æœ‰2ä¸ªçª—å£çš„bufferå†…å®¹ä¸€æ ·ï¼Œé‚£ä¹ˆå°±ä¸å¿…æŠŠåŸç›®å½•çš„bufferåˆ æ‰
     (if should-kill-temp-buffer
         (kill-buffer temp-previous-buffer))
     (set-buffer up-directory-buffer)
@@ -393,10 +226,9 @@ result-str = not nil : the file-name is a dvd directory. and result-str is the d
     (if (file-directory-p file)
         (progn
           (diredp-find-file-reuse-dir-buffer))
-      (w32-browser (convert-standard-filename file)))))
+      (w32-browser (dired-replace-in-string "/" "\\" file)))))
 
-;; ĞŞ¸Ädired-w32-browser,½øÈë×ÓÄ¿Â¼µÄÊ±ºòµ÷ÓÃdiredp-find-file-reuse-dir-buffer£¬ÕâÑù¿ÉÒÔ²»ĞèÒªĞÂ¿ªÒ»
-;; ¸öbuffer¡£
+;; ä¿®æ”¹dired-w32-browser,è¿›å…¥å­ç›®å½•çš„æ—¶å€™è°ƒç”¨diredp-find-file-reuse-dir-bufferï¼Œè¿™æ ·å¯ä»¥ä¸éœ€è¦æ–°å¼€ä¸€ä¸ªbufferã€‚
 (defun wuxch-dired-w32-browser ()
   "Run default Windows application associated with current line's file.
 If file is a directory, then `dired-find-file' instead.
@@ -410,11 +242,11 @@ If no application is associated with file, then `find-file'."
             (find-file (dired-get-file-for-visit)))
           )
       (progn
-        ;; Èç¹ûÊÇ.Ä³Ğ©ÎÄ¼ş£¬ÄÇÃ´Ö±½Ó´ò¿ª£¬²»ĞèÒªµ÷ÓÃieÁË
+        ;; å¦‚æœæ˜¯.æŸäº›æ–‡ä»¶ï¼Œé‚£ä¹ˆç›´æ¥æ‰“å¼€ï¼Œä¸éœ€è¦è°ƒç”¨ieäº†
         (let ((ext (file-name-extension file)))
           (if (or (string= ext "el") (string= ext "c") (string= ext "h") (string= ext "outline"))
               (find-file (dired-get-file-for-visit))
-            (w32-browser (convert-standard-filename file))
+            (w32-browser (dired-replace-in-string "/" "\\" file))
             )
           )
         )
@@ -427,14 +259,14 @@ If no application is associated with file, then `find-file'."
 else open the current directory.06/11/2007 10:54:28 wuxch"
   (interactive)
   (let ((directory-path (dired-current-directory)))
-    ;; Èç¹ûµ±Ç°¹â±êÃ»ÓĞÈÎºÎÄÚÈİ£¬ÔòÖ±½ÓÊ¹ÓÃµ±Ç°µÄÄ¿Â¼
+    ;; å¦‚æœå½“å‰å…‰æ ‡æ²¡æœ‰ä»»ä½•å†…å®¹ï¼Œåˆ™ç›´æ¥ä½¿ç”¨å½“å‰çš„ç›®å½•
     ;; (if (not directory-path)
     ;;         (setq directory-path (dired-current-directory)))
-    ;; Èç¹ûµ±Ç°µÄ¹â±êÊÇÄ¿Â¼£¬ÄÇÃ´´ò¿ª´ËÄ¿Â¼¡£Èç¹ûÊÇÎÄ¼ş£¬ÄÇÃ´´ò¿ªµ±Ç°Ä¿Â¼
-    ;; 10/28/2008 09:20:42,¼´Ê¹ÊÇÄ¿Â¼£¬»¹ÊÇ´ò¿ªµ±Ç°Ä¿Â¼±È½Ï·½±ã£¬ËùÒÔ¸Ä»ØÈ¥¡£
+    ;; å¦‚æœå½“å‰çš„å…‰æ ‡æ˜¯ç›®å½•ï¼Œé‚£ä¹ˆæ‰“å¼€æ­¤ç›®å½•ã€‚å¦‚æœæ˜¯æ–‡ä»¶ï¼Œé‚£ä¹ˆæ‰“å¼€å½“å‰ç›®å½•
+    ;; 10/28/2008 09:20:42,å³ä½¿æ˜¯ç›®å½•ï¼Œè¿˜æ˜¯æ‰“å¼€å½“å‰ç›®å½•æ¯”è¾ƒæ–¹ä¾¿ï¼Œæ‰€ä»¥æ”¹å›å»ã€‚
     ;; (if (not (file-directory-p directory-path))
     ;;         (setq directory-path (dired-current-directory)))
-    (w32-shell-execute "open" (convert-standard-filename directory-path))
+    (w32-shell-execute "open" (dired-replace-in-string "/" "\\" directory-path))
     )
   ;; (message "directory-path is %s" (dired-get-filename nil t))
   )
@@ -485,9 +317,9 @@ else open the current directory.06/11/2007 10:54:28 wuxch"
 
 (defun wuxch-dired-mode-hook-fun ()
   ""
-  ;; ĞŞ¸ÄbufferÃû³Æ£¬±ãÓÚÊ¶±ğÊÇÄ¿Â¼
+  ;; ä¿®æ”¹bufferåç§°ï¼Œä¾¿äºè¯†åˆ«æ˜¯ç›®å½•
   ;; (let ((new-buffer-name (concat "<" (buffer-name) ">"))(buffer-seq 0))
-  ;;     ;; ĞèÒªÏÈ¿´¿´ÊÇ·ñÒÑ¾­ÓĞÍ¬ÃûµÄÄ¿Â¼buffer£¬Èç¹ûÓĞµÄ»°£¬ÔÚºóÃæ¼ÓÉÏÊı×ÖĞòºÅ
+  ;;     ;; éœ€è¦å…ˆçœ‹çœ‹æ˜¯å¦å·²ç»æœ‰åŒåçš„ç›®å½•bufferï¼Œå¦‚æœæœ‰çš„è¯ï¼Œåœ¨åé¢åŠ ä¸Šæ•°å­—åºå·
   ;;     (while  (bufferp (get-buffer new-buffer-name))
   ;;       (setq new-buffer-name (concat "<" (buffer-name) (number-to-string buffer-seq) ">"))
   ;;       (setq buffer-seq (1+ buffer-seq))
@@ -500,7 +332,8 @@ else open the current directory.06/11/2007 10:54:28 wuxch"
   (wuxch-dired-set-avi-face)
   )
 
-(add-hook 'dired-mode-hook 'wuxch-dired-mode-hook-fun)
+;; ä¸dired+é¢œè‰²è®¾ç½®æœ‰å†²çª
+;; (add-hook 'dired-mode-hook 'wuxch-dired-mode-hook-fun)
 
 (defface wuxch-dired-doc-face   '((t (:inherit font-lock-warning-face))) "doc files")
 (defface wuxch-dired-elisp-face '((t (:inherit font-lock-keyword-face))) "elisp files")
@@ -510,7 +343,7 @@ else open the current directory.06/11/2007 10:54:28 wuxch"
 (defun wuxch-dired-set-doc-face ()
   "wuxch-dired-set-doc-face:"
   (font-lock-add-keywords
-   nil '(("^  .*\\.\\(tex\\|doc\\|docx\\|xls\\|xlsx\\|txt\\|org\\|ppt\\|pptx\\|html\\|xml\\|xsl\\|xsd\\|sty\\|mod\\|dtd\\)$"
+   nil '(("^  .*\\.\\(tex\\|doc\\|xls\\|txt\\|org\\|ppt\\|html\\)$"
           (".+"
            (dired-move-to-filename)
            nil
@@ -530,7 +363,7 @@ else open the current directory.06/11/2007 10:54:28 wuxch"
 (defun wuxch-dired-set-exe-face ()
   "wuxch-dired-set-exe-face:"
   (font-lock-add-keywords
-   nil '(("^  .*\\.\\(exe\\|EXE\\|bat\\|BAT\\)$"
+   nil '(("^  .*\\.\\(\\(exe\\)\\|\\(EXE\\)\\)$"
           (".+"
            (dired-move-to-filename)
            nil
@@ -540,7 +373,7 @@ else open the current directory.06/11/2007 10:54:28 wuxch"
 (defun wuxch-dired-set-avi-face ()
   "wuxch-dired-set-avi-face:"
   (font-lock-add-keywords
-   nil '(("^  .*\\.\\(pdf\\|chm\\|flv\\|avi\\|AVI\\|mkv\\|rmvb\\|mpeg\\|mpg\\|MPG\\|rm\\|mp4\\|mp3\\|MP3\\|wmv\\|wma\\|m4v\\|mov\\)$"
+   nil '(("^  .*\\.\\(pdf\\|avi\\|mkv\\|rmvb\\|rm\\|mp4\\|mp3\\|MP3\\|wmv\\|wma\\|m4v\\|mov\\)$"
           (".+"
            (dired-move-to-filename)
            nil
@@ -548,7 +381,7 @@ else open the current directory.06/11/2007 10:54:28 wuxch"
   )
 
 (defun wuxch-dired (dirname &optional switches)
-  "ĞŞ¸Ä´Ëº¯ÊıµÄ¶¨Òå£¬Ä¿µÄÊÇµ÷ÓÃdiredµÄÊ±ºòÈ±Ê¡Ä¿Â¼Ê¹ÓÃÎÒ×Ô¼ºĞèÒªµÄÄ¿Â¼"
+  "ä¿®æ”¹æ­¤å‡½æ•°çš„å®šä¹‰ï¼Œç›®çš„æ˜¯è°ƒç”¨diredçš„æ—¶å€™ç¼ºçœç›®å½•ä½¿ç”¨æˆ‘è‡ªå·±éœ€è¦çš„ç›®å½•"
   (interactive (wuxch-dired-read-dir-and-switches ""))
   (switch-to-buffer (dired-noselect dirname switches)))
 
@@ -568,10 +401,7 @@ else open the current directory.06/11/2007 10:54:28 wuxch"
               (read-file-name (format "Dired %s(directory): " str)
                               nil default-directory nil)))))
 
-(global-set-key [(control x)(d)] 'ignore)
-(global-set-key [(control x)(d)] 'wuxch-dired)
-
-;; Õâ¸ö²ÎÊı±È½ÏÖØÒª£¬µ±Í¬Ê±´ò¿ª2¸öbufferÊ±£¬¸´ÖÆµÄÈ±Ê¡Â·¾¶¾ÍÊÇÁíÒ»¸öbufferµÄdiredÂ·¾¶¡£Ê¹ÓÃÆğÀ´ÓĞĞ©Ïñ
+;; è¿™ä¸ªå‚æ•°æ¯”è¾ƒé‡è¦ï¼Œå½“åŒæ—¶æ‰“å¼€2ä¸ªbufferæ—¶ï¼Œå¤åˆ¶çš„ç¼ºçœè·¯å¾„å°±æ˜¯å¦ä¸€ä¸ªbufferçš„diredè·¯å¾„ã€‚ä½¿ç”¨èµ·æ¥æœ‰äº›åƒ
 ;; totalcommand
 (setq dired-dwim-target t)
 
@@ -579,29 +409,36 @@ else open the current directory.06/11/2007 10:54:28 wuxch"
   ""
   (let ((clipboard))
     (if only-path
-        ;; Ö»ÒªÂ·¾¶£¬²»¹ØĞÄÎÄ¼şÃû
+        ;; åªè¦è·¯å¾„ï¼Œä¸å…³å¿ƒæ–‡ä»¶å
         (progn
-          (setq clipboard (convert-standard-filename (dired-current-directory)))
+          ;; (setq path (dired-replace-in-string "/" "\\" (dired-current-directory)))
+          (if(equal 'windows-nt system-type)
+              (setq clipboard (dired-replace-in-string "/" "\\" (dired-current-directory)))
+            (setq clipboard (dired-current-directory))
+            )
           )
-      ;; ĞèÒªÎÄ¼şÃû
+      ;; éœ€è¦æ–‡ä»¶å
       (progn
         (let ((file (dired-get-file-for-visit)))
           (if with-full-path
               (progn
-                ;; Èç¹ûÊÇÂ·¾¶£¬ÄÇÃ´ÔÚ×îºó²¹Ò»¸ö"/"
+                ;; å¦‚æœæ˜¯è·¯å¾„ï¼Œé‚£ä¹ˆåœ¨æœ€åè¡¥ä¸€ä¸ª"/"
                 (if (file-directory-p file)
                     (setq file (concat file "/")))
-                ;; ĞèÒª°üÀ¨Â·¾¶µÄÎÄ¼şÃû
-                (setq clipboard (convert-standard-filename file))
+                ;; éœ€è¦åŒ…æ‹¬è·¯å¾„çš„æ–‡ä»¶å
+                (if(equal 'windows-nt system-type)
+                    (setq clipboard (dired-replace-in-string "/" "\\" file))
+                  (setq clipboard file)
+                  )
                 )
-            ;; ²»°üÀ¨Â·¾¶µÄÎÄ¼şÃû£¨»òÕßÊÇÄ¿Â¼Ãû£©
+            ;; ä¸åŒ…æ‹¬è·¯å¾„çš„æ–‡ä»¶åï¼ˆæˆ–è€…æ˜¯ç›®å½•åï¼‰
             (progn
               (if (file-directory-p file)
                   (progn
                     (setq clipboard (file-name-nondirectory file))
                     )
                 (progn
-;;;                 ;; Èç¹ûÊÇÆÕÍ¨ÎÄ¼şÃû£¬ÄÇÃ´²»ĞèÒªÀ©Õ¹Ãû
+;;;                 ;; å¦‚æœæ˜¯æ™®é€šæ–‡ä»¶åï¼Œé‚£ä¹ˆä¸éœ€è¦æ‰©å±•å
 ;;;                 (setq clipboard (file-name-sans-extension (file-name-nondirectory file))))))
                   (setq clipboard (file-name-nondirectory file))
                   )
@@ -614,41 +451,17 @@ else open the current directory.06/11/2007 10:54:28 wuxch"
 
     (kill-new clipboard)
     (message "copy string \"%s\" to clipboard" clipboard)
-    clipboard
     )
   )
 
 
 
-;; Ğ´Ò»¸öº¯Êı£¬¿ÉÒÔ¸´ÖÆµ±Ç°ÎÄ¼şµÄÃû³ÆºÍÂ·¾¶µ½¼ôÌù°å¡£
+;; å†™ä¸€ä¸ªå‡½æ•°ï¼Œå¯ä»¥å¤åˆ¶å½“å‰æ–‡ä»¶çš„åç§°å’Œè·¯å¾„åˆ°å‰ªè´´æ¿ã€‚
 (defun wuxch-get-file-name-with-path ()
   ""
   (interactive)
   (do-wuxch-get-file-name t nil)
   )
-
-(defun wuxch-get-file-name-with-path-with-unix-style ()
-  ""
-  (interactive)
-  (let ((full-string (do-wuxch-get-file-name t nil))
-        (clipboard))
-    (setq clipboard (replace-regexp-in-string "\\\\" "/" full-string))
-    (kill-new clipboard)
-    (message "copy string \"%s\" to clipboard" clipboard)
-    )
-  )
-
-(defun wuxch-get-file-name-with-path-with-double-slash ()
-  ""
-  (interactive)
-  (let ((full-string (do-wuxch-get-file-name t nil))
-        (clipboard))
-    (setq clipboard (replace-regexp-in-string "\\\\" "\\\\\\\\" full-string))
-    (kill-new clipboard)
-    (message "copy string \"%s\" to clipboard" clipboard)
-    )
-  )
-
 
 (defun wuxch-get-file-name-without-path ()
   ""
@@ -668,12 +481,12 @@ else open the current directory.06/11/2007 10:54:28 wuxch"
   (interactive)
   (let ((buf (current-buffer)))
     (if (one-window-p)
-        ;; Èç¹ûÖ»ÓĞÒ»¸ö´°¿Ú£¬´ò¿ªÒ»¸öĞÂµÄ´°¿Ú£¬ÄÚÈİºÍ±¾Ä¿Â¼µÄÒ»Ñù
+        ;; å¦‚æœåªæœ‰ä¸€ä¸ªçª—å£ï¼Œæ‰“å¼€ä¸€ä¸ªæ–°çš„çª—å£ï¼Œå†…å®¹å’Œæœ¬ç›®å½•çš„ä¸€æ ·
         (progn
           (split-window-horizontally)
           (other-window 1)
           (set-window-buffer (selected-window) buf))
-      ;; Èç¹û²»Ö»Ò»¸ö´°¿Ú£¬µ÷µ½ÁíÒ»¸ö´°¿Ú
+      ;; å¦‚æœä¸åªä¸€ä¸ªçª—å£ï¼Œè°ƒåˆ°å¦ä¸€ä¸ªçª—å£
       (other-window 1))
     )
   )
@@ -683,7 +496,7 @@ else open the current directory.06/11/2007 10:54:28 wuxch"
   (interactive)
   (if (not (one-window-p))
       (let ((buf (current-buffer)))
-        ;; Ìøµ½ÁíÒ»¸ö´°¿Ú£¬Í¬Ê±Éè¶¨2¸ö´°¿ÚµÄÄÚÈİÒ»Ñù
+        ;; è·³åˆ°å¦ä¸€ä¸ªçª—å£ï¼ŒåŒæ—¶è®¾å®š2ä¸ªçª—å£çš„å†…å®¹ä¸€æ ·
         (other-window 1)
         (set-window-buffer (selected-window) buf))))
 
@@ -692,8 +505,8 @@ else open the current directory.06/11/2007 10:54:28 wuxch"
 (define-key dired-mode-map [down] 'ignore)
 (define-key dired-mode-map [down] 'wuxch-dired-next-line)
 
-;; ÖÕÓÚÇå³şlocal-variableµÄÓÃ·¨ÁË¡£
-;; ÏÈÊ¹ÓÃglobal-variable£¬×¢ÒâÊ¹ÓÃsetq-defaultÉèÖÃ£¬Ò»µ©make-local-variableÖ®ºó¾Í²»ÔÚ¸Ä±äÁË¡£
+;; ç»ˆäºæ¸…æ¥šlocal-variableçš„ç”¨æ³•äº†ã€‚
+;; å…ˆä½¿ç”¨global-variableï¼Œæ³¨æ„ä½¿ç”¨setq-defaultè®¾ç½®ï¼Œä¸€æ—¦make-local-variableä¹‹åå°±ä¸åœ¨æ”¹å˜äº†ã€‚
 ;; (defvar wuxch-temp-buffer-local-value 0)
 ;; (defun wuxch-temp-use-local-value ()
 ;;   ""
@@ -702,8 +515,8 @@ else open the current directory.06/11/2007 10:54:28 wuxch"
 ;;       (progn
 ;;         (message "variable is local, value is %d" wuxch-temp-buffer-local-value))
 ;;     (progn
-;;       (setq-default wuxch-temp-buffer-local-value (+ wuxch-temp-buffer-local-value 1))
 ;;       (make-local-variable 'wuxch-temp-buffer-local-value)
+;;       (setq-default wuxch-temp-buffer-local-value (+ wuxch-temp-buffer-local-value 1))
 ;;       (message "make variable locally, and set it to %d" wuxch-temp-buffer-local-value))
 ;;     )
 ;;   )
@@ -771,10 +584,10 @@ else open the current directory.06/11/2007 10:54:28 wuxch"
   )
 
 
-;; ¾ÍÊÇÒÔÏÂÕâÁ½¸öº¯Êı£¬¿¼ÂÇµ½Ã¿´Îµ÷ÓÃ»áÏûºÄ²»ÉÙµÄCPU£¬Òò´ËÊ¹ÓÃÀàËÆÓÚcµÄ¾²Ì¬±äÁ¿·½Ê½£¬
-;; ×ö¹ıÒ»´Î¾Í±£´æÊıÖµ£¬Ö®ºó²»¶ÏµØÖØ¸´µ÷ÓÃ£¬³ı·Ç¸üĞÂÄ¿Â¼ÄÚÈİ¡£
+;; å°±æ˜¯ä»¥ä¸‹è¿™ä¸¤ä¸ªå‡½æ•°ï¼Œè€ƒè™‘åˆ°æ¯æ¬¡è°ƒç”¨ä¼šæ¶ˆè€—ä¸å°‘çš„CPUï¼Œå› æ­¤ä½¿ç”¨ç±»ä¼¼äºcçš„é™æ€å˜é‡æ–¹å¼ï¼Œ
+;; åšè¿‡ä¸€æ¬¡å°±ä¿å­˜æ•°å€¼ï¼Œä¹‹åä¸æ–­åœ°é‡å¤è°ƒç”¨ï¼Œé™¤éæ›´æ–°ç›®å½•å†…å®¹ã€‚
 
-;; Ã¿¸ödired bufferÀïÃæ×îºóÒ»ĞĞ»á¶àÒ»¸ö¿ÕĞĞ£¬Òò´ËÕâÀï¶à¼ÓÒ»ĞĞ¡£
+;; æ¯ä¸ªdired bufferé‡Œé¢æœ€åä¸€è¡Œä¼šå¤šä¸€ä¸ªç©ºè¡Œï¼Œå› æ­¤è¿™é‡Œå¤šåŠ ä¸€è¡Œã€‚
 (defconst wuxch-dired-add-addtional-line 1)
 (defun wuxch-dired-max-line-by-count ()
   ""
@@ -784,9 +597,9 @@ else open the current directory.06/11/2007 10:54:28 wuxch"
   ""
   (goto-char (point-min))
   (if (search-forward ".." nil t)
-      ;; ÕÒµ½ÁË¡£´ËÊ±¹â±êËùÔÚµÄµÚÒ»ĞĞ¾ÍÊÇ..µÄÏÂÒ»ĞĞ
+      ;; æ‰¾åˆ°äº†ã€‚æ­¤æ—¶å…‰æ ‡æ‰€åœ¨çš„ç¬¬ä¸€è¡Œå°±æ˜¯..çš„ä¸‹ä¸€è¡Œ
       (+ (line-number-at-pos) 1)
-    ;; Ã»ÓĞÕÒµ½ ..£¬²âÊÔ¹â±êËùÔÚµÄµÚÒ»ĞĞÊÇµÚ¶şĞĞ
+    ;; æ²¡æœ‰æ‰¾åˆ° ..ï¼Œæµ‹è¯•å…‰æ ‡æ‰€åœ¨çš„ç¬¬ä¸€è¡Œæ˜¯ç¬¬äºŒè¡Œ
     (+ (line-number-at-pos) 1)
     )
   )
@@ -828,7 +641,7 @@ else open the current directory.06/11/2007 10:54:28 wuxch"
   (let ((temp-current-line (line-number-at-pos))
         (temp-max-line (wuxch-dired-max-line))
         (temp-first-line-of-dried (wuxch-get-first-line-of-dired)))
-    ;; ÒòÎªwuxch-get-first-line-of-dired»áÌøµ½µÚÒ»ĞĞ£¬Òò´ËÔÚ×öÏÂÒ»ĞĞ²Ù×÷µÄÊ±ºòĞèÒªÏÈ»Ö¸´¹â±êµ½¿ªÊ¼µÄÎ»ÖÃ¡£
+    ;; å› ä¸ºwuxch-get-first-line-of-diredä¼šè·³åˆ°ç¬¬ä¸€è¡Œï¼Œå› æ­¤åœ¨åšä¸‹ä¸€è¡Œæ“ä½œçš„æ—¶å€™éœ€è¦å…ˆæ¢å¤å…‰æ ‡åˆ°å¼€å§‹çš„ä½ç½®ã€‚
     (goto-line temp-current-line)
     (dired-move-to-filename)
     (if (eq temp-current-line (- temp-first-line-of-dried 1))
@@ -840,7 +653,7 @@ else open the current directory.06/11/2007 10:54:28 wuxch"
 
 ;; (setq dired-listing-switches "-alh")
 
-;; ¼¸¸ö³£ÓÃµÄÎÄ¼ş
+;; å‡ ä¸ªå¸¸ç”¨çš„æ–‡ä»¶
 ;; (defun cq-update ()
 ;;   ""
 ;;   (interactive)
@@ -882,7 +695,7 @@ else open the current directory.06/11/2007 10:54:28 wuxch"
 ;;     (while (not (null file-list))
 ;;       (setq mp3-file (concat (dired-current-directory) (pop file-list)))
 ;;       ;; (message "mp3-file is %s" mp3-file)
-;;       ;; ×¢Òâ£¬¶ÔÓÚprogram filesÕâÑùµÄÂ·¾¶£¬ĞèÒª¼ÓÉÏË«ÒıºÅ¡£ÎÄ¼şÃûÒ²¿ÉÄÜÓĞ¿Õ¸ñ£¬ËùÒÔÒ²Ìí¼ÓË«ÒıºÅ¡£
+;;       ;; æ³¨æ„ï¼Œå¯¹äºprogram filesè¿™æ ·çš„è·¯å¾„ï¼Œéœ€è¦åŠ ä¸ŠåŒå¼•å·ã€‚æ–‡ä»¶åä¹Ÿå¯èƒ½æœ‰ç©ºæ ¼ï¼Œæ‰€ä»¥ä¹Ÿæ·»åŠ åŒå¼•å·ã€‚
 ;;       (setq mp3-add-command (concat "C:\\\"Program Files\"\\foobar2000\\foobar2000.exe /add " "\"" (dired-replace-in-string "/" "\\" mp3-file) "\"" ))
 ;;       (message "command is %s" mp3-add-command)
 ;;       (shell-command mp3-add-command)
@@ -896,7 +709,7 @@ else open the current directory.06/11/2007 10:54:28 wuxch"
 ;;   (let ((rar-file)(rar-file-dos-format)(winrar-uncompress-command)(file-list (dired-get-marked-files t arg)))
 ;;     (while (not (null file-list))
 ;;       (setq rar-file (concat (dired-current-directory) (pop file-list)))
-;;       ;; ×¢Òâ£¬¶ÔÓÚprogram filesÕâÑùµÄÂ·¾¶£¬ĞèÒª¼ÓÉÏË«ÒıºÅ¡£ÎÄ¼şÃûÒ²¿ÉÄÜÓĞ¿Õ¸ñ£¬ËùÒÔÒ²Ìí¼ÓË«ÒıºÅ¡£
+;;       ;; æ³¨æ„ï¼Œå¯¹äºprogram filesè¿™æ ·çš„è·¯å¾„ï¼Œéœ€è¦åŠ ä¸ŠåŒå¼•å·ã€‚æ–‡ä»¶åä¹Ÿå¯èƒ½æœ‰ç©ºæ ¼ï¼Œæ‰€ä»¥ä¹Ÿæ·»åŠ åŒå¼•å·ã€‚
 ;;       (setq rar-file-dos-format (concat "\"" (dired-replace-in-string "/" "\\" rar-file) "\""))
 
 ;;       (setq winrar-uncompress-command (concat "C:\\\"Program Files\"\\WinRAR\\WinRAR.exe e " rar-file-dos-format))
@@ -1037,7 +850,7 @@ else open the current directory.06/11/2007 10:54:28 wuxch"
 ;;   )
 
 (defun wuxch-quoto-string (arg-string)
-  "¸øarg-stringÌí¼ÓÒıºÅ£¬Ö÷ÒªÓÃÓÚÒ»Ğ©Ä¿Â¼ÖĞÓĞ¿Õ¸ñ"
+  "ç»™arg-stringæ·»åŠ å¼•å·ï¼Œä¸»è¦ç”¨äºä¸€äº›ç›®å½•ä¸­æœ‰ç©ºæ ¼"
   (let ((quoto-string "\""))
     (concat quoto-string arg-string quoto-string)
     )
@@ -1165,5 +978,6 @@ changing into DIR) is
     (dired-move-to-filename)
     )
   )
+
 
 (provide 'wuxch-dired)
