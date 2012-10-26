@@ -1,0 +1,14 @@
+table{
+	margin:10px;
+	border:1px;
+	border-bottom:0px;
+	border-right:0px;
+}
+table td{
+	border-bottom:1px solid #000; 
+	padding:3px;
+	border-right:1px solid #000;
+}
+table th{
+    border-right:1px solid #000;
+}
