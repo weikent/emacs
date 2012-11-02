@@ -1,0 +1,51 @@
+
+(defconst my-emacs-path           "~/emacs/" "我的emacs相关配置文件的路径")
+(defconst my-emacs-my-lisps-path  (concat my-emacs-path "lisps/") "我自己写的emacs lisp包的路径")
+(defconst my-emacs-lisps-path     (concat my-emacs-path "lisps/") "我下载的emacs lisp包的路径")
+(defconst my-emacs-templates-path (concat my-emacs-path "templates/") "Path for templates")
+
+
+
+;; 把`my-emacs-lisps-path'的所有子目录都加到`load-path'里面
+(load (concat my-emacs-my-lisps-path "my-subdirs"))
+(my-add-subdirs-to-load-path my-emacs-lisps-path)
+(my-add-subdirs-to-load-path my-emacs-my-lisps-path)
+
+;;(load-file "~/.emacs.d/sudo-ext.el")
+(server-start)
+;;(require 'sudo-ext)
+(require 'my-global-key-settings)
+
+
+;; 一些基本的小函数
+(require 'ahei-misc)
+
+;; 利用`eval-after-load'加快启动速度的库
+;; 用eval-after-load避免不必要的elisp包的加载
+;; http://emacser.com/eval-after-load.htm
+(require 'eval-after-load)
+
+(require 'util)
+
+;; 用一个很大的kill ring. 这样防止我不小心删掉重要的东西
+(setq kill-ring-max 200)
+
+;; 方便的在kill-ring里寻找需要的东西
+(require 'browse-kill-ring-settings)
+
+;; 显示行号
+(require 'linum-settings)
+
+;; color theme Emacs主题
+(require 'color-theme-settings)
+
+(require 'ahei-face)
+(require 'color-theme-ahei)
+(require 'face-settings)
+
+;; 高亮当前行
+(require 'hl-line-settings)
+
+;; 字体配置
+(require 'font-settings)
+
