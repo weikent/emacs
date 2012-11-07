@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="gbk"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Baidu Map 笔记</title>
+<meta http-equiv="Content-Type" content="text/html;charset=gbk"/>
+<meta name="title" content="Baidu Map 笔记"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2012-11-02T16:23+0800"/>
+<meta name="author" content=""/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  html { font-family: Times, serif; font-size: 12pt; }
+  .title  { text-align: center; }
+  .todo   { color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #add8e6; font-weight:normal }
+  .target { }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
+  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
+  .center {margin-left:auto; margin-right:auto; text-align:center;}
+  p.verse { margin-left: 3% }
+  pre {
+	border: 1pt solid #AEBDCC;
+	background-color: #F3F5F7;
+	padding: 5pt;
+	font-family: courier, monospace;
+        font-size: 90%;
+        overflow:auto;
+  }
+  table { border-collapse: collapse; }
+  td, th { vertical-align: top;  }
+  th.right  { text-align:center;  }
+  th.left   { text-align:center;   }
+  th.center { text-align:center; }
+  td.right  { text-align:right;  }
+  td.left   { text-align:left;   }
+  td.center { text-align:center; }
+  dt { font-weight: bold; }
+  div.figure { padding: 0.5em; }
+  div.figure p { text-align: center; }
+  div.inlinetask {
+    padding:10px;
+    border:2px solid gray;
+    margin:10px;
+    background: #ffffcc;
+  }
+  textarea { overflow-x: auto; }
+  .linenr { font-size:smaller }
+  .code-highlighted {background-color:#ffff00;}
+  .org-info-js_info-navigation { border-style:none; }
+  #org-info-js_console-label { font-size:10px; font-weight:bold;
+                               white-space:nowrap; }
+  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
+                                 font-weight:bold; }
+  /*]]>*/-->
+</style><link rel="stylesheet"
+    href="./style/emacs.css"
+    type="text/css"/>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012  Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+<div id="org-div-home-and-up" style="text-align:right;font-size:70%;white-space:nowrap;">
+ <a accesskey="h" href="index.html"> UP </a>
+ |
+ <a accesskey="H" href="index.html"> HOME </a>
+</div>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">Baidu Map 笔记</h1>
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">what is .xib file</a></li>
+<li><a href="#sec-2">first responder 是什么：</a></li>
+<li><a href="#sec-3">显示标注</a></li>
+<li><a href="#sec-4">显示多点标注</a></li>
+<li><a href="#sec-5">在地图中心显示搜索点</a></li>
+<li><a href="#sec-6">自定义UIView</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1">what is .xib file</h2>
+<div class="outline-text-2" id="text-1">
+
+<p>  现在只是认为是一个可视化界面吧。可以拖拽控件。
+</p></div>
+
+</div>
+
+<div id="outline-container-2" class="outline-2">
+<h2 id="sec-2">first responder 是什么：</h2>
+<div class="outline-text-2" id="text-2">
+
+<p>  它是在若干事件中第一个接收通知的对象，例如轻敲文本框就会呼出键盘。
+</p></div>
+
+</div>
+
+<div id="outline-container-3" class="outline-2">
+<h2 id="sec-3">显示标注</h2>
+<div class="outline-text-2" id="text-3">
+
+
+
+
+<pre class="src src-c">Annotation
+<span style="color: #00ff00;">BMKPointAnnotation</span>* <span style="color: #C892FFFF9957;">annotation</span> = [[BMKPointAnnotation alloc]init];
+<span style="color: #00ff00;">CLLocationCoordinate2D</span> <span style="color: #C892FFFF9957;">coor</span>;
+coor.latitude = <span style="color: #00ff00;">int</span>;
+coor.longitude = <span style="color: #00ff00;">int</span>;
+annotation .coordinate = coor;
+[mapView addAnnotation:annotation];<span style="color: #ff7f24;">// </span><span style="color: #ff0000;">&#27492;&#22788;&#20250;&#33258;&#21160;&#35843;&#29992;mapView:viewForAnnotation:&#26041;&#27861;</span>
+
+
+- (<span style="color: #00ff00;">BMKAnnotationView</span> *)mapView:(<span style="color: #00ff00;">BMKMapView</span> *)<span style="color: #00ff00;">mapView</span> <span style="color: #ffff00; background-color: #45D463DD4FF8;">viewForAnnotation</span>:(id &lt;BMKAnnotation&gt;) annotation
+ {
+  <span style="color: #00ffff;">if</span>([annotation isKindOfClass:[BMKPointAnnotation class]])
+     {
+        <span style="color: #00ff00;">BMKPinAnnotationView</span> *<span style="color: #C892FFFF9957;">newAnnotation</span> = [[BMKPinAnnotationView alloc] initWithAnnotation: annotation reuseIdentifier:@<span style="color: #ff00ff;">"myAnnotation"</span>];
+        newAnnotation.pinColor = BMKPinAnnotationColorGreen;<span style="color: #ff7f24;">//</span><span style="color: #ff0000;">emun</span>
+        newAnnotation.animatesDrop = YES;
+        newAnnotation.draggable = YES;
+
+        <span style="color: #00ffff;">return</span> newAnnotation;
+     }
+     <span style="color: #00ffff;">return</span> nil;
+ }
+</pre>
+
+</div>
+
+</div>
+
+<div id="outline-container-4" class="outline-2">
+<h2 id="sec-4">显示多点标注</h2>
+<div class="outline-text-2" id="text-4">
+
+<p>  可以使用百度提供的POI检索功能。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-5" class="outline-2">
+<h2 id="sec-5">在地图中心显示搜索点</h2>
+<div class="outline-text-2" id="text-5">
+
+
+
+
+<pre class="src src-C">  mapView <span style="color: #00ff00;">&#30340;</span> <span style="color: #C892FFFF9957;">setCenterCoordinate</span>:animated: &#26041;&#27861;&#12290;
+  BMKSearch search = [[BMKSearch]alloc]init];
+  search.delegate = self;<span style="color: #ff7f24;">////</span><span style="color: #ff0000;">&#20195;&#29702;(&#22996;&#25176;)&#35774;&#32622;&#20026;&#33258;&#36523;&#65292;&#25628;&#32034;&#20043;&#21518;&#20250;&#33258;&#21160;&#22238;&#35843;&#19979;&#19968;&#27493;&#20013;&#30340;&#20989;&#25968;</span>
+
+  <span style="color: #00ff00;">search&#30340;&#26041;&#27861;</span> <span style="color: #ffff00; background-color: #45D463DD4FF8;">geocode</span>:withCity: &#21487;&#20197;&#25353;&#22320;&#22336;&#25628;&#32034;&#12290;
+  &#25628;&#32034;&#20043;&#21518;&#20250;&#33258;&#21160;&#35843;&#29992; onGetAddrResult:errorCode: 
+
+  - (<span style="color: #00ff00;">void</span>)onGetAddrResult:(<span style="color: #00ff00;">BMKAddrInfo</span>*)<span style="color: #00ff00;">result</span> <span style="color: #ffff00; background-color: #45D463DD4FF8;">errorCode</span>:(<span style="color: #00ff00;">int</span>)error
+{
+    <span style="color: #00ffff;">if</span>(error == 0)
+    {
+        <span style="color: #00ff00;">BMKPointAnnotation</span>* <span style="color: #C892FFFF9957;">item</span> = [[BMKPointAnnotation alloc]init];
+        item.coordinate = result.geoPt;
+        item.title = result.strAddr;
+        [mapView addAnnoation:item];
+
+        <span style="color: #00ff00;">CLLocationCoordinate2D</span> <span style="color: #C892FFFF9957;">coor</span>;
+        coor.latitude = item.coordinate.latitude;
+        corr.longitude = item.coordinate.longitude;
+        [mapView setCenterCoordinate:coor animated:YES];<span style="color: #ff7f24;">//</span><span style="color: #ff0000;">animated:Yes&#34920;&#31034;&#26377;&#21160;&#30011;&#25928;&#26524;&#65292;NO&#34920;&#31034;&#27809;&#26377;&#21160;&#30011;</span>
+    }
+}
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-6" class="outline-2">
+<h2 id="sec-6">自定义UIView</h2>
+<div class="outline-text-2" id="text-6">
+
+<p>  新建类，继承自UIView。可以覆盖initWithFrame:rect 来初始化视图。
+  整理一下POI搜索过程。在textField中输入要搜索的关键字，点击按钮之后执行：
+</p>
+
+
+
+
+<pre class="src src-c">1. [_search poiSearchInCity:_cityText.text withKey:_addrText.text pageIndex:0]
+2. - (<span style="color: #00ff00;">void</span>)onGetPoiResult:(<span style="color: #00ff00;">NSArray</span>*)<span style="color: #00ff00;">poiResultList</span> <span style="color: #ffff00; background-color: #45D463DD4FF8;">searchType</span>:(<span style="color: #00ff00;">int</span>)<span style="color: #00ff00;">type</span> <span style="color: #ffff00; background-color: #45D463DD4FF8;">errorcode</span>:(<span style="color: #00ff00;">int</span>)error
+   {
+       <span style="color: #00ffff;">if</span>(error == BMKErrorOK)
+       {
+           <span style="color: #00ff00;">BMKPoiResult</span>* <span style="color: #C892FFFF9957;">result</span> = [poiResultList objectAtIndex:0];
+           <span style="color: #00ffff;">for</span> (<span style="color: #00ff00;">int</span> <span style="color: #C892FFFF9957;">i</span> = 0; i &lt; result.poiInfoList.count; i++]
+           {
+               <span style="color: #00ff00;">BMKPoiInfo</span>* <span style="color: #C892FFFF9957;">poi</span> = [result.poiInfoList objectAtIndex:i];
+               ......
+           }
+       }
+   }
+
+3. - (<span style="color: #00ff00;">BMKAnnotationView</span> *)mapView:(<span style="color: #00ff00;">BMKMapView</span> *)<span style="color: #00ff00;">view</span> <span style="color: #ffff00; background-color: #45D463DD4FF8;">viewForAnnotation</span>:(id &lt;BMKAnnotation&gt;)annotation
+
+4. &#28857;&#20987;&#26631;&#27880;&#30340;&#26102;&#20505;&#25191;&#34892;
+   - (<span style="color: #00ff00;">void</span>)mapView:(<span style="color: #00ff00;">BMKMapView</span> *)<span style="color: #00ff00;">mapView</span> <span style="color: #ffff00; background-color: #45D463DD4FF8;">didSelectAnnotationView</span>:(<span style="color: #00ff00;">BMKAnnotationView</span> *)view
+
+5. &#21462;&#28040;&#28857;&#20987;&#26631;&#27880;&#30340;&#26102;&#20505;&#25191;&#34892;
+   - (<span style="color: #00ff00;">void</span>)mapView:(<span style="color: #00ff00;">BMKMapView</span> *)<span style="color: #00ff00;">mapView</span> <span style="color: #ffff00; background-color: #45D463DD4FF8;">didDeselectAnnotationView</span>:(<span style="color: #00ff00;">BMKAnnotationView</span> *)view
+
+</pre>
+
+
+
+
+
+
+
+
+
+
+<hr/>
+</div>
+</div>
+</div>
+
+<div id="postamble">
+<p class="date">Date: 2012-11-02T16:23+0800</p>
+<p class="author">Author: </p>
+<p class="creator"><a href="http://orgmode.org">Org</a> version N/A-fixup with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 24</p>
+<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
+
+</div>
+</body>
+</html>

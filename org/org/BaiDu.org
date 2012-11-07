@@ -1,4 +1,4 @@
-#+TITLE: Xcode笔记
+#+TITLE: Baidu Map 笔记
 
 * what is .xib file
   现在只是认为是一个可视化界面吧。可以拖拽控件。
@@ -65,6 +65,7 @@
   整理一下POI搜索过程。在textField中输入要搜索的关键字，点击按钮之后执行：
 
 
+#+begin_src c
 
   1. [_search poiSearchInCity:_cityText.text withKey:_addrText.text pageIndex:0]
   2. - (void)onGetPoiResult:(NSArray*)poiResultList searchType:(int)type errorcode:(int)error
@@ -88,8 +89,13 @@
   5. 取消点击标注的时候执行
      - (void)mapView:(BMKMapView *)mapView didDeselectAnnotationView:(BMKAnnotationView *)view
 
-
+#+end_src
 
 
  
 
+
+
+
+
+--------------------
