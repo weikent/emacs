@@ -64,7 +64,7 @@
 
 (require 'dired-settings)
 
-;;(require 'grep-settings)
+(require 'grep-settings)
 
 (require 'tramp-settings)
 
