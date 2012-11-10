@@ -9,6 +9,6 @@
       (huangq-fontset-consolas 17)
     ;; (huangq-fontset-dejavu 17)))
     ;; (huangq-fontset-fixedsys 17)
-    (set-default-font "Monospace 13")))
+    (set-default-font "Monospace 17")))
 
 (provide 'font-settings)

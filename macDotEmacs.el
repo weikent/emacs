@@ -49,3 +49,23 @@
 ;; 字体配置
 (require 'font-settings)
 
+
+
+(defmacro def-redo-command (fun-name redo undo)
+  "Make redo command."
+  `(defun ,fun-name ()
+     (interactive)
+     (if (equal last-command ,redo)
+         (setq last-command 'undo)
+       (setq last-command nil))
+     (call-interactively ,undo)
+     (setq this-command ,redo)))
+(def-redo-command redo 'redo 'undo)
+
+(require 'dired-settings)
+
+(require 'grep-settings)
+
+(require 'tramp-settings)
+
+(require 'ido-settings)

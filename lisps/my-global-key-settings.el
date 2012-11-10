@@ -108,7 +108,7 @@
 (global-set-key [f5] 'revert-buffer)
 (global-set-key [C-f5] 'revert-buffer-with-coding-system)
 
-
+(global-set-key (kbd "<f1>") 'ansi-term)
 
 ;;;F3£ºÇÐ»»µ½diredÄ£Ê½
 (global-set-key [(f3)] 'grep-find)
