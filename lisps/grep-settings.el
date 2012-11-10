@@ -39,7 +39,8 @@ SYMBOL should be one of `grep-command', `grep-template',
 (defun find-grep-in-dir (dir)
   "Run `find-grep' in directory DIR."
   (interactive (list (read-directory-name "Directory to find in: " default-directory "" t)))
-  (let ((prompt (concat "find " dir " -type f ! -path \"*/.svn*\" ! -path \"*~\" -print0 | xargs -0 -e grep -nH -e ")))
+;;  (let ((prompt (concat "find " dir " -type f ! -path \"*/.svn*\" ! -path \"*~\" -print0 | xargs -0 -e grep -nH -e ")))
+  (let ((prompt (concat "find " dir " -type f ! -path \"*/.svn*\" ! -path \"*~\" -print0 | xargs -0 grep -nH -e ")))
     (set-grep-command prompt)
     (call-interactively 'find-grep)))
 
@@ -55,7 +56,8 @@ SYMBOL should be one of `grep-command', `grep-template',
    (list
     (read-directory-name "Directory to grep in: " default-directory "" t)
     current-prefix-arg))
-  (set-grep-command   (concat "find " dir " -type f ! -path \"*/.svn*\" ! -path \"*~\" -print0 | xargs -0 -e grep -nH -e "))
+;;  (set-grep-command   (concat "find " dir " -type f ! -path \"*/.svn*\" ! -path \"*~\" -print0 | xargs -0 -e grep -nH -e "))
+  (set-grep-command   (concat "find " dir " -type f ! -path \"*/.svn*\" ! -path \"*~\" -print0 | xargs -0 grep -nH -e "))
   (let* ((word (current-word)) command-args)
     (if (not word)
         (message "No word under cursor.")
@@ -74,7 +76,7 @@ SYMBOL should be one of `grep-command', `grep-template',
   (find-grep-current-word default-directory is-prompt))
 
 (defvar grep-find-prompt
-  "find . -type f ! -path \"*/.svn*\" ! -path \"*~\" -print0 | xargs -0 -e grep -nH -e "
+  "find . -type f ! -path \"*/.svn*\" ! -path \"*~\" -print0 | xargs -0 grep -nH -e "
   "*Default prompt of `grep-find'.")
 
 ;;;###autoload
