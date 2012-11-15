@@ -4,11 +4,13 @@
 (defconst my-emacs-templates-path (concat my-emacs-path "templates/") "Path for templates")
 
 
+
 ;; 把`my-emacs-lisps-path'的所有子目录都加到`load-path'里面
 (load (concat my-emacs-lisps-path "my-subdirs"))
 (my-add-subdirs-to-load-path my-emacs-lisps-path)
 (my-add-subdirs-to-load-path my-emacs-my-lisps-path)
 (my-add-subdirs-to-load-path my-emacs-path)
+
 
 ;;访问.emacs文件
 (defun visit-.emacs ()
@@ -84,19 +86,7 @@
 (global-set-key [f7] 'indent-whole)
 
 
-(add-to-list 'load-path
-             "~/emacs/lisp/yasnippet-0.6.1c")
-(require 'yasnippet) ;; not yasnippet-bundle
-(yas/initialize)
-(yas/load-directory "~/emacs/lisps/yasnippet-0.6.1c/snippets")
-
-
-
-(add-to-list 'load-path "~/.emacs.d/")
-(require 'auto-complete-config)
-(add-to-list 'ac-dictionary-directories "~/.emacs.d//ac-dict")
-(ac-config-default)
-
+(require 'init_python)
 
 
 
