@@ -55,7 +55,6 @@
 ;;设置打开文件缺省路径
 (setq default-directory "~/")
 
-(setq visible-bell t);关闭出错时的提示声
 
 
 ;;取消工具栏
@@ -72,7 +71,7 @@
 
 
 ;;不要打入 TAB 时总是听到 PC 喇叭嘀嘀嘀的叫
-(setq visible-bell t)
+(setq visible-bell nil)
 
 
 
