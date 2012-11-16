@@ -64,6 +64,7 @@
 (pymacs-load "ropemacs" "rope-")
 (setq ropemacs-enable-autoimport t)
 
+(require 'ipython)
 
 (require 'anything) (require 'anything-ipython)
 (when (require 'anything-show-completion nil t)
