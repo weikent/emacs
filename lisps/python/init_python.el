@@ -20,7 +20,7 @@
 			   ;;                 ac-source-ropemacs  
 			   ac-source-imenu    
 			   ac-source-words-in-buffer  
-			   ac-source-dictionary  
+;;			   ac-source-dictionary  
 			   ac-source-abbrev    
 			   ac-source-words-in-buffer    
 			   ac-source-files-in-current-dir    
@@ -64,9 +64,41 @@
 (pymacs-load "ropemacs" "rope-")
 (setq ropemacs-enable-autoimport t)
 
+(defvar server-buffer-clients)
+(when (and (fboundp 'server-start) (string-equal (getenv "TERM") 'xterm))
+  (server-start)
+  (defun fp-kill-server-with-buffer-routine ()
+    (and server-buffer-clients (server-done)))
+  (add-hook 'kill-buffer-hook 'fp-kill-server-with-buffer-routine))
+
 (require 'ipython)
 
-(require 'anything) (require 'anything-ipython)
+(setq py-python-command-args '("-pylab" "-colors" "LightBG"))
+(setq ansi-color-for-comint-mode t)
+
+;; (require 'helm-config)
+;; (helm-mode 1)
+
+(require 'anything-config)
+
+(defun my-anything ()
+  (interactive)
+  (anything-other-buffer
+   '(anything-c-source-buffers
+     anything-c-source-file-name-history
+     anything-c-source-info-pages
+     anything-c-source-info-elisp
+     anything-c-source-man-pages
+     anything-c-source-locate
+     anything-c-browse-code-regexp-python
+     anything-for-files
+     anything-ff-avfs-directory
+     anything-source-ipython
+     anything-c-source-emacs-commands)
+   " *my-anything*"))
+
+(require 'anything-ipython)
+
 (when (require 'anything-show-completion nil t)
   (use-anything-show-completion 'anything-ipython-complete
 				'(length initial-pattern)))
@@ -76,6 +108,12 @@
 (define-key comint-mode-map (kbd "M-") 'comint-previous-input)
 (define-key comint-mode-map [down] 'comint-next-matching-input-from-input)
 (define-key comint-mode-map [up] 'comint-previous-matching-input-from-input)
+
+
+
+
+
+
 
 ;; (require 'pycomplete)  
 ;; (setq auto-mode-alist (cons '("\\.py$" . python-mode) auto-mode-alist))  
