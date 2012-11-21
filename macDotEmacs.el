@@ -11,8 +11,17 @@
 (my-add-subdirs-to-load-path my-emacs-lisps-path)
 (my-add-subdirs-to-load-path my-emacs-my-lisps-path)
 
+
+;;访问.emacs文件
+(defun visit-.emacs ()
+  "访问.emacs文件"
+  (interactive)
+  (find-file (concat my-emacs-path "macDotEmacs.el")))
+(global-set-key (kbd "C-x E") 'visit-.emacs)
+
+
 ;;(load-file "~/.emacs.d/sudo-ext.el")
-(server-start)
+;;(server-start)
 ;;(require 'sudo-ext)
 (require 'my-global-key-settings)
 
@@ -47,8 +56,8 @@
 (require 'hl-line-settings)
 
 ;; 字体配置
-(require 'font-settings)
-
+;;(require 'font-settings)
+(color-theme-ahei)
 
 
 (defmacro def-redo-command (fun-name redo undo)

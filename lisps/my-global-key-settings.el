@@ -61,7 +61,7 @@
 ;;(tool-bar-mode nil);;这个在ntemacs24中不好使，估计nil都不好使。
 (tool-bar-mode -1)
 ;;(scroll-bar-mode nil)
-(scroll-bar-mode 1);;显示右侧滚动条。-1为不显示。
+(scroll-bar-mode -1);;显示右侧滚动条。-1为不显示。
 
 
 (setq x-select-enable-clipboard t) ;支持emacs和外部程序的粘贴
