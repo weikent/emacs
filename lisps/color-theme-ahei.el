@@ -43,7 +43,9 @@
 
 (defface ahei-hl-line-face
   '((((type tty)) :underline t)
-    (t :background "AntiqueWhite4" :underline t :inverse-video nil))
+;;    (t :background "AntiqueWhite1" :underline t :inverse-video nil))
+ (t :background "grey28" :underline t :inverse-video nil))
+
   "ahei's `hl-line-face'.")
 
 (setq hl-line-face 'ahei-hl-line-face)
