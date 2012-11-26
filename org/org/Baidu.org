@@ -1,0 +1,101 @@
+#+TITLE: Baidu Map 笔记
+
+* what is .xib file
+  现在只是认为是一个可视化界面吧。可以拖拽控件。
+* first responder 是什么：
+  它是在若干事件中第一个接收通知的对象，例如轻敲文本框就会呼出键盘。
+* 显示标注
+  #+BEGIN_SRC c
+
+  Annotation
+  BMKPointAnnotation* annotation = [[BMKPointAnnotation alloc]init];
+  CLLocationCoordinate2D coor;
+  coor.latitude = int;
+  coor.longitude = int;
+  annotation .coordinate = coor;
+  [mapView addAnnotation:annotation];// 此处会自动调用mapView:viewForAnnotation:方法
+  
+
+  - (BMKAnnotationView *)mapView:(BMKMapView *)mapView viewForAnnotation:(id <BMKAnnotation>) annotation
+   {
+    if([annotation isKindOfClass:[BMKPointAnnotation class]])
+       {
+          BMKPinAnnotationView *newAnnotation = [[BMKPinAnnotationView alloc] initWithAnnotation: annotation reuseIdentifier:@"myAnnotation"];
+          newAnnotation.pinColor = BMKPinAnnotationColorGreen;//emun
+          newAnnotation.animatesDrop = YES;
+	  newAnnotation.draggable = YES;
+
+          return newAnnotation;
+       }
+       return nil;
+   }
+   #+END_SRC
+* 显示多点标注
+  可以使用百度提供的POI检索功能。
+  
+* 在地图中心显示搜索点
+  #+BEGIN_SRC C
+
+  mapView 的 setCenterCoordinate:animated: 方法。
+  BMKSearch search = [[BMKSearch]alloc]init];
+  search.delegate = self;////代理(委托)设置为自身，搜索之后会自动回调下一步中的函数
+
+  search的方法 geocode:withCity: 可以按地址搜索。
+  搜索之后会自动调用 onGetAddrResult:errorCode: 
+
+  - (void)onGetAddrResult:(BMKAddrInfo*)result errorCode:(int)error
+{
+    if(error == 0)
+    {
+        BMKPointAnnotation* item = [[BMKPointAnnotation alloc]init];
+	item.coordinate = result.geoPt;
+	item.title = result.strAddr;
+	[mapView addAnnoation:item];
+
+	CLLocationCoordinate2D coor;
+	coor.latitude = item.coordinate.latitude;
+	corr.longitude = item.coordinate.longitude;
+	[mapView setCenterCoordinate:coor animated:YES];//animated:Yes表示有动画效果，NO表示没有动画
+    }
+}
+   #+END_SRC
+
+* 自定义UIView
+  新建类，继承自UIView。可以覆盖initWithFrame:rect 来初始化视图。
+  整理一下POI搜索过程。在textField中输入要搜索的关键字，点击按钮之后执行：
+
+
+#+begin_src c
+
+  1. [_search poiSearchInCity:_cityText.text withKey:_addrText.text pageIndex:0]
+  2. - (void)onGetPoiResult:(NSArray*)poiResultList searchType:(int)type errorcode:(int)error
+     {
+         if(error == BMKErrorOK)
+         {
+             BMKPoiResult* result = [poiResultList objectAtIndex:0];
+             for (int i = 0; i < result.poiInfoList.count; i++]
+             {
+                 BMKPoiInfo* poi = [result.poiInfoList objectAtIndex:i];
+                 ......
+             }
+         }
+     }
+
+  3. - (BMKAnnotationView *)mapView:(BMKMapView *)view viewForAnnotation:(id <BMKAnnotation>)annotation
+
+  4. 点击标注的时候执行
+     - (void)mapView:(BMKMapView *)mapView didSelectAnnotationView:(BMKAnnotationView *)view
+
+  5. 取消点击标注的时候执行
+     - (void)mapView:(BMKMapView *)mapView didDeselectAnnotationView:(BMKAnnotationView *)view
+
+#+end_src
+
+
+ 
+
+
+
+
+
+--------------------
