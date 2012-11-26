@@ -63,7 +63,11 @@
 ;;  '(add-to-list 'pymacs-load-path YOUR-PYMACS-DIRECTORY"))
 (pymacs-load "ropemacs" "rope-")
 (setq ropemacs-enable-autoimport t)
+
+(if (eq system-type 'darwin)
 (rope-mode 1)
+)
+
 (defvar server-buffer-clients)
 (when (and (fboundp 'server-start) (string-equal (getenv "TERM") 'xterm))
   (server-start)
