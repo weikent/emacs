@@ -1,13 +1,13 @@
 
 ;; (setq load-path (cons "~/emacs/lisps/org" load-path))
 ;; (setq load-path (cons "~/lib/emacs-lisp/org-7.01h/contrib/lisp" load-path))
-(add-to-list 'load-path "~/org-mode/lisp")
-(add-to-list 'load-path "~/org-mode/contrib/lisp")
+;;(add-to-list 'load-path "~/org-mode/lisp")
+;;(add-to-list 'load-path "~/org-mode/contrib/lisp")
 (require 'org)                                   
 
 (setq org-log-done t) 
 
-;;(require 'org-install)
+(require 'org-install)
 (require 'org-publish)
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
 (add-hook 'org-mode-hook 'turn-on-font-lock)
