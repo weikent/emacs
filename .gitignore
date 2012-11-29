@@ -1,5 +1,10 @@
+# Files
+*#
 .DS_Store
 
+
+
+# Directories
 lisps/python/rope-0.9.4
 lisps/python/ropemacs-0.7
 lisps/python/ropemode-0.2
