@@ -1,0 +1,12 @@
+#+TITLE: 命令行命令记录
+
+
+* find
+
+** find rm
+
+   find /home/raven -name abc.txt | xargs rm -rf
+
+   如果不使用xargs，则为：
+
+   find /home/raven -name abc.txt -exec rm -fv {} \;
