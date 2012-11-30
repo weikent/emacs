@@ -72,6 +72,7 @@
 
 
 (require 'orgMode-settings)
+(require 'htmlize)
 
 (require 'tramp-settings)
 
