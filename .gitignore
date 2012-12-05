@@ -51,3 +51,4 @@ lisps/python/ropemode-0.2
 lisps/python/Pymacs-master
 lisps/python/python-mode.el-6.0.12
 org/publish/*.html
+.rope*

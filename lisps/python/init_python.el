@@ -64,9 +64,9 @@
 (pymacs-load "ropemacs" "rope-")
 (setq ropemacs-enable-autoimport t)
 
-(if (eq system-type 'darwin)
-(rope-mode 1)
-)
+;; (if (eq system-type 'darwin)
+;; (rope-mode 1)
+;; )
 
 (defvar server-buffer-clients)
 (when (and (fboundp 'server-start) (string-equal (getenv "TERM") 'xterm))
@@ -75,10 +75,10 @@
     (and server-buffer-clients (server-done)))
   (add-hook 'kill-buffer-hook 'fp-kill-server-with-buffer-routine))
 
-(require 'ipython)
+;;(require 'ipython)
 
-(setq py-python-command-args '("-pylab" "-colors" "LightBG"))
-(setq ansi-color-for-comint-mode t)
+;;(setq py-python-command-args '("-pylab" "-colors" "LightBG"))
+;;(setq ansi-color-for-comint-mode t)
 
 ;; (require 'helm-config)
 ;; (helm-mode 1)
@@ -97,21 +97,21 @@
      anything-c-browse-code-regexp-python
      anything-for-files
      anything-ff-avfs-directory
-     anything-source-ipython
+;;     anything-source-ipython
      anything-c-source-emacs-commands)
    " *my-anything*"))
 
-(require 'anything-ipython)
+;;(require 'anything-ipython)
 
-(when (require 'anything-show-completion nil t)
-  (use-anything-show-completion 'anything-ipython-complete
-				'(length initial-pattern)))
+;; (when (require 'anything-show-completion nil t)
+;;   (use-anything-show-completion 'anything-ipython-complete
+;; 				'(length initial-pattern)))
 
-(require 'comint)
-(define-key comint-mode-map (kbd "M-") 'comint-next-input)
-(define-key comint-mode-map (kbd "M-") 'comint-previous-input)
-(define-key comint-mode-map [down] 'comint-next-matching-input-from-input)
-(define-key comint-mode-map [up] 'comint-previous-matching-input-from-input)
+;; (require 'comint)
+;; (define-key comint-mode-map (kbd "M-") 'comint-next-input)
+;; (define-key comint-mode-map (kbd "M-") 'comint-previous-input)
+;; (define-key comint-mode-map [down] 'comint-next-matching-input-from-input)
+;; (define-key comint-mode-map [up] 'comint-previous-matching-input-from-input)
 
 
 
