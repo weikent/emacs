@@ -49,7 +49,7 @@
   (if is-before-emacs-21 (require 'wdired "wdired-for-21"))
 
   ;; 让你能够在dired-mode里面使用只对文件名部分执行i-search
-  (require 'dired-isearch "my-dired-isearch")
+;;  (require 'dired-isearch "my-dired-isearch")
   
   (defun his-dired-sort ()
     "dired-mode中让目录显示在文件前"
@@ -206,10 +206,10 @@ which is options for `diff'."
        ("/."          ywb-dired-filter-extension)
        ("C-q"         ywb-dired-quickview)
        ("r"           wdired-change-to-wdired-mode)
-       ("C-s"         dired-lis-isearch-forward-always?)
-       ("C-r"         dired-lis-isearch-backward-always?)
-       ("ESC C-s"     dired-lis-isearch-forward-regexp-always?)
-       ("ESC C-r"     dired-lis-isearch-backward-regexp-always?)
+;;       ("C-s"         dired-lis-isearch-forward-always?)
+;;       ("C-r"         dired-lis-isearch-backward-always?)
+;;       ("ESC C-s"     dired-lis-isearch-forward-regexp-always?)
+;;       ("ESC C-r"     dired-lis-isearch-backward-regexp-always?)
        ;; 让dired只使用一个buffer
        ("RET"         dired-lis-find-file-reuse-dir-buffer)
        ("<return>"    dired-lis-find-file-reuse-dir-buffer)
