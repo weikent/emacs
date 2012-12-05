@@ -3,7 +3,8 @@
 (setq path "/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin:/usr/local/bin")
 (setenv "PATH" path)
 ;;设置PYTHONPATH  export PYTHONPATH=/Users/weishijian/emacs/python:$PYTHONPATH in .bash_profile or other environment variables set files.
-(setenv "PYTHONPATH" "");
+;; HOME 路径不能用 ~/... 这样添加不成功，
+(setenv "PYTHONPATH" ":/Users/weishijian/emacs/PP4E/Preview:/Users/weishijian/emacs/project")
 
 (defconst my-emacs-path           "~/emacs/" "我的emacs相关配置文件的路径")
 (defconst my-emacs-my-lisps-path  (concat my-emacs-path "lisps/") "我自己写的emacs lisp包的路径")
