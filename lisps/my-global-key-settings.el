@@ -252,7 +252,7 @@
 
 (defun my-replace ()
   (interactive)
-  (replace-string "    " (regexp-quote "\t")))
+  (replace-string  (regexp-quote "\t") "    "))
 
 
 (global-set-key (kbd "C-c m d") 'my-insert-date)
