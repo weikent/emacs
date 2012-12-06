@@ -250,6 +250,11 @@
   (interactive)
   (insert (format-time-string "%Y/%m/%d %H:%M:%S" (current-time))))
 
+(defun my-replace ()
+  (interactive)
+  (replace-string "    " (regexp-quote "\t")))
+
+
 (global-set-key (kbd "C-c m d") 'my-insert-date)
 
 
