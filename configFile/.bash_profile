@@ -17,7 +17,7 @@ alias mvm='./manage.py validate'
 # export RUBYOPT=rubygems
 
 export PATH=/usr/local/bin:/usr/local/sbin/:$PATH
-
+export PYTHONPATH=~/emacs/python:~/emacs/project:~/emacs/PP4E/Preview:$PYTHONPATH
 
 # 第一行让命令行提示显示用户和当前路径就行了, 太长了不好看,
 # 第三和四行就是让terminal输出显示颜色. 默认编辑器设置成vi, 编码设置utf-8, 
