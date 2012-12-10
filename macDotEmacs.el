@@ -59,23 +59,10 @@
 
 ;; 显示行号
 (require 'linum-settings)
-
-;; color theme Emacs主题
-(require 'color-theme-settings)
-
-(require 'ahei-face)
-(require 'color-theme-ahei)
-(require 'face-settings)
-
 ;; 高亮当前行
 (require 'hl-line-settings)
 
-;; 字体配置
-;;(require 'font-settings)
-(color-theme-ahei)
 
-(require 'orgMode-settings)
-(require 'htmlize)
 
 
 (defmacro def-redo-command (fun-name redo undo)
@@ -107,3 +94,30 @@
 
 
 (require 'init_python)
+
+(require 'orgMode-settings)
+;; ;;;(require 'htmlize)
+
+;; color theme Emacs主题
+(defun my-color-settings()
+  (interactive)
+  (require 'color-theme-settings)
+
+  (require 'ahei-face)
+  (require 'color-theme-ahei)
+  (require 'face-settings)
+  )
+
+
+;; ;; 字体配置
+;; ;;(require 'font-settings)
+;; (color-theme-ahei)
+
+;; 有关界面和字体的配置
+(add-hook 'after-make-frame-functions
+	  (lambda (new-frame)
+	    (select-frame new-frame)
+	    (tool-bar-mode 0)
+	    (scroll-bar-mode 0)
+	    (my-color-settings)
+	    ))

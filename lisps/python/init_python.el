@@ -48,10 +48,10 @@
 	    (set-variable 'py-indent-offset 4)
 					;(set-variable 'py-smart-indentation nil)
 	    (set-variable 'indent-tabs-mode nil)
-	    (define-key py-mode-map (kbd "RET") 'newline-and-indent)
+;;	    (define-key py-mode-map (kbd "RET") 'newline-and-indent)
 					;(define-key py-mode-map [tab] 'yas/expand)
 					;(setq yas/after-exit-snippet-hook 'indent-according-to-mode)
-	    (smart-operator-mode-on)
+;;	    (smart-operator-mode-on)
 	    ))
 ;; pymacs
 (autoload 'pymacs-apply "pymacs")
@@ -68,12 +68,12 @@
 ;; (rope-mode 1)
 ;; )
 
-(defvar server-buffer-clients)
-(when (and (fboundp 'server-start) (string-equal (getenv "TERM") 'xterm))
-  (server-start)
-  (defun fp-kill-server-with-buffer-routine ()
-    (and server-buffer-clients (server-done)))
-  (add-hook 'kill-buffer-hook 'fp-kill-server-with-buffer-routine))
+;; (defvar server-buffer-clients)
+;; (when (and (fboundp 'server-start) (string-equal (getenv "TERM") 'xterm))
+;;   (server-start)
+;;   (defun fp-kill-server-with-buffer-routine ()
+;;     (and server-buffer-clients (server-done)))
+;;   (add-hook 'kill-buffer-hook 'fp-kill-server-with-buffer-routine))
 
 ;;(require 'ipython)
 
@@ -83,23 +83,23 @@
 ;; (require 'helm-config)
 ;; (helm-mode 1)
 
-(require 'anything-config)
+;;(require 'anything-config)
 
-(defun my-anything ()
-  (interactive)
-  (anything-other-buffer
-   '(anything-c-source-buffers
-     anything-c-source-file-name-history
-     anything-c-source-info-pages
-     anything-c-source-info-elisp
-     anything-c-source-man-pages
-     anything-c-source-locate
-     anything-c-browse-code-regexp-python
-     anything-for-files
-     anything-ff-avfs-directory
-;;     anything-source-ipython
-     anything-c-source-emacs-commands)
-   " *my-anything*"))
+;; (defun my-anything ()
+;;   (interactive)
+;;   (anything-other-buffer
+;;    '(anything-c-source-buffers
+;;      anything-c-source-file-name-history
+;;      anything-c-source-info-pages
+;;      anything-c-source-info-elisp
+;;      anything-c-source-man-pages
+;;      anything-c-source-locate
+;;      anything-c-browse-code-regexp-python
+;;      anything-for-files
+;;      anything-ff-avfs-directory
+;; ;;     anything-source-ipython
+;;      anything-c-source-emacs-commands)
+;;    " *my-anything*"))
 
 ;;(require 'anything-ipython)
 
@@ -112,10 +112,6 @@
 ;; (define-key comint-mode-map (kbd "M-") 'comint-previous-input)
 ;; (define-key comint-mode-map [down] 'comint-next-matching-input-from-input)
 ;; (define-key comint-mode-map [up] 'comint-previous-matching-input-from-input)
-
-
-
-
 
 
 
