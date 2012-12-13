@@ -7,3 +7,82 @@
    1. option + product menu    ->  Clean Build Folder
    2. iOS Simulator -> Reset Content and settings
 
+
+* 获取IOS设备的类型和系统版本
+#+begin_src objc
+//  DeviceHelper.m   
+//  DeviceUtil   
+//   
+//  Created by LUOYL on 12-4-9.   
+//  Copyright (c) 2012年 http://luoyl.info. All rights reserved.   
+//   
+  
+#import "DeviceHelper.h"   
+#import "sys/utsname.h"   
+  
+@implementation DeviceHelper   
+  
+/*  
+ *功能：获取设备类型  
+ *  
+ *  AppleTV2,1    AppleTV(2G)  
+ *  i386          simulator  
+ *  
+ *  iPod1,1       iPodTouch(1G)  
+ *  iPod2,1       iPodTouch(2G)  
+ *  iPod3,1       iPodTouch(3G)  
+ *  iPod4,1       iPodTouch(4G)  
+ *  
+ *  iPhone1,1     iPhone  
+ *  iPhone1,2     iPhone 3G  
+ *  iPhone2,1     iPhone 3GS  
+ *  
+ *  iPhone3,1     iPhone 4  
+ *  iPhone3,3     iPhone4 CDMA版(iPhone4(vz))  
+ 
+ *  iPhone4,1     iPhone 4S  
+ *  
+ *  iPad1,1       iPad  
+ *  iPad2,1       iPad2 Wifi版  
+ *  iPad2,2       iPad2 GSM3G版  
+ *  iPad2,3       iPad2 CDMA3G版  
+ *  @return null  
+ */  
++ (NSString *)getDeviceVersion   
+{   
+    struct utsname systemInfo;   
+    uname(&systemInfo);   
+    //get the device model and the system version   
+    NSString *machine =[NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding];    
+    return machine;   
+}   
+  
+/** 获取IOS系统的版本号 */  
++ (NSString*)getOSVersion   
+{   
+    return [[UIDevice currentDevice]systemVersion];   
+}   
+  
+/** 判断当前设备是否ipad */  
++ (BOOL)isIpad   
+{   
+    return [UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad;   
+}   
+  
+/** 判断当前设备是否iphone */  
+  
++ (BOOL)isIphone   
+{   
+    return [UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone;   
+  
+}   
+  
+/** 判断当前系统是否有摄像头 */  
++ (BOOL)hasCamera   
+{   
+    return [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera];   
+}   
+  
+@end   
+
+#+end_src 

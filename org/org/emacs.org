@@ -1,0 +1,24 @@
+#+TITLE emacs 笔记
+
+* org-Mode
+- TAB	 	折叠列表项
+- M-RET	 	插入项
+- M-S-RET	 	插入带复选框的项
+- M-S-UP/DOWN	 	移动列表项
+- M-LEFT/RIGHT	 	升/降级列表项，不包括子项
+- M-S-LEFT/RIGTH	 	升/降级列表项，包括子项
+- C-c C-c	 	改变复选框状态
+- C-c -	 	更换列表标记（循环切换
+
+
+ 
+|快捷键|	命令|	说明|
+
+TAB	 	折叠列表项
+M-RET	 	插入项
+M-S-RET	 	插入带复选框的项
+M-S-UP/DOWN	 	移动列表项
+M-LEFT/RIGHT	 	升/降级列表项，不包括子项
+M-S-LEFT/RIGTH	 	升/降级列表项，包括子项
+C-c C-c	 	改变复选框状态
+C-c -	 	更换列表标记（循环切换）
