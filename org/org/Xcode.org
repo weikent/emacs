@@ -86,3 +86,33 @@
 @end   
 
 #+end_src 
+
+* iOS学习笔记——字符串编码转换
+
+我们知道，使用NSURLConnection的代理方法下载网页，存到一个NSData中，
+
+#+begin_src objc
+NSMutableData *pageData;
+[pageData appendData:data];
+#+end_src
+
+如果网页编码是UTF-8的，可以这么转换为字符串：
+
+#+begin_src objc
+NSString *pageSource = [[NSString alloc] initWithData:pageData encoding:NSUTF8StringEncoding];
+#+end_src 
+
+如果网页是gbk（或者gb2312），用UTF8转换的话，pageSource返回nil。这时需要使用gbk编码做转换，但是NSStringEncoding不含gbk，怎么办？用另一个方法处理一下：
+
+#+begin_src objc
+NSStringEncoding gbkEncoding = CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingGB_18030_2000);
+NSString *pageSource = [[NSString alloc] initWithData:pageData encoding:gbkEncoding];
+#+end_src
+
+为什么可以这么处理？在NSString.h（按住command，双击NSStringEncoding即能查看），对NSStringEncoding的定义中，注释这么写着：
+
+Note that in addition to the values explicitly listed below, NSStringEncoding supports encodings provided by CFString.
+
+See CFStringEncodingExt.h for a list of these encodings.
+
+See CFString.h for functions which convert between NSStringEncoding and CFStringEncoding.
