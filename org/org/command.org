@@ -10,3 +10,7 @@
    如果不使用xargs，则为：
 
    find /home/raven -name abc.txt -exec rm -fv {} \;
+
+
+* u盘之类的设备在那里呢？？？
+在 /Volumes 目录下
