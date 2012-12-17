@@ -7,8 +7,98 @@
 [at] 強調場所中的「點」，[on] 強調場所中的「面」及「線」，[in]強調場所中的「立體空間」。
 
 
-1 [at] 強調場所/位置中的「點」: at 通常用來表示可視為"一點"的場所，即使地方大，只要說話人將其視為"一點"，則可用at。
-2 [on] 強調場所/位置中的「面」及「線」: 指在....(面)上，在.....(路線)上
+ 1) [at] 強調場所/位置中的「點」: at 通常用來表示可視為"一點"的場所，即使地方大，只要說話人將其視為"一點"，則可用at。
+ 2) [on] 強調場所/位置中的「面」及「線」: 指在....(面)上，在.....(路線)上
+ 3) [in]強調場所/位置中的「立體空間」: in通常用來表示在某空間之內，不論地點大小，只要說話者著眼於"空間 (在.....裡)"，即用in。
+
+*** 比較1: 
+on a river (在河面上) 
+in a river (在河裡)
+
+
+*** 比較2:
+
+1 in the corner of a room 
+
+(在房間的角落裡—將角落視為一個「長寬高」皆具的"立體空間")
+
+2 at the corner of a street 
+
+(在街的角落上—將角落視為"一點")
+
+3 on the corner of a street 
+
+(在街的角落上—強調在街角的"街面"上)
+
+
+
+----------------例句比較-------------
+
+
+
+【比較一】at the station 及 in the station
+
+(1) We met him at the station. 
+
+車站雖是立體空間，但由於此句強調"碰面的地點"(此時的車站如同地圖上的一點)，因此介系詞用表示「點」的 at。
+
+(2) People in the station are tired, weary and exhausted.
+
+說明在車站內的人們很疲累，強調"場所內部的空間"，因此介系詞用表示「立體空間」的 in。
+
+
+
+【比較二】 on the street 及 in the street
+
+(1) I met her on the street.
+
+街雖是立體空間，但此句強調在某"街面上"(有腳踏於地面的感覺)遇見她，因此用表示「面」的 on。
+
+(2) I met her in the street.
+
+說明在街上遇見她，強調被眼前這個街上的立體空間所環繞(有置身於街上這個立體空間的感覺)，因此用表示「立體空間」的 in。
+
+
+
+【比較三】on one's way 及in one's way
+
+(1) He is on his way home.
+
+回家的道路，是一條路線，強調「線狀」空間，因此用表示「線」的 on。
+
+(2) Excuse me! You are in my way!
+
+對方擋住路，是擋住一個「長寬高」皆具的"空間"，對方要讓出一個「立體空間」才能讓自已順利通過。因此用表示「立體空間」的 in。
+
+
+
+----------補充說明---------------
+
+
+
+一般國內外文法書及傳統文法教學常將此三介系詞的使用規則以所指的"地點大小"來區分(at+小型地點，on+中型地點，in+大型地點)。但地點的大小常因個人觀感不同而有所差異，因此此種分類方法常會對學習者造成困擾。
+
+
+
+舉例:
+
+
+
+(1)factory比car大，但我們講 at a factory (在工廠)、in a car (在車子裡)，是因為當我們談到「在工廠時」，所強調的是在工廠這個「地點」，當我們談到「在車子裡」時，所強調的是在車內的「立體空間」裡。
+
+
+
+(可看出介系詞的使用並非以地點的大小型來區分)
+
+(2)當我們說"街道、河川"時，通常用介系詞「on」。
+
+如on Tenth Street(第十街)--因第十街是「路線」故用強調「線」的on。又如on the Yellow River(在黃河)--因在河"面"上，故用強調「面」的「on 」。
+
+(非因街道、河川為中型地點)
+
+因此以書寫者所要強調的為地點/位置的「點、線、面、立體空間」來區別「at、on、in」的使用，是較簡易且正確的方法。
 
 ** 時間介系詞 at、on、in 的比較
 
+
+* test2
