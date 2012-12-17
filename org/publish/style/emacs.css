@@ -30,7 +30,77 @@ a:link,a:visited,a:hover,a:active {
     font: inherit;
     text-decoration: inherit;
 }
+/* body{ */
+/*                 font-size:12px; */
+/*                 margin:0px; */
+/*                 padding:0px; */
+/*                 color:#666666; */
+/*                 font-family:"trebuchet ms",arial,helvetica,sans-serif; */
+/*                 background-color:#F8F8F8; */
+/*         } */
 
+/*         a:link,a:visited{text-decoration:none;color: #5489DE;} */
+/*         a:hover{color:#FD0085;text-decoration:none;} */
+
+/*         #content { */
+/*                         text-align:left; */
+/*                         width:958px; */
+/*                         background:#FFF; */
+/*                         border-color:#DDD; */
+/*                         border-style:solid; */
+/*                         border-width:1px 1px; */
+/*                         margin:0 auto;  */
+/*                         margin-top:15px; */
+/*                         margin-bottom:15px; */
+
+/*                         -moz-border-radius: 15px; */
+/*                         -webkit-border-radius: 15px; */
+/*                         border-radius: 15px; */
+
+/*                         -webkit-box-shadow: 10px 10px 25px #ccc; */
+/*                         -moz-box-shadow: 10px 10px 25px #ccc; */
+/*                         box-shadow: 10px 10px 25px #ccc; */
+
+
+/*         } */
+
+/*         #postamble{margin-top:15px} */
+
+/*         #org-div-home-and-up{margin-right:10px;margin-top:5px} */
+
+/*         .title{color:#666666} */
+/*         .src,.example{ */
+/*                         margin: 5px 10px; */
+/*                         font-size: small */
+/*         } */
+
+/*         p{margin: 5px 10px} */
+/*         h2{margin:5px 5px} */
+/*         h3{margin:5px 10px} */
+/*         h4{margin:5px 15px} */
+/*         img{max-width:940px; width:expression(document.body.clientWidth > 940? "940px": "auto" );margin:5px 5px} */
+
+/*         table{ */
+/*                         padding: 0; */
+/*                         margin-left:15px; */
+/*         } */
+
+/*         th { */
+/*                 font: bold 12px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; */
+/*                 color: #4f6b72; */
+/*                 border: 1px solid #C1DAD7; */
+/*                 letter-spacing: 2px; */
+/*                 text-align: center; */
+/*                 padding: 6px 6px 6px 12px; */
+/*                 background: #CAE8EA  no-repeat; */
+/*           } */
+/*          td { */
+/*                 border: 1px solid #C1DAD7; */
+/*                 background: #fff; */
+/*                 font-size:11px; */
+/*                 padding: 6px 6px 6px 12px; */
+/*                 color: #4f6b72; */
+/*           } */
 
 body {
     color: #ffffff;
