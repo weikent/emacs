@@ -48,5 +48,5 @@
 ;;         :author "shijian.wei@gmail.com"
          )))
 
-
+(setq org-startup-indented t)
 (provide 'orgMode-settings)
