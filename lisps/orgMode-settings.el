@@ -62,4 +62,22 @@
       (set-face-underline-p 'org-link t))
   (iimage-mode))
 
+;; iimage mode
+(autoload 'iimage-mode "iimage" "Support Inline image minor mode." t)
+(autoload 'turn-on-iimage-mode "iimage" "Turn on Inline image minor mode." t)
+;; 然后就可以用命令
+
+;; M-x iimage-mode RET
+;; 在当前模式里启动 iimage 这个 minor mode。
+
+;; 如果想在 Emacs org 模式里启用 iimage 模式，把下面的代码放到配置文件里，则可以在 Emacs Org 的编辑区里显示图片。
+
+(defun org-toggle-iimage-in-org ()
+  "display images in your org file"
+  (interactive)
+  (if (face-underline-p 'org-link)
+      (set-face-underline-p 'org-link nil)
+      (set-face-underline-p 'org-link t))
+  (iimage-mode))
+
 (provide 'orgMode-settings)

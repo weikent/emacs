@@ -8,6 +8,49 @@
    2. iOS Simulator -> Reset Content and settings
 
 
+* ios 10.8 xcode 4.5 添加的view 默认是iphone样式。
+可以在选中view之后，选择attributes inspector --> size。 可以改变样式。
+
+* ios6 之后添加了 auto layout 功能。 需要关闭的时候可以如下操作
+使用Xcode 4.5 创建App时，Auto Layout功能在所有nib或Storyboard 文件中，默认是enable（开启的）
+需要关闭storyboard或xib界面文件的Use Auto Layout 选项，这是因为Auto Layout特性是iOS 6 新增加的，在之前的 5.0/5.1 Simulator模拟器中不支持。
+1 open user interface document
+2 choose view --> Utilities --> show file inspector --> interface Builder Document 下。 uncheck “use auto layout".
+
+* 编程技巧
+** 点击界面空白出隐藏keyboard。 也可以做其他事情。
+#+begin_src objc
+-(void) touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    [super touchesBegan:touches withEvent:event];
+    
+    [name resignFirstResponder];
+    [password resignFirstResponder];
+    
+}
+#+end_src
+
+** TextField 输入完毕后 隐藏 keyboard
+实现textField 的 didEndonExit 事件。在方法里面写上 
+
+#+begin_src objc
+[textfiel resignFirstResponder];
+#+end_src
+
+
+** 使控件不可用
+设置控件的 userinterfaceEnabled
+
+#+begin_src objc
+[control setUserInteractionEnabled:YES];
+#+end_src
+
+
+** xcode 调试 EXC_BAD_ACCESS  
+1 第一种方法：在程序 crash 之后，在控制台输入 bt，就可以显示 crash 堆栈：
+2 为工程运行时加入 NSZombieEnabled 环境变量，并设为启用。
+=======
+
 * 获取IOS设备的类型和系统版本
 #+begin_src objc
 //  DeviceHelper.m   
