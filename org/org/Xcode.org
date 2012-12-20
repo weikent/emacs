@@ -116,3 +116,18 @@ Note that in addition to the values explicitly listed below, NSStringEncoding su
 See CFStringEncodingExt.h for a list of these encodings.
 
 See CFString.h for functions which convert between NSStringEncoding and CFStringEncoding.
+
+
+* 如何将NSstring转欢成char (UTF8String, cString)
+如果是 .m文件，直接可以转换
+
+#+begin_src objc
+char *s;
+NSString *str;
+s=[str UTF8String];
+
+str=[NSString stringWithUTF8String:s];
+str=[NSString stringWithFormat:@"%s",s];
+#+end_src
+
+如果是.mm会提示出错,因为[str UTF8String]返回的是const char *
