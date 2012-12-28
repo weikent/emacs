@@ -7,7 +7,8 @@
    1. option + product menu    ->  Clean Build Folder
    2. iOS Simulator -> Reset Content and settings
 
-
+* Xcode 调试
+在project-setting中找到 “Run Static Analyzer” 键，然后把值修改为“YES”.这样在编码的时候，xcode就可以自动为我们检查内存泄露了
 * ios 10.8 xcode 4.5 添加的view 默认是iphone样式。
 可以在选中view之后，选择attributes inspector --> size。 可以改变样式。
 
