@@ -7,7 +7,8 @@
    1. option + product menu    ->  Clean Build Folder
    2. iOS Simulator -> Reset Content and settings
 
-
+* Xcode 调试
+在project-setting中找到 “Run Static Analyzer” 键，然后把值修改为“YES”.这样在编码的时候，xcode就可以自动为我们检查内存泄露了
 * ios 10.8 xcode 4.5 添加的view 默认是iphone样式。
 可以在选中view之后，选择attributes inspector --> size。 可以改变样式。
 
@@ -160,6 +161,7 @@ See CFStringEncodingExt.h for a list of these encodings.
 
 See CFString.h for functions which convert between NSStringEncoding and CFStringEncoding.
 
+
 * 造成unrecognized selector sent to instance……程序崩溃原因分析  
 
 造成unrecognized selector sent to instance……，大部分情况下是因为对象被提前release了，在你心里不希望他release的情况下，指针还在，对象已经不在了。
@@ -167,3 +169,19 @@ See CFString.h for functions which convert between NSStringEncoding and CFString
 
 属性必须用 self 
 属性必须用 self 属性必须用 self 属性必须用 self 属性必须用 self 属性必须用 self 属性必须用 self 属性必须用 self 属性必须用 self 属性必须用 self 
+=======
+
+* 如何将NSstring转欢成char (UTF8String, cString)
+如果是 .m文件，直接可以转换
+
+#+begin_src objc
+char *s;
+NSString *str;
+s=[str UTF8String];
+
+str=[NSString stringWithUTF8String:s];
+str=[NSString stringWithFormat:@"%s",s];
+#+end_src
+
+如果是.mm会提示出错,因为[str UTF8String]返回的是const char *
+
