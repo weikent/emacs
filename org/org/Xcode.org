@@ -175,3 +175,30 @@ str=[NSString stringWithFormat:@"%s",s];
 #+end_src
 
 如果是.mm会提示出错,因为[str UTF8String]返回的是const char *
+
+* iPhone 程式要間隔一段時間執行某個函式的方法
+最基本的就是用NSTimer ..
+只是這個要建一個 NSTimer 再做一些設定..
+感覺有點麻煩..
+
+有看到另一種方法.
+[self performSelector:@selector(test:) withObject:nnil afterDelay:1.0];
+
+
+
+可以設定過幾秒後執行.
+要一直執行就在函式中也加上同樣命令.就會一直進去了.
+要停止的話就做判斷,條件達到的時候不會跑該命令就好.
+
+另外在cocos2D裡也有
+
+
+
+[self schedule:@selector(objMove:) interval:0.01f];
+的方式可以達成.
+不過這個跟 performSelector:(selector)... 方法有點不一樣.
+就是 schedule 比較像timer 會一直執行.. (其實裡面好像就是幫你處理timer的宣告..)
+所以要停止的話要用
+[self unschedule:@selector(objMove:)];
+
+來停止這個動作的繼續執行.
