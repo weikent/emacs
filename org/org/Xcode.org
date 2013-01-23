@@ -50,6 +50,7 @@
 ** xcode 调试 EXC_BAD_ACCESS  
 1 第一种方法：在程序 crash 之后，在控制台输入 bt，就可以显示 crash 堆栈：
 2 为工程运行时加入 NSZombieEnabled 环境变量，并设为启用。
+3 MallocStackLogging 启用
 =======
 
 * 获取IOS设备的类型和系统版本
