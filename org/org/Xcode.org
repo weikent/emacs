@@ -223,3 +223,14 @@ str=[NSString stringWithFormat:@"%s",s];
 
 将一个UIView显示在最前面只需要调用其父视图的 bringSubviewToFront（）方法。
 将一个UIView层推送到背后只需要调用其父视图的 sendSubviewToBack（）方法。
+
+* iOS Programming – 触摸事件处理
+-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event;
+-(void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event;
+-(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event;
+-(void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event;
+
+当手指接触屏幕时，就会调用touchesBegan:withEvent方法；
+当手指在屏幕上移时，动就会调用touchesMoved:withEvent方法；
+当手指离开屏幕时，就会调用touchesEnded:withEvent方法；
+当触摸被取消（比如触摸过程中被来电打断），就会调用touchesCancelled:withEvent方法。而这几个方法被调用时，正好对应了UITouch类中phase属性的4个枚举值。
