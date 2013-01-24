@@ -187,3 +187,11 @@ in the evening ---強調 (從sunset到bedtime)的這個「時段」。
 - 在表達提出某種建議的意思時, 即"~怎麼樣;~好嗎?"時, what about 和 how about 是可以互換的,因為意思相同.例如:What should we go now?  How/What about going  to the movies? (我們現在要去哪呢?去看電影怎麼樣呢?)     比方說:How about taking a walk? (散個步好嗎?)
 - 若是詢問意見或打聽消息時, 就只能使用 what about了.例如:Andy, we are going to the harbor by ship. What about you? (Andy,我們政要搭船到海港去.你呢?)
 - 若是提供多項事物讓人選擇的話,則使用 how about.比方說:Mary, I suggest to go to McDonald or KFC to have lunch. How about you and your sister?* test2
+
+* have been 是什么时态
+- have/has been +名词，现在完成时态的主动语态
+- have/has been +动词的过去分词（done)，现在完成时态的被动语态
+- have/has been +动词的现在分词(doing)，现在完成进行时态的主动语态
+- had been +名词，过去完成时态的主动语态
+- had been +动词的过去分词（done)，过去完成时态的被动语态
+- had been +动词的现在分词(doing)，过去完成进行时态的主动语态
