@@ -213,3 +213,13 @@ str=[NSString stringWithFormat:@"%s",s];
 
 來停止這個動作的繼續執行.
 =======
+* 设置UIPickerView默认选择
+
+#+begin_src objc
+[[self pickerView] selectRow:3 inComponent:0 animated:NO];
+#+end_src objc
+
+* UIView层次管理 放到最上层 放到最下层
+
+将一个UIView显示在最前面只需要调用其父视图的 bringSubviewToFront（）方法。
+将一个UIView层推送到背后只需要调用其父视图的 sendSubviewToBack（）方法。
