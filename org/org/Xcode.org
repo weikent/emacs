@@ -49,9 +49,13 @@
 
 ** xcode 调试 EXC_BAD_ACCESS  
 1 第一种方法：在程序 crash 之后，在控制台输入 bt，就可以显示 crash 堆栈：
+
 2 为工程运行时加入 NSZombieEnabled、 MallocStackLogging环境变量，并设为启用。
     produce-->edit schema-->run (environment variables)中
-=======
+
+3 为工程运行时加入 NSZombieEnabled 环境变量，并设为启用。
+4 MallocStackLogging 启用
+
 
 * 获取IOS设备的类型和系统版本
 #+begin_src objc
@@ -205,3 +209,67 @@ str=[NSString stringWithFormat:@"%s",s];
       }
   }
 #+end_src
+=======
+* iPhone 程式要間隔一段時間執行某個函式的方法
+最基本的就是用NSTimer ..
+只是這個要建一個 NSTimer 再做一些設定..
+感覺有點麻煩..
+
+有看到另一種方法.
+[self performSelector:@selector(test:) withObject:nnil afterDelay:1.0];
+
+
+
+可以設定過幾秒後執行.
+要一直執行就在函式中也加上同樣命令.就會一直進去了.
+要停止的話就做判斷,條件達到的時候不會跑該命令就好.
+
+另外在cocos2D裡也有
+
+
+
+[self schedule:@selector(objMove:) interval:0.01f];
+的方式可以達成.
+不過這個跟 performSelector:(selector)... 方法有點不一樣.
+就是 schedule 比較像timer 會一直執行.. (其實裡面好像就是幫你處理timer的宣告..)
+所以要停止的話要用
+[self unschedule:@selector(objMove:)];
+
+來停止這個動作的繼續執行.
+=======
+* 设置UIPickerView默认选择
+
+#+begin_src objc
+[[self pickerView] selectRow:3 inComponent:0 animated:NO];
+#+end_src objc
+
+* UIView层次管理 放到最上层 放到最下层
+
+将一个UIView显示在最前面只需要调用其父视图的 bringSubviewToFront（）方法。
+将一个UIView层推送到背后只需要调用其父视图的 sendSubviewToBack（）方法。
+
+* iOS Programming – 触摸事件处理
+-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event;
+-(void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event;
+-(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event;
+-(void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event;
+
+当手指接触屏幕时，就会调用touchesBegan:withEvent方法；
+当手指在屏幕上移时，动就会调用touchesMoved:withEvent方法；
+当手指离开屏幕时，就会调用touchesEnded:withEvent方法；
+当触摸被取消（比如触摸过程中被来电打断），就会调用touchesCancelled:withEvent方法。而这几个方法被调用时，正好对应了UITouch类中phase属性的4个枚举值。
+
+[self.nextResponder touchesBegan:touches withEvent:event];
+可以把事件传递到下一个相应事件的view。
+
+* 遇到的问题
+** uinavigationController  pushviewController 的时候是不是需要把 push的viewcontroller给release掉。
+ 答案是需要。因为push会retain。
+ 但当时的情况是 release 这个push 的viewcontroller会导致exec_bad_access错误。
+
+ 原因是在这个被push的viewcontroller中，有些不需要release的view或button、label之类的控件被release掉了。
+ 并且没有实现dealloc 方法。
+
+ autorelease的不需要手动release。
+
+ dealloc方法中要写上 [super dealloc]。会自动释放标记为autorelease的控件。
