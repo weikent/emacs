@@ -49,7 +49,8 @@
 
 ** xcode 调试 EXC_BAD_ACCESS  
 1 第一种方法：在程序 crash 之后，在控制台输入 bt，就可以显示 crash 堆栈：
-2 为工程运行时加入 NSZombieEnabled 环境变量，并设为启用。
+2 为工程运行时加入 NSZombieEnabled、 MallocStackLogging环境变量，并设为启用。
+    produce-->edit schema-->run (environment variables)中
 =======
 
 * 获取IOS设备的类型和系统版本
@@ -185,3 +186,22 @@ str=[NSString stringWithFormat:@"%s",s];
 
 如果是.mm会提示出错,因为[str UTF8String]返回的是const char *
 
+
+* Cocoa Fundation内存释放原则
+
+1. 通过分配或复制创建的对象保持计数1
+2. 假设任何别的方法获取的对象保持计数1,而且在自动释放池中. 要想在当前执行范围外使用该对象,就必须保持它
+3. 向集合添加对象时它就被保持,从集合移除对象时就被释放.释放集合对象会释放该集合中的所有对象
+4. 确保有多少alloc,copy,mutableCopy或retain消息就有多少release或autorelease消息发送给该对象. 换句话说,确保你的代码平衡
+5. 在访问方法设置属性,先保持,再释放 (ztime: 现在有@propperty , @synthesize 两个指令自动创建此代码)
+6. 用@"..."结构创建的NSString对象是常量.发送release或retain并无效果
+
+* 删除视图中的子视图
+
+#+begin_src objc
+  for (UIView *oneView in cell.subviews ) {
+      if ([oneView isKindOfClass:[UILabel class]]) {
+          [oneView removeFromSuperview];
+      }
+  }
+#+end_src
