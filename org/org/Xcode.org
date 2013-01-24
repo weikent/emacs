@@ -237,3 +237,15 @@ str=[NSString stringWithFormat:@"%s",s];
 
 [self.nextResponder touchesBegan:touches withEvent:event];
 可以把事件传递到下一个相应事件的view。
+
+* 遇到的问题
+** uinavigationController  pushviewController 的时候是不是需要把 push的viewcontroller给release掉。
+ 答案是需要。因为push会retain。
+ 但当时的情况是 release 这个push 的viewcontroller会导致exec_bad_access错误。
+
+ 原因是在这个被push的viewcontroller中，有些不需要release的view或button、label之类的控件被release掉了。
+ 并且没有实现dealloc 方法。
+
+ autorelease的不需要手动release。
+
+ dealloc方法中要写上 [super dealloc]。会自动释放标记为autorelease的控件。
