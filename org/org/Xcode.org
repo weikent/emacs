@@ -273,3 +273,5 @@ str=[NSString stringWithFormat:@"%s",s];
  autorelease的不需要手动release。
 
  dealloc方法中要写上 [super dealloc]。会自动释放标记为autorelease的控件。
+** incomplete implementation
+这个一般来说是在.h文件中声明了。却没有在.m文件中实现方法。
