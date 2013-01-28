@@ -1496,7 +1496,10 @@ table{
     border:1px;
     border-bottom:0px;
     border-right:0px;
+    border-color:red;
+ background-color:#4682b4;
 }
+
 table td{
     border-bottom:1px solid #000; 
     padding:3px;
