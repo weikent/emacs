@@ -1,3 +1,11 @@
+
+/******************************/
+/* name: pun.c		      */
+/* Purpose: Prints a bad pun. */
+/* Author: weikent	      */
+/******************************/
+
+
 #include <stdio.h>
 
 int main(int argc, char *argv[])
