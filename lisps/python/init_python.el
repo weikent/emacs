@@ -5,6 +5,20 @@
 (yas/initialize)
 (yas/load-directory "~/emacs/lisps/yasnippet-0.6.1c/snippets")
 
+;; (setq yas/next-field-or-maybe-expand (kbd "<f4>"))
+;; (setq yas/prev-field (kbd "<f5>"))
+;; setq yas/trigger-key (kbd "<f4>")
+
+
+;; ;; at ~/.emacs.d folder. git clone yasnippet.git
+;; (add-to-list 'load-path
+;;               "~/.emacs.d/yasnippet")
+;; (require 'yasnippet)
+;; (yas-global-mode 1)
+
+;; (setq yas-next-field-or-maybe-expand "M-n")
+;; (setq yas-prev-field "M-p")
+
 
 
 (add-to-list 'load-path "~/.emacs.d/")

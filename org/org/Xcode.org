@@ -200,6 +200,31 @@ str=[NSString stringWithFormat:@"%s",s];
 5. 在访问方法设置属性,先保持,再释放 (ztime: 现在有@propperty , @synthesize 两个指令自动创建此代码)
 6. 用@"..."结构创建的NSString对象是常量.发送release或retain并无效果
 
+* iOS中NSString引用计数内存管理机制分析
+
+在 iOS 中引用计数是内存的管理方式，虽然在 iOS5 版本中，已经支持了自动引用计数管理模式，但理解它的运行方式有助于我们了解程序的运行原理，有助于 debug 程序。
+   操作系统的内存管理分成堆和栈。
+
+   在堆中分配的内存，都试用引用计数模式；在栈中则不是。
+
+   NSString 定义的对象是保存在栈中，所以它没有引用计算。看一些书上说它的引用计算会是 fffffffff 最大整数，测试的结果显示它是－ 1. 对该对象进行 retain 操作，不好改变它的 retainCount 值。
+
+   MutableNSString 定义的对象，需要先分配堆中的内存空间，再初始化才能使用。它是采用引用计数管理内存的。对该对象做 retainCount 操作则每次增加一个。
+
+NSString: initWithString
+NSString: stringWithString
+是在栈上分配的空间。没有引用计数。
+NSString: initWithFormat
+NSString: stringWithFormat
+是在堆上分配的空间，有引用计数。
+
+不论在堆上还是在栈上分配空间的NSString， 在str = [str substringFromIndex:2];之后，都会在堆上分配一个新的空间。str会指向新的内存空间。有可能会造成内存泄露。所以应该 str1 = [str substringFromIndex:2]; [str release]; str = str1;
+
+
+// 下面的内容说的不正确。
+   其实，引用计数是对内存区域的空间管理方式，是应从内存块的视角去看的。任何对象都是指向它的指针，有多少个指针指向它，就有多少个引用计算。
+   如果没有任何指针指向该内存块了，很明显，该内存块就没有对象引用了，引用计算就是 0, 系统会人为该内存区域已经空闲，于是立即清理，也就是更新一下管理堆的链表中某个标示位。
+   // 到此为止
 * 删除视图中的子视图
 
 #+begin_src objc
