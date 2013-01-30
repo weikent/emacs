@@ -4,7 +4,9 @@
 (require 'yasnippet) ;; not yasnippet-bundle
 (yas/initialize)
 (yas/load-directory "~/emacs/lisps/yasnippet-0.6.1c/snippets")
+;; (setq yas/trigger-key (kbd “M-[“))
 
+;;(require 'yasnippet-settings)
 
 
 (add-to-list 'load-path "~/.emacs.d/")
