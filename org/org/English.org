@@ -195,3 +195,13 @@ in the evening ---強調 (從sunset到bedtime)的這個「時段」。
 - had been +名词，过去完成时态的主动语态
 - had been +动词的过去分词（done)，过去完成时态的被动语态
 - had been +动词的现在分词(doing)，过去完成进行时态的主动语态
+* each和every的区别
+** each 强调个体，是形容词(adj)和代词(PRON).形容词时，起修饰限定作用，代词可以单独使用。each指2个或2个以上中的每一个。
+- each boy
+- each of the boys
+- each of my hands
+- each of my parents
+** every 强调整体，只能做adj
+every 指三个或三个以上中的每一个。
+- every students (不能写为every of the student) 
+- every one of my fingers.
