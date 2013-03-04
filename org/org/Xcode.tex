@@ -1,0 +1,405 @@
+% Created 2013-01-30 周三 15:54
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{soul}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\providecommand{\alert}[1]{\textbf{#1}}
+
+\title{Xcode}
+\author{}
+\date{\today}
+\hypersetup{
+  pdfkeywords={},
+  pdfsubject={},
+  pdfcreator={Emacs Org-mode version 7.8.11}}
+
+\begin{document}
+
+\maketitle
+
+\setcounter{tocdepth}{3}
+\tableofcontents
+\vspace*{1cm}
+
+\section{关于xib}
+\label{sec-1}
+
+  用xib文件添加视图的时候，在4.2版本的xcode中，程序会报错。需要把view按住control键拖到文件里面。生成一下自动代码，并删除自动代码之后就正常了。
+\subsection{Xcode4.2}
+\label{sec-1-1}
+
+   Xcode4.2 中清理xib缓存
+\begin{enumerate}
+\item option + product menu    ->  Clean Build Folder
+\item iOS Simulator -> Reset Content and settings
+\end{enumerate}
+\section{Xcode 调试}
+\label{sec-2}
+
+在project-setting中找到 “Run Static Analyzer” 键，然后把值修改为“YES”.这样在编码的时候，xcode就可以自动为我们检查内存泄露了
+\section{ios 10.8 xcode 4.5 添加的view 默认是iphone样式。}
+\label{sec-3}
+
+可以在选中view之后，选择attributes inspector --> size。 可以改变样式。
+\section{ios6 之后添加了 auto layout 功能。 需要关闭的时候可以如下操作}
+\label{sec-4}
+
+使用Xcode 4.5 创建App时，Auto Layout功能在所有nib或Storyboard 文件中，默认是enable（开启的）
+需要关闭storyboard或xib界面文件的Use Auto Layout 选项，这是因为Auto Layout特性是iOS 6 新增加的，在之前的 5.0/5.1 Simulator模拟器中不支持。
+1 open user interface document
+2 choose view --> Utilities --> show file inspector --> interface Builder Document 下。 uncheck “use auto layout''.
+\section{编程技巧}
+\label{sec-5}
+\subsection{点击界面空白出隐藏keyboard。 也可以做其他事情。}
+\label{sec-5-1}
+
+
+\begin{verbatim}
+-(void) touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    [super touchesBegan:touches withEvent:event];
+
+    [name resignFirstResponder];
+    [password resignFirstResponder];
+
+}
+\end{verbatim}
+\subsection{TextField 输入完毕后 隐藏 keyboard}
+\label{sec-5-2}
+
+实现textField 的 didEndonExit 事件。在方法里面写上 
+
+
+\begin{verbatim}
+[textfiel resignFirstResponder];
+\end{verbatim}
+\subsection{使控件不可用}
+\label{sec-5-3}
+
+设置控件的 userinterfaceEnabled
+
+
+\begin{verbatim}
+[control setUserInteractionEnabled:YES];
+\end{verbatim}
+\subsection{xcode 调试 EXC$_{\mathrm{BAD}}$$_{\mathrm{ACCESS}}$}
+\label{sec-5-4}
+
+\begin{enumerate}
+\item 第一种方法：在程序 crash 之后，在控制台输入 bt，就可以显示 crash 堆栈：
+\item 为工程运行时加入 NSZombieEnabled、 MallocStackLogging环境变量，并设为启用。 produce-->edit schema-->run (environment variables)中
+\item MallocStackLogging 启用
+\item 为工程运行时加入 NSZombieEnabled 环境变量，并设为启用。
+\end{enumerate}
+\section{获取IOS设备的类型和系统版本}
+\label{sec-6}
+
+
+\begin{verbatim}
+//  DeviceHelper.m   
+//  DeviceUtil   
+//   
+//  Created by LUOYL on 12-4-9.   
+//  Copyright (c) 2012年 http://luoyl.info. All rights reserved.   
+//   
+
+#import "DeviceHelper.h"   
+#import "sys/utsname.h"   
+
+@implementation DeviceHelper   
+
+/*  
+ *功能：获取设备类型  
+ *  
+ *  AppleTV2,1    AppleTV(2G)  
+ *  i386          simulator  
+ *  
+ *  iPod1,1       iPodTouch(1G)  
+ *  iPod2,1       iPodTouch(2G)  
+ *  iPod3,1       iPodTouch(3G)  
+ *  iPod4,1       iPodTouch(4G)  
+ *  
+ *  iPhone1,1     iPhone  
+ *  iPhone1,2     iPhone 3G  
+ *  iPhone2,1     iPhone 3GS  
+ *  
+ *  iPhone3,1     iPhone 4  
+ *  iPhone3,3     iPhone4 CDMA版(iPhone4(vz))  
+
+ *  iPhone4,1     iPhone 4S  
+ *  
+ *  iPad1,1       iPad  
+ *  iPad2,1       iPad2 Wifi版  
+ *  iPad2,2       iPad2 GSM3G版  
+ *  iPad2,3       iPad2 CDMA3G版  
+ *  @return null  
+ */  
++ (NSString *)getDeviceVersion   
+{   
+    struct utsname systemInfo;   
+    uname(&systemInfo);   
+    //get the device model and the system version   
+    NSString *machine =[NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding];    
+    return machine;   
+}   
+
+/** 获取IOS系统的版本号 */  
++ (NSString*)getOSVersion   
+{   
+    return [[UIDevice currentDevice]systemVersion];   
+}   
+
+/** 判断当前设备是否ipad */  
++ (BOOL)isIpad   
+{   
+    return [UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad;   
+}   
+
+/** 判断当前设备是否iphone */  
+
++ (BOOL)isIphone   
+{   
+    return [UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone;   
+
+}   
+
+/** 判断当前系统是否有摄像头 */  
++ (BOOL)hasCamera   
+{   
+    return [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera];   
+}   
+
+@end
+\end{verbatim}
+\section{iOS学习笔记——字符串编码转换}
+\label{sec-7}
+
+
+我们知道，使用NSURLConnection的代理方法下载网页，存到一个NSData中，
+
+
+\begin{verbatim}
+NSMutableData *pageData;
+[pageData appendData:data];
+\end{verbatim}
+
+如果网页编码是UTF-8的，可以这么转换为字符串：
+
+
+\begin{verbatim}
+NSString *pageSource = [[NSString alloc] initWithData:pageData encoding:NSUTF8StringEncoding];
+\end{verbatim}
+
+如果网页是gbk（或者gb2312），用UTF8转换的话，pageSource返回nil。这时需要使用gbk编码做转换，但是NSStringEncoding不含gbk，怎么办？用另一个方法处理一下：
+
+
+\begin{verbatim}
+NSStringEncoding gbkEncoding = CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingGB_18030_2000);
+NSString *pageSource = [[NSString alloc] initWithData:pageData encoding:gbkEncoding];
+\end{verbatim}
+
+为什么可以这么处理？在NSString.h（按住command，双击NSStringEncoding即能查看），对NSStringEncoding的定义中，注释这么写着：
+
+Note that in addition to the values explicitly listed below, NSStringEncoding supports encodings provided by CFString.
+
+See CFStringEncodingExt.h for a list of these encodings.
+
+See CFString.h for functions which convert between NSStringEncoding and CFStringEncoding.
+\section{造成unrecognized selector sent to instance……程序崩溃原因分析}
+\label{sec-8}
+
+
+造成unrecognized selector sent to instance……，大部分情况下是因为对象被提前release了，在你心里不希望他release的情况下，指针还在，对象已经不在了。
+很多时候，是因为init初始化函数中，对属性赋值没有使用self.foo赋值，而是直接对foo赋值，导致属性对象没有retain(心里以为retain了)，而提前释放。
+
+属性必须用 self 
+属性必须用 self 属性必须用 self 属性必须用 self 属性必须用 self 属性必须用 self 属性必须用 self 属性必须用 self 属性必须用 self 属性必须用 self 
+=======
+\section{如何将NSstring转欢成char (UTF8String, cString)}
+\label{sec-9}
+
+如果是 .m文件，直接可以转换
+
+
+\begin{verbatim}
+char *s;
+NSString *str;
+s=[str UTF8String];
+
+str=[NSString stringWithUTF8String:s];
+str=[NSString stringWithFormat:@"%s",s];
+\end{verbatim}
+
+如果是.mm会提示出错,因为[str UTF8String]返回的是const char *
+\section{Cocoa Fundation内存释放原则}
+\label{sec-10}
+
+
+\begin{enumerate}
+\item 通过分配或复制创建的对象保持计数1
+\item 假设任何别的方法获取的对象保持计数1,而且在自动释放池中. 要想在当前执行范围外使用该对象,就必须保持它
+\item 向集合添加对象时它就被保持,从集合移除对象时就被释放.释放集合对象会释放该集合中的所有对象
+\item 确保有多少alloc,copy,mutableCopy或retain消息就有多少release或autorelease消息发送给该对象. 换句话说,确保你的代码平衡
+\item 在访问方法设置属性,先保持,再释放 (ztime: 现在有@propperty , @synthesize 两个指令自动创建此代码)
+\item 用@''\ldots{}''结构创建的NSString对象是常量.发送release或retain并无效果
+\end{enumerate}
+\section{iOS中NSString引用计数内存管理机制分析}
+\label{sec-11}
+
+
+在 iOS 中引用计数是内存的管理方式，虽然在 iOS5 版本中，已经支持了自动引用计数管理模式，但理解它的运行方式有助于我们了解程序的运行原理，有助于 debug 程序。
+   操作系统的内存管理分成堆和栈。
+
+   在堆中分配的内存，都试用引用计数模式；在栈中则不是。
+
+   NSString 定义的对象是保存在栈中，所以它没有引用计算。看一些书上说它的引用计算会是 fffffffff 最大整数，测试的结果显示它是－ 1. 对该对象进行 retain 操作，不好改变它的 retainCount 值。
+
+   MutableNSString 定义的对象，需要先分配堆中的内存空间，再初始化才能使用。它是采用引用计数管理内存的。对该对象做 retainCount 操作则每次增加一个。
+
+NSString: initWithString
+NSString: stringWithString
+是在栈上分配的空间。没有引用计数。
+NSString: initWithFormat
+NSString: stringWithFormat
+是在堆上分配的空间，有引用计数。
+
+不论在堆上还是在栈上分配空间的NSString， 在str = [str substringFromIndex:2];之后，都会在堆上分配一个新的空间。str会指向新的内存空间。有可能会造成内存泄露。所以应该 str1 = [str substringFromIndex:2]; [str release]; str = str1;
+
+
+// 下面的内容说的不正确。
+   其实，引用计数是对内存区域的空间管理方式，是应从内存块的视角去看的。任何对象都是指向它的指针，有多少个指针指向它，就有多少个引用计算。
+   如果没有任何指针指向该内存块了，很明显，该内存块就没有对象引用了，引用计算就是 0, 系统会人为该内存区域已经空闲，于是立即清理，也就是更新一下管理堆的链表中某个标示位。
+   // 到此为止
+\section{iOS中的堆(heap)和栈(stack)的理解}
+\label{sec-12}
+
+操作系统iOS 中应用程序使用的计算机内存不是统一分配空间，运行代码使用的空间在三个不同的内存区域，分成三个段：“text segment “，“stack segment ”，“heap segment ”。
+
+段“text segment ”是应用程序运行时应用程序代码存在的内存段。每一个指令，每一个单个函数、过程、方法和执行代码都存在这个内存段中直到应用程序退出。一般情况下，你不会真的不得不知道这个段的任何事情。
+
+当应用开始以后，函数main() 被调用，一些空间分配在”stack” 中。这是为应用分配的另一个段的内存空间，这是为了函数变量存储需要而分配的内存。每一次在应用中调用一个函数，“stack ”的一部分会被分配在”stack” 中，称之为”frame” 。新函数的本地变量分配在这里。
+正如名称所示，“stack ”是后进先出（LIFO ）结构。当函数调用其他的函数时，“stack frame ”会被创建；当其他函数退出后，这个“frame ”会自动被破坏。
+ “heap” 段也称为”data” 段，提供一个保存中介贯穿函数的执行过程，全局和静态变量保存在“heap ”中，直到应用退出。
+为了访问你创建在heap 中的数据，你最少要求有一个保存在stack 中的指针，因为你的CPU 通过stack 中的指针访问heap 中的数据。
+你可以认为stack 中的一个指针仅仅是一个整型变量，保存了heap 中特定内存地址的数据。实际上，它有一点点复杂，但这是它的基本结构。
+ 
+简而言之，操作系统使用stack 段中的指针值访问heap 段中的对象。如果stack 对象的指针没有了，则heap 中的对象就不能访问。这也是内存泄露的原因。
+在iOS 操作系统的stack 段和heap 段中，你都可以创建数据对象。
+stack 对象的优点主要有两点，一是创建速度快，二是管理简单，它有严格的生命周期。stack 对象的缺点是它不灵活。创建时长度是多大就一直是多大，创建时是哪个函数创建的，它的owner 就一直是它。不像heap 对象那样有多个owner ，其实多个owner 等同于引用计数。只有heap 对象才是采用“引用计数”方法管理它。
+stack 对象的创建
+只要栈的剩余空间大于stack 对象申请创建的空间，操作系统就会为程序提供这段内存空间，否则将报异常提示栈溢出。
+heap 对象的创建
+操作系统对于内存heap 段是采用链表进行管理的。操作系统有一个记录空闲内存地址的链表，当收到程序的申请时，会遍历链表，寻找第一个空间大于所申请的heap 节点，然后将该节点从空闲节点链表中删除，并将该节点的空间分配给程序。
+例如：
+NSString 的对象就是stack 中的对象，NSMutableString 的对象就是heap 中的对象。前者创建时分配的内存长度固定且不可修改；后者是分配内存长度是可变的，可有多个owner, 适用于计数管理内存管理模式。
+两类对象的创建方法也不同，前者直接创建“NSString * str1=@''welcome''; “，而后者需要先分配再初始化“ NSMutableString * mstr1=[[NSMutableString alloc] initWithString:@''welcome'']; ”。
+ 
+(miki西游 @mikixiyou 原文链接: \href{http://mikixiyou.iteye.com/blog/1595230}{http://mikixiyou.iteye.com/blog/1595230} )
+ 
+再补充一点，这里说的是操作系统的堆和栈。
+在我们学习“数据结构”时，接触到的堆和栈的概念和这个操作系统中的堆和栈不是一回事的。
+操作系统的堆和栈是指对内存进行操作和管理的一些方式。
+“数据结构“的堆实际上指的就是（满足堆性质的）优先Queue 的一种数据结构，第1 个元素有最高的优先权；栈实际上就是满足先进后出的性质的数据或数据结构。
+\section{删除视图中的子视图}
+\label{sec-13}
+
+
+
+\begin{verbatim}
+for (UIView *oneView in cell.subviews ) {
+    if ([oneView isKindOfClass:[UILabel class]]) {
+        [oneView removeFromSuperview];
+    }
+}
+\end{verbatim}
+=======
+\section{iPhone 程式要間隔一段時間執行某個函式的方法}
+\label{sec-14}
+
+最基本的就是用NSTimer ..
+只是這個要建一個 NSTimer 再做一些設定..
+感覺有點麻煩..
+
+有看到另一種方法.
+[self performSelector:@selector(test:) withObject:nnil afterDelay:1.0];
+
+
+
+可以設定過幾秒後執行.
+要一直執行就在函式中也加上同樣命令.就會一直進去了.
+要停止的話就做判斷,條件達到的時候不會跑該命令就好.
+
+另外在cocos2D裡也有
+
+
+
+[self schedule:@selector(objMove:) interval:0.01f];
+的方式可以達成.
+不過這個跟 performSelector:(selector)\ldots{} 方法有點不一樣.
+就是 schedule 比較像timer 會一直執行.. (其實裡面好像就是幫你處理timer的宣告..)
+所以要停止的話要用
+[self unschedule:@selector(objMove:)];
+
+來停止這個動作的繼續執行.
+=======
+\section{设置UIPickerView默认选择}
+\label{sec-15}
+
+
+
+\begin{verbatim}
+[[self pickerView] selectRow:3 inComponent:0 animated:NO];
+\end{verbatim}
+\section{UIView层次管理 放到最上层 放到最下层}
+\label{sec-16}
+
+
+将一个UIView显示在最前面只需要调用其父视图的 bringSubviewToFront（）方法。
+将一个UIView层推送到背后只需要调用其父视图的 sendSubviewToBack（）方法。
+\section{iOS Programming – 触摸事件处理}
+\label{sec-17}
+
+-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event;
+-(void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event;
+-(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event;
+-(void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event;
+
+当手指接触屏幕时，就会调用touchesBegan:withEvent方法；
+当手指在屏幕上移时，动就会调用touchesMoved:withEvent方法；
+当手指离开屏幕时，就会调用touchesEnded:withEvent方法；
+当触摸被取消（比如触摸过程中被来电打断），就会调用touchesCancelled:withEvent方法。而这几个方法被调用时，正好对应了UITouch类中phase属性的4个枚举值。
+
+[self.nextResponder touchesBegan:touches withEvent:event];
+可以把事件传递到下一个相应事件的view。
+\section{遇到的问题}
+\label{sec-18}
+\subsection{uinavigationController  pushviewController 的时候是不是需要把 push的viewcontroller给release掉。}
+\label{sec-18-1}
+
+ 答案是需要。因为push会retain。
+ 但当时的情况是 release 这个push 的viewcontroller会导致exec$_{\mathrm{bad}}$$_{\mathrm{access}}$错误。
+
+ 原因是在这个被push的viewcontroller中，有些不需要release的view或button、label之类的控件被release掉了。
+ 并且没有实现dealloc 方法。
+
+ autorelease的不需要手动release。
+
+ dealloc方法中要写上 [super dealloc]。会自动释放标记为autorelease的控件。
+\subsection{incomplete implementation}
+\label{sec-18-2}
+
+这个一般来说是在.h文件中声明了。却没有在.m文件中实现方法。
+
+\end{document}
