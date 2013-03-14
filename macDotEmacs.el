@@ -1,7 +1,15 @@
 
 ;; path
+(message (getenv "PATH"))
 (setq path "/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin:/usr/local/bin")
-(setenv "PATH" path)
+(setq path1 "/usr/local/bin")
+(setenv "PATH"
+  (concat
+   "/usr/local/bin" ":"
+   (getenv "PATH")
+  )
+)
+(message (getenv "PATH"))
 
 
 (setq homeName (substring system-name 0 (string-match "teki" system-name)))
@@ -9,10 +17,15 @@
 (setq pathModule1 (concat homePath "/emacs/PP4E/Preview"))
 (setq pathModule2 (concat homePath "/emacs/python"))
 (setq pathModule3 (concat homePath "/emacs/project"))
-(setq pythonModulePath (concat pathModule1 ":" pathModule2 ":" pathModule3))
+(setq pathModule4 (concat homePath "/emacs/python/pythonFirstGame"))
+(setq pythonModulePath (concat pathModule1 ":" pathModule2 ":" pathModule3 ":" pathModule4))
 ;;设置PYTHONPATH  export PYTHONPATH=/Users/weishijian/emacs/python:$PYTHONPATH in .bash_profile or other environment variables set files.
 ;; HOME 路径不能用 ~/... 这样添加不成功，
 (setenv "PYTHONPATH" pythonModulePath)
+
+
+
+
 
 (defconst my-emacs-path           "~/emacs/" "我的emacs相关配置文件的路径")
 (defconst my-emacs-my-lisps-path  (concat my-emacs-path "lisps/") "我自己写的emacs lisp包的路径")
@@ -39,6 +52,16 @@
 ;;(server-start)
 ;;(require 'sudo-ext)
 (require 'my-global-key-settings)
+
+
+(require 'init_elget)
+
+(require 'init_initjedi)
+
+(require 'init_yasnippet)
+
+(require 'init_ipython)
+
 
 
 ;; 一些基本的小函数
@@ -93,7 +116,7 @@
 (global-set-key [f7] 'indent-whole)
 
 
-(require 'init_python)
+;;(require 'init_python)
 
 (require 'orgMode-settings)
 ;; ;;;(require 'htmlize)
