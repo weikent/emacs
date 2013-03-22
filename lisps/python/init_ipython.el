@@ -1,7 +1,7 @@
 
-
+(message "start ipython")
 ;;(load-file "~/.emacs.d/ipython.el")
-(load-file "~/emacs/lisps/ipython.el")
+(load-file "~/emacs/lisps/python/ipython.el")
 (require 'python)
 ;; use ipython
 (setq python-command "ipython")

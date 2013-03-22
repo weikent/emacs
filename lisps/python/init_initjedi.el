@@ -6,6 +6,8 @@
 
 ;;MACOS,should run "make requirements" at jedi folders in terminal.
 
+
+(message "start jedi")
 (add-hook 'python-mode-hook 'jedi:ac-setup)
 
 (add-hook 'python-mode-hook

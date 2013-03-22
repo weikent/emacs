@@ -1,4 +1,4 @@
-
+(message "start yasnippet")
 (add-to-list 'load-path
              "~/emacs/lisp/yasnippet-0.6.1c")
 (require 'yasnippet) ;; not yasnippet-bundle
