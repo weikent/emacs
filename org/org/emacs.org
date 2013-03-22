@@ -1,5 +1,10 @@
 #+TITLE emacs 笔记
 
+
+* 使用el-get.el 来安装所有（几乎所有）el文件。
+https://github.com/dimitri/el-get
+
+
 * org-Mode
 - TAB	 	折叠列表项
 - M-RET	 	插入项
@@ -12,13 +17,26 @@
 
 
  
-|快捷键|	命令|	说明|
+| 快捷键         | 命令 | 说明                      |
+|                |      |                           |
+| TAB            |      | 折叠列表项                |
+| M-RET          |      | 插入项                    |
+| M-S-RET        |      | 插入带复选框的项          |
+| M-S-UP/DOWN    |      | 移动列表项                |
+| M-LEFT/RIGHT   |      | 升/降级列表项，不包括子项 |
+| M-S-LEFT/RIGTH |      | 升/降级列表项，包括子项   |
+| C-c C-c        |      | 改变复选框状态            |
+| C-c -          |      | 更换列表标记（循环切换）  |
 
-TAB	 	折叠列表项
-M-RET	 	插入项
-M-S-RET	 	插入带复选框的项
-M-S-UP/DOWN	 	移动列表项
-M-LEFT/RIGHT	 	升/降级列表项，不包括子项
-M-S-LEFT/RIGTH	 	升/降级列表项，包括子项
-C-c C-c	 	改变复选框状态
-C-c -	 	更换列表标记（循环切换）
+
+** 在ubuntu中。执行C-c C-e会提示Can't find library org. 此时安装emacs24-el，并重启emacs即可。
+
+* emacs 配置 python
+ 可以使用jedi来替代之前到rope / ropemacs /ropemode  组合。
+** 使用el-get.el 安装jedi
+地址：https://github.com/davidhalter/jedi
+在ubuntu中安装好需要到软件之后，直接在M-x el-get-install RET jedi即可安装成功。
+
+在mac中。需要在系统自带的命令行中,jedi到目录中执行 make requestments 。之后在安装。 其他到基本和ubuntu一样。
+
+** 需要用到ipython.el python-mode.el。
