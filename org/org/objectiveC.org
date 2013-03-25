@@ -1,4 +1,4 @@
-#+TITLE  OBJC 笔记
+#+TITLE:  OBJC 笔记
 
 
 * NSLog
