@@ -1,0 +1,93 @@
+
+#+TITLE:     Django 笔记
+
+
+
+* 安装
+首先得有Python
+1. 官方版本
+    1. 下载 http://www.djangoproject.com/download/
+    1. 解压 并  python setup.py install。
+1. Trunk版本
+    没安装这个版本，具体介绍看http://djangobook.py3k.cn/2.0/chapter02/
+
+
+** 官方版本和Trunk版本的区别
+  区别是，Trunk版本中都是拥有最新功能，但不是很稳定的版本。
+
+
+
+* 第一个项目
+
+1. 创建一个目录专门用来存放django到代码。
+1. 在创建到目录中运行  django-admin.py startproject mysite  （mysite是项目到名称，可以换做其他名称）
+
+startproject 命令创建一个目录，包含4个文件：
+
+#+BEGIN_SRC sh
+
+mysite/
+    __init__.py
+    manage.py
+    settings.py
+    urls.py
+
+
+
+
+    + __init__.py:让python把该项目当成一个开发包（即一组模块）所需到文件，这是一个空文件，一般不需要修改。
+    + manage.py: 一种命令行工具，允许以多种方式与该Django项目进行交互。键入python manage.py help.可以看到帮助，不许要修改，生成它纯是为了方便。
+    + settings.py: 该Django项目的设置或配置，查看并理解这个文件中可用的设置类型及默认值。
+    + urls.py: Django 项目的URL设置。可视其为django网站的目录，
+
+#+END_SRC sh
+
+切换到mysite目录， 执行 python manage.py runserver   可以启动django web 服务。默认监听端口8000.
+
+可以用python manage.py runserver 8080 指定监听端口。
+
+可以用python manage.py runserver 0.0.0.0:8000 制定监听端口和ip地址。
+
+
+
+* 添加视图
+
+web 服务起来了。可是没有显示什么有用到内容。
+
+django使用视图来显示页面信息。
+
+使用Django， 页面的内容是靠view function（视图函数） 来产生，URL定义在 URLconf 中
+
+视图的名称无关紧要，django都可以找到，但建议写成views.py
+
+#+BEGIN_SRC python
+
+from django.http import HttpResponse
+
+def hello(request):
+    return HttpResponse("Hello world")
+
+#+END_SRC
+
+1. 从django.http模块导入HttpResponse类，
+1. 每个视图函数都有，至少有1个参数 ： request
+    request是一个触发这个视图、包含当前web请求信息到对象，是类diango.http.HttpRequest的一个实例。
+1. 视图函数的名称并不重要，任意起名即可， urlconf中指定这个视图函数对样到url即可。
+1. 返回一个HttpResponse实例。
+
+
+--
+
++ 一个视图就是一个python函数，
++ 第一个参数必须是HttpRequest类型，
++ 返回必须是HttpResponse实例。
+
+
+* 添加视图对应的url
+我们需要一个详细描述到url来显示告诉项目，我们有一个视图。这里就要用到URLconf（urls.py）
+
+URLconf是url和url所指向的视图函数之间到映射表。
+
+
+
+
