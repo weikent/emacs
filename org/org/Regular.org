@@ -1,4 +1,4 @@
-#+Title  Regular Express  正则表达式
+#+Title:  Regular Express  正则表达式
 
 * 常用的元字符
 | 代码 | 说明                         |

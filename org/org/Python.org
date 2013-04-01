@@ -1,0 +1,27 @@
+#+TITLE Python 笔记
+
+
+* shelve
+#+BEGIN_SRC python
+
+import shelve
+instanceName = shelve.open('fileName')
+print 1+1
+
+##use instanceName['key'], can assert the data.
+
+#+END_SRC
+
+
+* instance.method(arg1, arg2) 等价于  class.method(instance, arg1, arg2)
+
+* Django
+** 安装
+*** 官方版本
+1. 下载http://www.djangoproject.com/download/.
+1. tar xzvf Django-1.0.2-final.tar.gz
+1. cd Django-*
+1. sudo python setup.py install
+*** Trunk 版本
+1. 下载svn co http://code.djangoproject.com/svn/django/trunk djtrunk.
+1. 挺麻烦的 看http://www.djangobook.com/en/2.0/chapter02.html 吧。

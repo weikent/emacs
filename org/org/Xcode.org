@@ -1,4 +1,4 @@
-#+TITLE  XCODE
+#+TITLE:  XCODE
 
 * 关于xib
   用xib文件添加视图的时候，在4.2版本的xcode中，程序会报错。需要把view按住control键拖到文件里面。生成一下自动代码，并删除自动代码之后就正常了。
