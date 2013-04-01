@@ -56,7 +56,6 @@
 
 4. 为工程运行时加入 NSZombieEnabled 环境变量，并设为启用。
 
-
 * 获取IOS设备的类型和系统版本
 #+begin_src objc
 //  DeviceHelper.m   
@@ -166,7 +165,6 @@ See CFStringEncodingExt.h for a list of these encodings.
 
 See CFString.h for functions which convert between NSStringEncoding and CFStringEncoding.
 
-
 * 造成unrecognized selector sent to instance……程序崩溃原因分析  
 
 造成unrecognized selector sent to instance……，大部分情况下是因为对象被提前release了，在你心里不希望他release的情况下，指针还在，对象已经不在了。
@@ -189,7 +187,6 @@ str=[NSString stringWithFormat:@"%s",s];
 #+end_src
 
 如果是.mm会提示出错,因为[str UTF8String]返回的是const char *
-
 
 * Cocoa Fundation内存释放原则
 
@@ -338,3 +335,83 @@ NSString 的对象就是stack 中的对象，NSMutableString 的对象就是heap
  dealloc方法中要写上 [super dealloc]。会自动释放标记为autorelease的控件。
 ** incomplete implementation
 这个一般来说是在.h文件中声明了。却没有在.m文件中实现方法。
+* Xcode文件读写
+1. 得到文件路径。
+#+Begin_src objc
+NSArray *path = NSSearchPathForDirectorisInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+NSString *PathDir = [path objectAtIndex:0];
+
+//NSDocumentDirectory 是 NSSearchPathDirectory的枚举。可以得到其他文件夹路径。
+
+//文件夹追加文件名称。
+NSString *pathFile = [PathDir stringByAppendingFormat:@"/DataFile.plist"];
+//记得添加 "/"
+#+end_src objc
+
+
+1. 创建文件
+创建文件使用 NSFileManager
+#+begin_src objc
+NSFileManager *manager = [NSFileManager defaultManager];
+// 判断文件存在
+if(manager fileExistsAtPath:pathFile])
+{
+    //plist 文件应该都是 字典数据结构。可以用objectForKey 得到数据
+  NSMutableDictionary *dict = [[NSMutableDictionary alloc] initWithContentOfFile:pathFile];
+
+}
+else
+{
+    //创建文件。contents是NSData（不清除NSData结构）
+   [manager createFileAtPath:pathFile contents:nil attributes:nil];
+   创建一个dict对象。添加数据
+   [dict writeToFile:pathFile atomically:YES];
+}
+
+#+end_src
+
+
+* 取得wifi名称
+
+需要添加SystemConfiguration.framework
+#+begin_src objc
+    CFArrayRef arrayRef = CNCopySupportedInterfaces();
+    NSArray *interfaces = (NSArray *)arrayRef;
+    NSLog(@"interfaces -> %@",interfaces);
+    
+    NSLog(@"%lu",(unsigned long)interfaces.count);
+    
+    for (NSString *interfaceName in interfaces) {
+        NSLog(@"%@",interfaceName);
+        CFDictionaryRef dictRef = CNCopyCurrentNetworkInfo((CFStringRef)interfaceName);
+        NSLog(@"%@",dictRef);
+        if (dictRef != NULL) {
+            NSDictionary *networkInfo = (NSDictionary *)dictRef;
+            NSLog(@"network info -> %@",networkInfo);
+            CFRelease(dictRef);
+        }
+    }
+    
+    CFRelease(arrayRef);
+
+#+end_src objc
+
+* 多线程
+
+#+begin_src objc
+线程创建与启动
+NSThread的创建主要有两种直接方式：
+[NSThread detachNewThreadSelector:@selector(myThreadMainMethod:) toTarget:self withObject:nil];
+和
+NSThread* myThread = [[NSThread alloc] initWithTarget:self
+                                        selector:@selector(myThreadMainMethod:)
+                                        object:nil];
+[myThread start];
+
+这两种方式的区别是：前一种一调用就会立即创建一个线程来做事情；而后一种虽然你 alloc 了也 init了，但是要直到我们手动调用 start 启动线程时才会真正去创建线程。这种延迟实现思想在很多跟资源相关的地方都有用到。后一种方式我们还可以在启动线程之前，对线程进行配置，比如设置 stack 大小，线程优先级。
+
+还有一种间接的方式，更加方便，我们甚至不需要显式编写 NSThread 相关代码。那就是利用 NSObject 的类方法 performSelectorInBackground:withObject: 来创建一个线程：
+[myObj performSelectorInBackground:@selector(myThreadMainMethod) withObject:nil];
+其效果与 NSThread 的 detachNewThreadSelector:toTarget:withObject: 是一样的。
+#+end_src 
+线程停止 使用 [thread cancel];
