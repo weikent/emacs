@@ -415,3 +415,5 @@ NSThread* myThread = [[NSThread alloc] initWithTarget:self
 其效果与 NSThread 的 detachNewThreadSelector:toTarget:withObject: 是一样的。
 #+end_src 
 线程停止 使用 [thread cancel];
+
+线程执行的效果，需要线程启动的函数执行完毕之后才能体现出来。如果线程启动一个while（1）循环，那么基本就废了，在界面就不能体现线程都效果了。

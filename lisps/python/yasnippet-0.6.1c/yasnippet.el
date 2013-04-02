@@ -691,6 +691,7 @@ snippet itself contains a condition that returns the symbol
     (define-key map "\C-c&\C-n" 'yas/new-snippet)
     (define-key map "\C-c&\C-v" 'yas/visit-snippet-file)
     (define-key map "\C-c&\C-f" 'yas/find-snippets)
+    (define-key map "\M-i" 'yas/expand)
     map))
 
 (defvar yas/minor-mode-map (yas/init-minor-keymap)
