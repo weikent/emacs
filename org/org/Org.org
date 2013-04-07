@@ -1,0 +1,38 @@
+#+TITLE: ORG MODE 笔记
+
+#+OPTIONS: ^:nil
+
+
+* Org Mode 标记语言的一些疑问
+可以访问网页
+
+[[http://blog.waterlin.org/articles/emacs-org-mode-subscripter-setting.html][Org Mode 标记语言到一些疑问]]
+
+[[http://www.worldhello.net/gotgithub/appendix/markups.html][轻量级标记语言]]
+
+[[http://orgmode.org/manual/Export-options.html][官方说明]]
+
+
+在org-mode中，
+
+*粗体* \\
+/斜体/ \\
++删除线+ \\
+_下划线_ \\
+下标： H_2 O \\
+上标： E=mc^2 \\
+等宽字：  =git=  或者 ~git~ \\
+
+以上都是转义字符，但当在文档中需要输入这些转义字符的时候该怎么办呢？
+
+** 单个org文件的解决办法
+可以在文件开头的地方用下面的设置来关闭这个功能。
+
+
+用"{}"来替代"_"    此时：a_b 与 a_{b} 相同效果。
+
+
+* Org Mode 中重要文字的颜色区分
+@<font color="#ff0000">
+    //此处填写要标记颜色的文字
+@</font>
