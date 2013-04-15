@@ -1,5 +1,10 @@
 #+Title:  Regular Express  正则表达式
 
+
+* emacs 类型的正则表达式
+[[http://www.emacswiki.org/emacs/RegularExpression][emacswiki讲解emacs类型的正则表达式]]
+
+[[http://dsec.pku.edu.cn/~rli/WiKi/EmacsRegexp.html][水木论坛]]
 * 常用的元字符
 | 代码 | 说明                         |
 | .    | 匹配除换行符以外的任意字符   |

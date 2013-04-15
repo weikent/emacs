@@ -417,3 +417,71 @@ NSThread* myThread = [[NSThread alloc] initWithTarget:self
 线程停止 使用 [thread cancel];
 
 线程执行的效果，需要线程启动的函数执行完毕之后才能体现出来。如果线程启动一个while（1）循环，那么基本就废了，在界面就不能体现线程都效果了。
+
+* NSDate
+** 得到当前日期的前一天或前几天是什么日期
+- 首先组织一个字符串20000101或20010101之类。
+
+- 用NSDateFormatter转换成NSDate格式
+
+#+begin_src objc
+NSDateFormatter *formatter = [[NSDateFormatter alloc] init];  
+NSTimeZone *timeZone = [NSTimeZone localTimeZone];  
+  //得设置一下时区
+[formatter setTimeZone:timeZone];  
+[formatter setDateFormat : @"M/d/yyyy h:m a"];  
+  
+NSString *stringTime = @"12/5/2011 3:4 am";  
+  
+NSDate *dateTime = [formatter dateFromString:stringTime];   
+
+NSDate *preDate = [NSDate dateWithTimeInterval:-24*60*60*10 sinceDate:dateTime];
+//-24*60*60*10 是10天的秒数。所以preDate就是2011年11月5日的10天前的日期。
+#+end_src objc
+
+- 也可以直接得到当前日期，
+#+begin_src objc
+NSDate *date = [NSDate date];
+//可以得到当前日期。
+NSDate *preDate = [NSDate dateWithTimeInterval:-24*60*60*10 sinceDate:date];
+#+end_src objc
+
+** 得到当前月份有几天
+
+#+begin_src objc
+NSCalendar *calendar = [NSCalendar currentCalendar];
+unsigned unitFlags = NSYearCalendarUnit | NSMonthCalendarUnit |  NSDayCalendarUnit;
+ 
+NSDateComponents *components = [calendar components:unitFlags fromDate:[NSDate date]];
+ 
+NSInteger iCurYear = [components year];  //当前的年份
+ 
+NSInteger iCurMonth = [components month];  //当前的月份
+ 
+NSInteger iCurDay = [components day];  // 当前的号数
+
+#+end_src objc
+** NSDate 与 NSString 互换
+
+#+begin_src objc
+
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];  
+    NSTimeZone *timeZone = [NSTimeZone localTimeZone];  
+      
+    [formatter setTimeZone:timeZone];  
+    [formatter setDateFormat : @"M/d/yyyy h:m a"];  
+      
+    NSString *stringTime = @"12/5/2011 3:4 am";  
+      
+    NSDate *dateTime = [formatter dateFromString:stringTime];   
+      
+    NSLog(@"%@", dateTime);//打印2011-12-04 19:04:00 +0000，这里+0000表示时区  
+      
+    NSDate *dateNow = [NSDate date];  
+      
+    NSLog(@"%@", dateNow);//打印2011-08-17 08:26:57 +0000，这里+0000表示时区  
+      
+    [formatter setDateFormat : @"yyyy年M月d日 H点m分"];  
+      
+    NSLog(@"%@", [formatter stringFromDate:dateNow]);//打印2011年8月17日 16点26分  
+#+end_src objc
