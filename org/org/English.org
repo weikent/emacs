@@ -230,7 +230,10 @@ friends 不能是 friend。 因为朋友至少得2个人。。。。
  不是生物加S比如zoos公园
 
 
-* 定冠词的用法
+* 冠词
+冠词位于名词或名词词组之前或之后，在句子里主要是对名词起限定作用。
+** 定冠词的用法
+1. 定冠词和名词连用，表示某个或某些特定的人或东西。
 1. 指谈话双方彼此都知道的人或者事物。
 1. 用在表示宇宙间独一无二到事物的名词前。
 1. 对前面已经提到的人或者事物，第二次提到时加定冠词，用以表示特指。
@@ -241,3 +244,26 @@ friends 不能是 friend。 因为朋友至少得2个人。。。。
 1. 用在一些习惯用语中。
      in the day: 在白天
      in the morning(afternoon, evening)
+** 不用冠词的场合
+1. 表示独一无二的职务、身份前一般不用冠词。如：Elizabeth II, Queen of Enland 英国女王伊丽莎白二世
+1. 交通工具名词前@<font color="#ff0000">不用冠词@</font>。
+1. 在一些地点到名词，如：bed，church,school,hospital,home,work等。当人们去这些地方做在这些地方应该做到事时，@<font color="#ff0000">不加冠词。@</font>
+    - go home 回家
+    - go to school 去上学
+    - go to church 去教堂祈祷
+    - in hospital 住院
+    - go to work 上班
+    如果在上述词组前面加上定冠词the，可以表示去这些场所做其他事情。如：
+    - He came to the school to speak to the headmaster. 他来学校和校长谈话。
+    - He Went to the church to see the carvings. 他去教堂看雕刻。
+    - His mother is in hospital and he has been in the hospital to take care of her. 
+1. 某些专有名词的前面不用冠词。如：China，Class Four
+1. 在球类运动名称和三餐饭前，一般不用冠词。如：have launch，play football。
+1. 在季节、日期、星期、节日和学科的名称前，不用冠词。如：in spring, in June, on Monday
+1. 在不可数名词（抽象名词和物质名词）前面，一般不用冠词。如：
+    We have all played with snow and ice。 我们都玩过雪和冰。
+1. 名词前面已有作定语用的this，these,that,those,my,their,your,his,some,many等词时，常常不用冠词，如:The letter is in her pocket.信在她的衣袋里。
+1. 在某些习惯用法和固定短语中，常不用冠词。如：in bed, after school, by bus。
+* 感叹句的结构
+what + 形容词 + 名词。
+what fine wheather we have these days!
