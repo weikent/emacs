@@ -204,9 +204,12 @@ in the evening ---強調 (從sunset到bedtime)的這個「時段」。
 every 指三个或三个以上中的每一个。
 - every students (不能写为every of the student) 
 - every one of my fingers. 
+* either 和 neither
+在either...or, 或 neither...nor 连接2个主语时，其谓语动词要与其相近到那个主语相同。
 * any 和 some的区别
+可以修饰或代替可数名词或不可数名词。
 ** 表示 “一些” 含义的时候
-any 用在否定和疑问句中
+any 用在否定和疑问句中，但当疑问句实际上表示请求，邀请，建议时，用some而不用any。
 some 用在肯定句中
 ** any还可以表示 “任何” 
 此时any可以出现在肯定句中。
@@ -226,8 +229,8 @@ friends 不能是 friend。 因为朋友至少得2个人。。。。
 
 - a little 表示肯定， 意思是有点。
 * 以O 结尾的词 
-凡是生物既有生命的物体复数都加es  比如potatoes 
- 不是生物加S比如zoos公园
+- 凡是生物既有生命的物体复数都加es  比如potatoes 
+- 不是生物加S比如zoos公园
 
 
 * 冠词
@@ -237,10 +240,15 @@ friends 不能是 friend。 因为朋友至少得2个人。。。。
 1. 指谈话双方彼此都知道的人或者事物。
 1. 用在表示宇宙间独一无二到事物的名词前。
 1. 对前面已经提到的人或者事物，第二次提到时加定冠词，用以表示特指。
-1. 在动词play（演奏）后与乐器名词连用。
+1. 在动词play（演奏）后与乐器名词连用。西方乐器加the，中国乐器不加the。
 1. 在海洋、江河、湖泊、山脉、群岛、海峡、海湾等地理名词前加定冠词。
+    the Pacific Ocean 太平洋 the Huanghe river 黄河 the Tianshan Mountains 天山山脉 the Taiwan Straits 台湾海峡
+1. 表示地点、方位、具体的时间或某天的一部分，
+    in the east 在东方，in the west 在西方， in the front 在前面, at the back 在后面，
+1. 专有名词前面， the Great Wall, the Summer Palace, the Forbidden City,
 1. 在姓氏的复数形式前加定冠词，表示一家人。
 1. 用在某些形容词前，表示 一类人。
+   the poor   the rich    the sick    the wounded 伤员  the good 好人  the beautiful 美丽的事物
 1. 用在一些习惯用语中。
      in the day: 在白天
      in the morning(afternoon, evening)
@@ -258,8 +266,11 @@ friends 不能是 friend。 因为朋友至少得2个人。。。。
     - He Went to the church to see the carvings. 他去教堂看雕刻。
     - His mother is in hospital and he has been in the hospital to take care of her. 
 1. 某些专有名词的前面不用冠词。如：China，Class Four
+1. 在国家前不用冠词，特例国家除外：the United States of America
 1. 在球类运动名称和三餐饭前，一般不用冠词。如：have launch，play football。
 1. 在季节、日期、星期、节日和学科的名称前，不用冠词。如：in spring, in June, on Monday
+    但是表示特指的时候 @<font color="#ff0000">加冠词@</font>
+
 1. 在不可数名词（抽象名词和物质名词）前面，一般不用冠词。如：
     We have all played with snow and ice。 我们都玩过雪和冰。
 1. 名词前面已有作定语用的this，these,that,those,my,their,your,his,some,many等词时，常常不用冠词，如:The letter is in her pocket.信在她的衣袋里。
