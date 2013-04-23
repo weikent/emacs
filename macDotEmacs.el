@@ -4,11 +4,11 @@
 (setq path "/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin:/usr/local/bin")
 (setq path1 "/usr/local/bin")
 (setenv "PATH"
-  (concat
-   "/usr/local/bin" ":"
-   (getenv "PATH")
-  )
-)
+		(concat
+		 "/usr/local/bin" ":"
+		 (getenv "PATH")
+		 )
+		)
 (message (getenv "PATH"))
 
 
@@ -121,13 +121,21 @@
 (require 'orgMode-settings)
 ;; ;;;(require 'htmlize)
 
-(require 'xcscope)
+(require 'xcscope-settings)
 
-;; color theme Emacs主题
+
+(require 'highlight-symbol-settings)
+
+(require 'C-settings)
+
+
+;; color theme Emacs主题 
+;; color-theme-calm-forset 也听不错的。
 (defun my-color-settings()
   (interactive)
+  ;; (color-theme-initialize)  
+  ;; (color-theme-calm-forest)
   (require 'color-theme-settings)
-
   (require 'ahei-face)
   (require 'color-theme-ahei)
   (require 'face-settings)
@@ -140,9 +148,9 @@
 
 ;; 有关界面和字体的配置
 (add-hook 'after-make-frame-functions
-	  (lambda (new-frame)
-	    (select-frame new-frame)
-	    (tool-bar-mode 0)
-	    (scroll-bar-mode 0)
-	    (my-color-settings)
-	    ))
+		  (lambda (new-frame)
+			(select-frame new-frame)
+			(tool-bar-mode 0)
+			(scroll-bar-mode 0)
+			(my-color-settings)
+			))

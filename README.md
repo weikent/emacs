@@ -8,3 +8,8 @@ project目录包含python练习文件。
 
 2013-3-14
 用jedi替换rope ropemacs ropemode pymacs , 不用python-mode.
+
+
+2013-4-23
+添加cscope。 在unbuntu下直接sudo apt-get install cscope 即可。
+在mac下安装，看mac.org
