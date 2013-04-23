@@ -1,5 +1,6 @@
 #+TITLE: emacs 笔记
 
+#+OPTIONS: ^:nil
 
 * 使用el-get.el 来安装所有（几乎所有）el文件。
 
@@ -304,8 +305,16 @@ fi
     #+begin_src c
       find /usr/include -name "*.h" -o -name "*.c" -o -name "*.cc"  -o -name "*.cpp" -o -name "*.hpp" > cscope.files
       cscope -bkq -i cscope.files   
- #+end_src
+     #+end_src
 
+1. Cscope默认在每次进行查找时更新cscope.out。当工程十分庞大时，建议关闭该选项以提高查找速度。方法是在~/.emacs文件中加入
+    #+begin_src c  
+    (setq cscope-do-not-update-database t)
+    #+end_src
+1. Cscope可以通过创建反向索引加速查找，方法是调用Cscope时，使用-q参数。真的假的，一试便知。修改cscope-indexer脚本，将
+    cscope -b -i $LIST_FILE -f $DATABASE_FILE
+    替换为
+    cscope -q -b -i $LIST_FILE -f $DATABASE_FILE
 
 * emacs 设置C语言编辑
 设置c-set-style可以制定类似tab/4空格 缩进，大括号缩进之类的东西。
