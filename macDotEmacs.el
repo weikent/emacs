@@ -121,6 +121,8 @@
 (require 'orgMode-settings)
 ;; ;;;(require 'htmlize)
 
+(require 'xcscope)
+
 ;; color theme Emacs主题
 (defun my-color-settings()
   (interactive)
