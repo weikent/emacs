@@ -1,13 +1,460 @@
 #+TITLE: C 笔记
 
-
+#+OPTIONS: ^:nil
 
 * include"" 与 include<> 的区别
 - "" 是以当前路径为相对路径引用头文件
 - <> 是以系统环境变量路径引用头文件
 
-* SOCK_STREAM 和 SOCK_DGRAM
+* Socket 编程
+** SOCK_STREAM 和 SOCK_DGRAM
 sock_stream   是有保障的（即能保证数据正确传送到对方）面向连接的SOCKET，多用于资料（如文件）传送。
 sock_dgram   是无保障的面向消息的socket　，　主要用于在网络上发广播信息。
 SOCK_STREAM是基于TCP的，数据传输比较有保障。SOCK_DGRAM是基于UDP的，专门用于局域网，基于广播
 SOCK_STREAM 是数据流,一般是tcp/ip协议的编程,SOCK_DGRAM分是数据抱,是udp协议网络编程
+** 第一件事就是用socket()建立一个socket
+#+begin_src c
+#include <sys/socket.h>
+#include <sys/types.h>
+
+int socket(int af, int type, int protocol) 
+#+end_src
+- 'int af'代表地址族或者称为socket所代表的域，通常有两个选项： 
+    - AF_UNIX - 只在单机上使用。 
+    - AF_INET - 可以在单机或其他使用DARPA协议(UDP/TCP/IP)的异种机通信。 
+
+
+- 'int type'代表你所使用的连接类型，通常也有两种情况： 
+  - SOCK_DGRAM - 用来建立没有连接的sockets，不能保证数据传输的可靠性。
+  - SOCK_STREAM - 用来建立面向连接的sockets，可以进行可靠无误的的数据传输 
+    
+    在本文中，我们着重使用AF_INET地址族和SOCK_STREAM连接类型。 
+
+- 'int protocol'通常设定为0。这样的目的是使系统选择默认的由协议族和连接类型所确定的协议。 
+
+这个函数的返回值是一个文件描述句柄，如果在此期间发生错误则返回-1并且设定了相应的errno。 
+
+所以一般创建一个socket就用
+#+begin_src c
+#include <sys/types.h> 
+#include <sys/socket.h> 
+
+int sockfd /* soon to be socket file descriptor */ 
+
+sockfd = socket(AF_INET, SOCK_STREAM, 0) 
+/* error checking here */ 
+#+end_src
+
+
+** 第二件事是把socket绑定到某个端口上。bind()函数
+#+begin_src c
+
+#include <sys/types.h> 
+#include <sys/socket.h> 
+
+int bind(int sockfd, struct sockaddr *name, int namelen) 
+#+end_src
+
+*** sockfd是从socket()调用得到的文件描述句柄。
+*** name是一个指向sockaddr类型结构的一个指针。
+**** 如果地址族被设定为AF_UNIX
+
+#+begin_src c
+struct sockaddr { 
+u_short sa_family; 
+char sa_data[14]; 
+}; 
+#+end_src
+name.sa_family应当被设定为AF_UNIX。
+name.sa_data应当包含最长为14个字节的文件名，这个文件名用来分配给socket。
+namelen给出了文件名的具体长度。 
+#+begin_src c
+#include <sys/types.h> 
+#include <sys.socket.h> 
+
+struct sockaddr name; 
+int sockfd; 
+
+name.sa_family = AF_UNIX; 
+strcpy(name.sa_data, "/tmp/whatever"); 
+
+sockfd = socket(AF_UNIX, SOCK_STREAM, 0) 
+/* error checking code here */ 
+
+bind(sockfd, &name, strlen(name.sa_data) + sizeof(name.sa_family) 
+/* error checking code here */ 
+#+end_src
+**** 如果地址族被设定为AF_INET
+#+begin_src c
+struct sockaddr_in { 
+    short int sin_family; /* Address family */ 
+    unsigned short int sin_port; /* Port number */ 
+    struct in_addr sin_addr; /* Internet address */ 
+    unsigned char sin_zero[8]; /* Same size as struct sockaddr */ 
+}; 
+
+#+end_src
+- sin_family指代协议族，在socket编程中只能是AF_INET
+- sin_port存储端口号（使用网络字节顺序），在linux下，端口号的范围0~65535,同时0~1024范围的端口号已经被系统使用或保留。
+- sin_addr存储IP地址，使用in_addr这个数据结构
+- sin_zero是为了让sockaddr与sockaddr_in两个数据结构保持大小相同而保留的空字节。
+
+#+begin_src c
+sockaddr_in mysock;
+bzero((char*)&mysock,sizeof(mysock));
+mysock.sa_family=AF_INET;
+mysock.sin_port=htons(1234);//1234是端口号
+mysock.sin_addr.s_addr=inet_addr("192.168.0.1");
+#+end_src
+
+具体实例
+#+begin_src c
+#include <stdio.h> 
+#include <sys/types.h> 
+#include <sys/socket.h> 
+#include <errno.h> 
+
+int sockfd, port = 23; 
+struct sockaddr_in my_addr; 
+
+if((sockfd=socket(AF_INET, SOCK_STREAM, 0)) == -1) 
+{ 
+printf("Socket Error, %d\n", errno); 
+exit(1); 
+} 
+
+my_addr.sin_family = AF_INET; /* host byte order */ 
+my_addr.sin_port = htons(port); /* see man htons for more information 
+*/ 
+my_addr.sin_addr.s_addr = htonl(INADDR_ANY); /* get our address */ 
+bzero(&(my_addr.sin_zero), 8); /* zero out the rest of the space */ 
+
+if((bind(sockfd, (struct sockaddr *)&my_addr, sizeof(struct sockaddr))
+ == -1) 
+{ 
+printf("Bind Error, %d\n", errno); 
+close(sockfd); 
+exit(1); 
+} 
+#+end_src
+
+@<font color="#ff0000">bind()就是把一个指定的端口分配给要bind的socket。 以后就可以用这个端口来“听“网络的请求。bind()用于server端，一般端口都是well known，以便于提供服务。 端口分配后，其他socket不能再用这个端口。相当于告诉client端"要请求服务，往这个端口发"。 client端不用bind，每建一个socket系统会分配一个临时的端口，用完后再释放。谁叫它是client.@</font>
+
+
+** 如果是服务器就可以listen()了，如果是客户端就可以connect()了。
+*** 服务器listen()
+当我们需要建立一个服务器的时候，我们需要有一种手段来监听输入的请求，而listen()函数正是提供这个功能。 
+#+begin_src c
+#include <sys/types.h> 
+#include <sys/socket.h> 
+
+int listen(int sockfd, int backlog); 
+#+end_src
+
+参数backlog是指一次可以监听多少个连接 
+
+#+begin_src c
+socket(); /* to create out socket file descriptor */ 
+bind(); /* to give our socket a name */ 
+listen(); /* listen for connection */ 
+
+#+end_src
+*** 客户端connect()
+使用connect()函数可以和服务器建立链接。
+#+begin_src c
+#include <sys/types.h> 
+#include <sys/socket.h> 
+
+int connect(int sockfd, struct sockaddr *serv_addr, int addrlen);  
+#+end_src
+- sockfd是我们建立的文件描述句柄，
+- serv_addr是一个sockaddr结构，包含目的的地址和端口号，
+- addrlen 被设定为sockaddr结构的大小。 
+
+#+begin_src c
+
+#include <string.h>  
+#include <sys/types.h>  
+#include <sys/socket.h>  
+
+#define DEST_IP "132.241.5.10" 
+#define DEST_PORT 23 
+
+main() 
+{ 
+int sockfd; 
+struct sockaddr_in dest_addr; /* will hold the destination addr */ 
+
+sockfd = socket(AF_INET, SOCK_STREAM, 0); /* do some error checking! *
+/ 
+
+dest_addr.sin_family = AF_INET; /* host byte order */ 
+dest_addr.sin_port = htons(DEST_PORT); /* short, network byte order */
+
+dest_addr.sin_addr.s_addr = inet_addr(DEST_IP); 
+bzero(&(dest_addr.sin_zero), 8); /* zero the rest of the struct */ 
+
+connect(sockfd, (struct sockaddr *)&dest_addr, sizeof(struct sockaddr)
+); 
+/* error checking code here */ 
+/* more code  
+. 
+. 
+. 
+*/ 
+} 
+#+end_src
+
+** 当客户端发起链接的时候，服务器端可以accept()
+当有人试图从服务器打开的端口登陆进来时服务器应该响应他，这个时候就要用到accept()函数了
+#+begin_src c
+#include <sys/types.h> 
+#include <sys/socket.h> 
+
+int accept(int sockfd, void *addr, int *addrlen); 
+#+end_src
+
+#+begin_src c
+#include <string.h>  
+#include <sys/types.h>  
+#include <sys/socket.h>  
+
+#define MYPORT 1500 /* the port users will be connecting to */ 
+#define BACKLOG 5 /* how many pending connections queue will hold */ 
+
+main() 
+{ 
+int sockfd, new_fd; /* listen on sock_fd, new connection on new_fd */ 
+
+struct sockaddr_in my_addr; /* my address information */ 
+struct sockaddr_in their_addr; /* connector's address information */ 
+int sin_size; 
+
+sockfd = socket(AF_INET, SOCK_STREAM, 0); /* do some error checking! *
+/ 
+
+my_addr.sin_family = AF_INET; /* host byte order */ 
+my_addr.sin_port = htons(MYPORT); /* short, network byte order */ 
+my_addr.sin_addr.s_addr = INADDR_ANY; /* auto-fill with my IP */ 
+bzero(&(my_addr.sin_zero), 8); /* zero the rest of the struct */ 
+
+/* did you remember your error checking? */ 
+bind(sockfd, (struct sockaddr *)&my_addr, sizeof(struct sockaddr)); 
+
+listen(sockfd, BACKLOG); 
+
+sin_size = sizeof(struct sockaddr_in); 
+new_fd = accept(sockfd, &their_addr, &sin_size); 
+
+#+end_src
+
+这里我们要注意的是：我们用new_fd来完成所有的接收和发送的操作。如果在只有一个连接的情况下你可以关闭原来的sockfd用来防止更多的输入请求。 
+
+
+** accept()之后，可以用send() recv()或者write() read()来发送和接受信息。
+
+*** send()和recv()
+
+#+begin_src c
+
+#include <sys/types.h> 
+#include <sys/socket.h> 
+
+int send(int sockfd, const void *msg, int len, int flags); 
+int recv(int sockfd, void *buf, int len, unsigned int flags); 
+
+send(): 
+sockfd - socket file descriptor 
+msg - message to send 
+len - size of message to send 
+flags - read 'man send' for more info, set it to 0 for now :) 
+
+recv(): 
+sockfd - socket file descriptor 
+buf - data to receive 
+len - size of buf 
+flags - same as flags in send() 
+
+send() 例程: 
+- ------ 
+
+char *msg = "Hey there people"; 
+int len, send_msg; 
+
+/* code to create(), bind(), listen() and accept() */  
+
+len = strlen(msg); 
+bytes_sent = send(sockfd, msg, len, 0); 
+
+- ------ 
+recv() 例程: 
+- ------ 
+
+char *buf; 
+int len, recv_msg; 
+
+/* code to create(), bind(), listen() and accept() */ 
+
+len = strlen(buf); 
+recv_msg = recv(sockfd, buf, len, 0); 
+
+#+end_src
+
+*** write() 和 read()
+必须头：
+#+begin_src c
+#include <sys/types.h>
+#include <sys/uio.h>
+#include <unistd.h>
+#+end_src
+
+- 关于write()
+#+begin_src c
+ssize_t write(int d,const void *buf,size_t nbytes);
+#+end_src
+
+调用成功返回成功写入的字节数，调用失败则返回-1。参数1为对象的句柄；参数2是写入的内容；参数3是前
+者的大小。
+
+- 关于read()
+#+begin_src c
+ssize_t read(int d,void *buf,size_t nbytes);
+#+end_src
+
+正常调用返回成功读入的字节数，当读到句柄对象的底部时返回0，调用失败返回-1。参数1为对象句柄；参
+数2是读入容器的地址；参数3是前者的大小。
+
+** close() and shutdown() 
+传输结束时，应当关闭连接。 
+#+begin_src c
+#include <stdio.h> 
+
+/* all you code */ 
+
+close(sockfd); 
+#+end_src
+
+更保险的方法是用shutdown()来关闭连接。 
+
+#+begin_src c
+int shutdown(int sockfd, int how) 
+#+end_src
+
+
+参数how的选择： 
+1 - 不允许接收更多的数据 
+2 - 不允许发送更多的数据 
+3 - 不允许接收和发送更多的数据(和close()一样) 
+** 其他函数
+*** getpeerbyname
+服务器端得到与其链接的客户端信息。
+#+begin_src c
+#include <sys/socket.h> 
+
+int getpeername(int sockfd, struct sockaddr *addr, int *addrlen); 
+
+struct sockaddr_in name;
+int namelen = sizeof(name);
+.
+.
+.
+if(getpeername(0,(struct sockaddr*)&name, &namelen)<0){
+  syslog(LOG_ERR,"getpeername: %m");
+  exit(1);
+} else
+  syslog(LOG_INFO,"Connection from %s",inet_ntoa(name.sin_addr));
+#+end_src
+
+*** gethostname
+返回本地主机的标准主机名。
+#include <Winsock2.h>
+int PASCAL FAR gethostname(char FAR *name, int namelen);
+name：   一个指向将要存放主机名的缓冲区指针。
+namelen：缓冲区的长度。
+#+begin_src c
+#include <stdio.h>
+#include <unistd.h>
+int main()
+{
+char name[65];
+gethostname(name, sizeof(name));
+printf("hostname = %s\n", name);
+}
+
+
+#+end_src
+
+*** gethostbyname
+返回对应于给定主机名的包含主机名字和地址信息的hostent结构指针
+#+begin_src c
+#include <winsock2.h>
+struct hostent FAR *PASCAL FAR gethostbyname(const char
+FAR * name);
+name：指向主机名的指针。
+返回类型
+struct hostent
+{
+char FAR * h_name;
+char FAR * FAR * h_aliases;
+short h_addrtype;
+short h_length;
+char FAR * FAR * h_addr_list;
+};
+Linux版
+#include <netdb.h>
+struct hostent *gethostbyname(const char * hostname);
+返回：非空指针——成功，空指针——出错，同时设置h_errno
+
+#+end_src
+- h_name 正规的主机名字（PC）。
+- h_aliases 一个以空指针结尾的可选主机名队列。
+- h_addrtype 返回地址的类型，对于Windows Sockets，这个域总是PF_INET。
+- h_legnth 每个地址的长度（字节数），对应于PF_INET这个域应该为4。
+- h_addr_list 应该以空指针结尾的主机地址的列表，返回的地址是以网络顺序排列的
+为了保证其他旧的软件的兼容性，h_addr_list[0]被定义为宏h_addr。
+
+*** gethostbyaddr
+返回对应于给定地址的主机信息。
+
+#+begin_src c
+#include <winsock.h>
+struct hostent FAR *PASCAL FAR gethostbyaddr(const char
+FAR * addr, int len, int type);
+addr：指向网络字节顺序地址的指针。
+len： 地址的长度，在AF_INET类型地址中为4。
+type：地址类型，应为AF_INET。
+注释
+gethostbyaddr()返回对应于给定地址的包含主机名字和地址信息的hostent结构指针。结构的声明如下：
+struct hostent {
+char FAR * h_name;
+char FAR * FAR * h_aliases;
+short h_addrtype;
+short h_length;
+char FAR * FAR * h_addr_list;
+};
+结构的成员有
+成员 用途
+h_name 正规的主机名字（PC）。
+h_aliases 一个以空指针结尾的可选主机名队列。
+h_addrtype 返回地址的类型，对于Windows Sockets，这个域总是PF_INET。
+h_legnth 每个地址的长度（字节数），对应于PF_INET这个域应该为4。
+h_addr_list 应该以空指针结尾的主机地址的列表，返回的地址是以网络顺序排列的
+为了保证其他旧的软件的兼容性，h_addr_list[0]被定义为宏h_addr。
+#+end_src
+
+- h_name 正规的主机名字（PC）。
+- h_aliases 一个以空指针结尾的可选主机名队列。
+- h_addrtype 返回地址的类型，对于Windows Sockets，这个域总是PF_INET。
+- h_legnth 每个地址的长度（字节数），对应于PF_INET这个域应该为4。
+- h_addr_list 应该以空指针结尾的主机地址的列表，返回的地址是以网络顺序排列的
+为了保证其他旧的软件的兼容性，h_addr_list[0]被定义为宏h_addr。
+
+* Gdb 调试工具
+
+[[http://blog.csdn.net/liigo/archive/2006/01/17/582231.aspx][GDB 十分钟教程]]
+
+
+
+* end
+
+----------
