@@ -121,6 +121,8 @@
 (require 'orgMode-settings)
 ;; ;;;(require 'htmlize)
 
+(require 'cedet-settings)
+
 (require 'xcscope-settings)
 
 
