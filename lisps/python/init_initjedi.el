@@ -26,6 +26,7 @@
 (setq ac-quick-help-prefer-pos-tip t)
 (setq ac-use-quick-help t)
 (setq ac-quick-help-delay 1.0)
+(setq ac-fuzzy-enable t)
 (require 'auto-complete)
 (require 'auto-complete-config)
 (add-to-list 'ac-dictionary-directories "~/.emacs.d/el-get/auto-complete/dict")
@@ -40,6 +41,7 @@
 ;; (add-to-list 'ac-dictionary-directories "~/.emacs.d//ac-dict")
 ;; (ac-config-default)
 ;; (global-auto-complete-mode t)  
+
 
 (add-to-list 'load-path "~/.emacs.d/el-get/auto-complete-clang/")  
 (require 'auto-complete-clang)    
