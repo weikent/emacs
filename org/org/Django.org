@@ -2,6 +2,7 @@
 
 #+OPTIONS: ^:nil
 
+
 * 安装
 首先得有Python
 1. 官方版本
@@ -139,3 +140,8 @@ from mysite.views import hello 或者 import mysite.views
 | *        | 匹配0个或更多 (例如, \d* 匹配0个 或更多数字字符)                            |
 | {1,3}    | 介于一个和三个（包含）之前的表达式（例如，\d{1,3}匹配一个或两个或三个数字） |
 
+
+* 遇到的问题
+** empty module name
+此问题我是在设置数据库信息的时候，把”django.db.backends.mysql“错误的写成”django.db.backends.mysql.”
+最后多了一个@<font color="#ff0000">点号@</font>

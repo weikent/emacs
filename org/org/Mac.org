@@ -54,7 +54,7 @@ export VERSIONER_PYTHON_PREFER_32_BIT=yes
  export DYLD_LIBRARY_PATH=/usr/local/mysql/lib/
  export VERSIONER_PYTHON_PREFER_64_BIT=yes
  export VERSIONER_PYTHON_PREFER_32_BIT=yes
-* mysql 修改root密码
+* MySQL 修改root密码
 ** mysqladmin命令（回目录）
 格式如下（其中，USER为用户名，PASSWORD为新密码）：
 #+begin_src sql
@@ -76,3 +76,29 @@ FLUSH PRIVILEGES;
 #+begin_src sql
 SET PASSWORD FOR root=PASSWORD('123456');
 #+end_src 
+* MySQL 基本命令
+** show
+*** show variables
+显示MySQL的配置变量；
+
+**** 修改变量
+- 全局变量影响服务器的全局操作。会话变量影响具体客户端连接相关操作。服务器启动时，将所有全局变量初始化为默认值。可 以在选项文件或命令行中指定的选项来更改这些默认值。服务器启动后，通过连接服务器并执行SET GLOBAL var_name语句可以更改动态全局变量。要想更改全局变量，必须具有SUPER权限。
+
+- mysqld服务器还为每个客户端连接维护会话变量。连接时使用相应全局变量的当前值对客户端会话变量进行初始化。客户可以通过SET [SESSION] var_name语句来更改动态会话变量。设置会话变量不需要特殊权限，但客户可以只更改自己的会话变量，而不更改其它客户的会话变量。
+
+
+***** 修改全局变量
+global不是立即生效 而是对新连接生效 
+#+begin_src sql
+set global sort_buffer_size=100000（要求有SUPER权限）
+#+end_src
+
+***** 修改会话变量
+session级别在设置后立即生效 断开连接后环境变量就失效了 
+#+begin_src sql
+set session sort_buffer_size=10000 (无权限要求)
+#+end_src
+*** show databases;
+可以显示有那些数据库；
+*** show tables;
+可以显示数据库中有那些表；
