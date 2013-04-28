@@ -264,7 +264,7 @@
   (interactive)
   (insert "    "))
 
-(global-set-key (read-kbd-macro "<C-tab>") 'my-insert-tab) 
+;;(global-set-key (read-kbd-macro "<C-tab>") 'my-insert-tab) 
 
 ;;删除的东西。
 ;;(global-set-key [(f2)] 'browse-kill-ring)

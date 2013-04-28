@@ -54,9 +54,11 @@
 (require 'my-global-key-settings)
 
 
+(require 'init_auto-complete-clang)
+
 (require 'init_elget)
 
-(require 'init_initjedi)
+;;(require 'init_initjedi)
 
 (require 'init_yasnippet)
 
@@ -156,3 +158,7 @@
 			(scroll-bar-mode 0)
 			(my-color-settings)
 			))
+
+
+
+(require 'init_initjedi)
