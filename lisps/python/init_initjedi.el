@@ -14,7 +14,7 @@
 (add-hook 'python-mode-hook
 	  '(lambda ()
 	     (define-key python-mode-map [(meta s)] 'jedi:complete)
-	     (define-key python-mode-map [(control .)] 'jedi:key-goto-definition)
+	     (define-key python-mode-map [(control .)] 'jedi:goto-definition)
 	     ))
 ;(global-set-key [(control tab)] 'jedi:complete) 
 
