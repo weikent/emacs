@@ -282,3 +282,17 @@ friends 不能是 friend。 因为朋友至少得2个人。。。。
 * 感叹句的结构
 what + 形容词 + 名词。
 what fine wheather we have these days!
+
+* 动词分类
+- 助动词是指没有实际意义但能提前(提到句子前面)构成疑问或直接加not构成否定的动词。
+
+英语中有12个这样的动词。do, be ,have, can, may, need,dare, must, will, shall, used ,ought.这12个词必须构成合成谓语。
+
+
+- 联系动词是实义动词。不能提前构成疑问，也不能加not构成否定。
+
+
+be动词很特殊，兼有特殊助动词和普通实义动词特点。
+it's getting cool. is是助动词，不是系词。没有实意。仅起提前疑问和加not否定作用。
+ Is it cool.这里的is既是特殊助动词也是普通实意联系动词。
+It gets cool.get是普通实意联系动词。不能提前疑问，不能加not否定。

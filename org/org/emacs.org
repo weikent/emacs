@@ -139,6 +139,9 @@ ubuntu上使用apt-get install clang 可以安装。
     cscope -q -b -i $LIST_FILE -f $DATABASE_FILE
 
 
+@<font color="#ff0000">有的时候会出现建立完索引之后也不能用cscope进行查找，这是可以看看在.c文件的目录中是不是也包含cscope.out这个文件。它会覆盖掉根目录下的cscope.out。导致cscope只在当前目录查找。@</font>
+
+
 * org-Mode
 - TAB	 	折叠列表项
 - M-RET	 	插入项
