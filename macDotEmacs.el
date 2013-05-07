@@ -30,7 +30,7 @@
 (defconst my-emacs-path           "~/emacs/" "我的emacs相关配置文件的路径")
 (defconst my-emacs-my-lisps-path  (concat my-emacs-path "lisps/") "我自己写的emacs lisp包的路径")
 (defconst my-emacs-lisps-path     (concat my-emacs-path "lisps/") "我下载的emacs lisp包的路径")
-
+(defconst my-emacs-template-path  (concat my-emacs-lisps-path "template/templates") "")
 
 
 
@@ -116,6 +116,20 @@
   (message "format successfully"))
 ;;绑定到F7键
 (global-set-key [f7] 'indent-whole)
+
+
+
+
+(require 'template)  
+(setq template-default-directories '("~/emacs/lisps/template/templates"))
+;;(setq template-subdirectories '("~/.emacs.d/template/templates"))  
+(setq template-auto-insert t)  
+(template-initialize)
+(add-to-list 'template-find-file-commands  
+             'ido-exit-minibuffer)  
+
+
+
 
 
 ;;(require 'init_python)
