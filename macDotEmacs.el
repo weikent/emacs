@@ -54,10 +54,10 @@
 (require 'my-global-key-settings)
 
 
-(require 'init_auto-complete-clang)
+;;(require 'init_auto-complete-clang)
 
 (require 'init_elget)
-
+(require 'init_auto-complete-clang)
 ;;(require 'init_initjedi)
 
 (require 'init_yasnippet)
