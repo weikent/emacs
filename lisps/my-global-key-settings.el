@@ -104,8 +104,8 @@
 
 ;;revert-buffer 和 revert-buffer-with-coding-system 两个名命令可以重新加载当前buffer打开的文件，我把这两个功能分别绑定到F5和C-F5快键上:
 
-(global-set-key [f5] 'revert-buffer)
-(global-set-key [C-f5] 'revert-buffer-with-coding-system)
+(global-set-key [f2] 'revert-buffer)
+(global-set-key [C-f2] 'revert-buffer-with-coding-system)
 
 (global-set-key (kbd "<f1>") 'ansi-term)
 
@@ -113,7 +113,7 @@
 (global-set-key [(f3)] 'grep-find)
 
 ;;;;F7：调用compile
-(global-set-key (kbd "<f7>") 'compile)
+(global-set-key (kbd "<f5>") 'compile)
 
 
 ;;;
