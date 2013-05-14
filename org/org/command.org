@@ -36,7 +36,8 @@ man find 中
 ** u盘之类的设备在那里呢？？？
 在 /Volumes 目录下
 
-
+** 根据进程名获取进程id
+ps -ax  ¦ grep "进程名"  ¦ awk '{print $1}'
 * Windows
 ** 修改文件隐藏属性
 
