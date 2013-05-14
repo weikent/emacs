@@ -36,3 +36,6 @@ _下划线_ \\
 @<font color="#ff0000">
     //此处填写要标记颜色的文字
 @</font>
+
+* Org Mode 快捷键
+** 输入 <s TAB 会补全#+BEGIN_SRC #+END_SRC, 并等待输入src的语言。
