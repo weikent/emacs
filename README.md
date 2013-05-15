@@ -22,40 +22,75 @@ project目录包含python练习文件。
 
 2013-5-12
 今天记录一下一台全新的系统，如何安装配置emacs
-** 安装git
-   *** 在ubuntu下只需要sudo apt-get install git
-   *** 在mac下好像需要去git官网，按照教程安装
-** 安装emacs
-   *** 在ubuntu下可以添加ppa，来安装最新版本的emacs
-	https://launchpad.net/~cassou/+archive/emacs
-   *** 在mac下可以安装emacsformac版本。
-       或者自己编译，不过直接安装挺好的。
-** 使用git下载emacs的配置文件
-   git clone https://github.com/weikent/emacs 到~/ 目录
-** 安装cscope
-   *** 在ubuntu下
-       sudo apt-get install cscope
-   *** 在mac下
-       看emacs.org
-** 安装clang
-   *** 在ubuntu下
-       sudo apt-get install clang
-   *** 在mac下
-       mac里面好像自带clang
-** 安装"virtualenv" for jedi
-   *** 在ubuntu下
-       sudo apt-get install virtualenv-python
-   *** 在mac下
-       看init_initjedi.el
-** 启动 emacs
-   *** 创建.emacs文件
-   *** M-x el-get-install RET jedi
-   *** M-x el-get-install RET auto-complete
-   *** M-x el-get install RET auto-complete-clang
-   *** M-x el-get install RET pos-tip
-   *** M-x el-get install RET fuzzy
-   *** M-x el-get isntall RET popup
-   *** 退出emacs 重新启动 即可
 
+** 安装git
+
+   *** 在ubuntu下只需要sudo apt-get install git
+
+   *** 在mac下好像需要去git官网，按照教程安装
+
+** 安装emacs
+
+   *** 在ubuntu下可以添加ppa，来安装最新版本的emacs
+
+	https://launchpad.net/~cassou/+archive/emacs
+
+   *** 在mac下可以安装emacsformac版本。
+
+       或者自己编译，不过直接安装挺好的。
+
+** 使用git下载emacs的配置文件
+
+   git clone https://github.com/weikent/emacs 到~/ 目录
+
+** 安装cscope
+
+   *** 在ubuntu下
+
+       sudo apt-get install cscope
+
+   *** 在mac下
+
+       看emacs.org
+
+** 安装clang
+
+   *** 在ubuntu下
+
+       sudo apt-get install clang
+
+   *** 在mac下
+   
+       mac里面好像自带clang
+	   
+** 安装"virtualenv" for jedi
+
+   *** 在ubuntu下
+   
+       sudo apt-get install virtualenv-python
+	   
+   *** 在mac下
+   
+       看init_initjedi.el
+	   
+** 启动 emacs
+
+   *** 创建.emacs文件
+   
+   *** M-x el-get-install RET jedi
+   
+   *** M-x el-get-install RET auto-complete
+   
+   *** M-x el-get install RET auto-complete-clang
+   
+   *** M-x el-get install RET pos-tip
+   
+   *** M-x el-get install RET fuzzy
+   
+   *** M-x el-get isntall RET popup
+   
+   *** 退出emacs 重新启动 即可
+   
 ** 可以在系统启动时，添加启动项
+
    emacsclient -c -a "" 来启动emacs daemon
