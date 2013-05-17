@@ -469,6 +469,9 @@ h_addr_list 应该以空指针结尾的主机地址的列表，返回的地址�
 [[http://blog.csdn.net/liigo/archive/2006/01/17/582231.aspx][GDB 十分钟教程]]
 
 * C语言防止头文件重复调用
+[[http://www.cnblogs.com/IamEasy_Man/archive/2009/10/21/1587658.html][关于防止头文件重复调用和变量重复定义的网页说明]]
+
+
 使用条件编译，在所有头文件中都如下编写
 #+begin_src C
 #ifndef _HEADERNAME_H
