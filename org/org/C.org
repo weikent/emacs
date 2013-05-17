@@ -26,7 +26,21 @@ C++标准库很大。非常大。难以置信的大。怎么个大法？这么�
 sock_stream   是有保障的（即能保证数据正确传送到对方）面向连接的SOCKET，多用于资料（如文件）传送。
 sock_dgram   是无保障的面向消息的socket　，　主要用于在网络上发广播信息。
 SOCK_STREAM是基于TCP的，数据传输比较有保障。SOCK_DGRAM是基于UDP的，专门用于局域网，基于广播
-SOCK_STREAM 是数据流,一般是tcp/ip协议的编程,SOCK_DGRAM分是数据抱,是udp协议网络编程
+SOCK_DGRAM 是数据流,一般是tcp/ip协议的编程,SOCK_DGRAM分是数据抱,是udp协议网络编程
+*** Tcp 和 udp的区别
+- 基于连接与无连接
+- 对系统资源的要求(tcp较多，udp少)
+- udp程序结构简单
+- 流模式与数据报模式
+    - tcp保证数据正确性，udp可能丢包
+    - tcp保证数据顺序，udp不保证
+**** 具体编程时的区别
+1. socket()的参数不同
+1. udp server不需要调用listen和accept
+1. udp收发数据用sendto/recvfrom函数
+1. tcp：地址信息在connect/accept时确定
+1. udp：在sendto/recvfrom函数中每次均需指定地址信息
+1. udp： shutdown函数无效
 ** 第一件事就是用socket()建立一个socket
 #+begin_src c
 #include <sys/socket.h>
@@ -463,6 +477,7 @@ h_addr_list 应该以空指针结尾的主机地址的列表，返回的地址�
 - h_legnth 每个地址的长度（字节数），对应于PF_INET这个域应该为4。
 - h_addr_list 应该以空指针结尾的主机地址的列表，返回的地址是以网络顺序排列的
 为了保证其他旧的软件的兼容性，h_addr_list[0]被定义为宏h_addr。
+
 
 * Gdb 调试工具
 
