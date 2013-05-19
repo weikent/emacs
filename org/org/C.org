@@ -483,6 +483,101 @@ h_addr_list 应该以空指针结尾的主机地址的列表，返回的地址�
 
 [[http://blog.csdn.net/liigo/archive/2006/01/17/582231.aspx][GDB 十分钟教程]]
 
+* C语言防止头文件重复调用
+[[http://www.cnblogs.com/IamEasy_Man/archive/2009/10/21/1587658.html][关于防止头文件重复调用和变量重复定义的网页说明]]
+
+
+使用条件编译，在所有头文件中都如下编写
+#+begin_src C
+#ifndef _HEADERNAME_H
+#define _HEADERNAME_H
+// 头文件内容
+
+#endif
+
+#+end_src
+
+这样多重包含的危险就被消除了。当头文件第一次被包含时，它被正常处理，符号_HEADERNAME_H被定义为1， 如果头文件再次被包含，通过条件编译，它的内容被忽略。符号_HEADERNAME_H按照被包含头文件的文件名进行取名，以避免由于其他头文件使用相同的符号而引起的冲突。
+
+但是，预处理器仍将整个头文件读入，即使这个头文件所有内容被忽略，由于这种处理将托慢编译速度，如有可能，应该避免出现多重包含。
+* C语言防止变量被重复定义
+因为工程中的每个C文件都是独立的解释，即使在头文件中有#ifndef #define #endif之类的预定义，但不同的C文件引用的H文件中有重名变量，由于C文件独立解释，所以每个C文件都生成单独的O文件，再链接的时候，因为每个.O文件中都包含同一个重名变量，重名变量就会出现重复定义错误。
+
+** 解决办法
+- 在C文件中声明变量
+- 然后建立一个头文件（.h文件）在所有的变量声明前都加上extern
+- 但不用对变量进行初始化
+- 然后在其他需要使用全局变量的.c文件中都包含此.h文件。
+- 在编译器会为.c生成目标文件，然后链接时，如果该.c文件使用了全局变量，连接器就会连接到此.c文件。
+
+* C语言指针
+** 定义指针
+int *ptr1;
+int* ptr2;
+两种方式都对，@<font color="#ff0000">所以‘*’并不是和int结合来指定int类型的指针@
+</font>
+
+第一种方式可以避免误解
+int* ptr1, ptr2;
+这样的定义方式，容易把ptr2也误认为是指针
+** 指针的运算
+*** & (address-of operator)
+取指针的地址
+*** * (Dereference operator)
+*在定义时用来说明一个变量是指针，
+而在定义一个指针之后，*表示取指针所指向的对象（变量）
+
+* C语言引用传递
+在C中，没有类似C++的引用传递。但可以用指针的方式来改变函数参数的值。
+
+#+begin_src C
+//This program is to test whether a function can change the parameter's 
+//value in .c files.
+//also provides how we can change the value(use pointer!). YES, use pointer!
+#include<stdio.h>
+void changeInt(int *a)
+{
+*a=3;
+}
+void changeChar(char** c)
+{
+*c="changed!";
+}
+void main()
+{
+int a=0;
+char *c="hello";
+changeChar(&c);
+printf("%s\n",c);//print 'changed!'
+changeInt(&a);
+printf("%d\n",a);//out: 3
+}
+
+#+end_src
+
+
+#+begin_src C
+/* Swap function */
+void swap(int* a,int* b)
+{
+*a=*a-*b;
+*b=*b+*a;
+*a=*b-*a;
+}
+/* Main function */
+void main()
+{
+int i=3,j=1;
+swap(&i,&j); //如果数组的话 则可用这种形式：swap(&(a[i]),&(a[i+1]));
+printf("j:%d ",j);//3
+printf("i:%d\n",i);//i
+}
+
+#+end_src
+
+* 堆和栈
+- 栈：由编译器自动分配释放。
+- 堆：有程序员分配释放。
 
 * end
 
