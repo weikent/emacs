@@ -495,6 +495,75 @@ h_addr_list 应该以空指针结尾的主机地址的列表，返回的地址�
 - 然后在其他需要使用全局变量的.c文件中都包含此.h文件。
 - 在编译器会为.c生成目标文件，然后链接时，如果该.c文件使用了全局变量，连接器就会连接到此.c文件。
 
+* C语言指针
+** 定义指针
+int *ptr1;
+int* ptr2;
+两种方式都对，@<font color="#ff0000">所以‘*’并不是和int结合来指定int类型的指针@
+</font>
+
+第一种方式可以避免误解
+int* ptr1, ptr2;
+这样的定义方式，容易把ptr2也误认为是指针
+** 指针的运算
+*** & (address-of operator)
+取指针的地址
+*** * (Dereference operator)
+*在定义时用来说明一个变量是指针，
+而在定义一个指针之后，*表示取指针所指向的对象（变量）
+
+* C语言引用传递
+在C中，没有类似C++的引用传递。但可以用指针的方式来改变函数参数的值。
+
+#+begin_src C
+//This program is to test whether a function can change the parameter's 
+//value in .c files.
+//also provides how we can change the value(use pointer!). YES, use pointer!
+#include<stdio.h>
+void changeInt(int *a)
+{
+*a=3;
+}
+void changeChar(char** c)
+{
+*c="changed!";
+}
+void main()
+{
+int a=0;
+char *c="hello";
+changeChar(&c);
+printf("%s\n",c);//print 'changed!'
+changeInt(&a);
+printf("%d\n",a);//out: 3
+}
+
+#+end_src
+
+
+#+begin_src C
+/* Swap function */
+void swap(int* a,int* b)
+{
+*a=*a-*b;
+*b=*b+*a;
+*a=*b-*a;
+}
+/* Main function */
+void main()
+{
+int i=3,j=1;
+swap(&i,&j); //如果数组的话 则可用这种形式：swap(&(a[i]),&(a[i+1]));
+printf("j:%d ",j);//3
+printf("i:%d\n",i);//i
+}
+
+#+end_src
+
+* 堆和栈
+- 栈：由编译器自动分配释放。
+- 堆：有程序员分配释放。
+
 * end
 
 ----------
