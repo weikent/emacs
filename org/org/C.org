@@ -22,7 +22,7 @@ C++标准库很大。非常大。难以置信的大。怎么个大法？这么�
 
 慑于被激怒的程序员会产生的破坏力，标准委员会决定为包装了std的那部分标准库构件创建新的头文件名。生成新头文件的方法仅仅是将现有C++头文件名中的 .h 去掉，方法本身不重要，正如最后产生的结果不一致也并不重要一样。所以<iostream.h>变成了<iostream>，<complex.h>变成了<complex>，等等。对于C头文件，采用同样的方法，但在每个名字前还要添加一个c。所以C的<string.h>变成了<cstring>，<stdio.h>变成了<cstdio>，等等。最后一点是，旧的C++头文件是官方所反对使用的（即，明确列出不再支持），但旧的C头文件则没有（以保持对C的兼容性）。实际上，编译器制造商不会停止对客户现有软件提供支持，所以可以预计，旧的C++头文件在未来几年内还是会被支持。
 * Socket 编程
-** SOCK_STREAM 和 SOCK_DGRAM
+** sock_stream 和 SOCK_DGRAM
 sock_stream   是有保障的（即能保证数据正确传送到对方）面向连接的SOCKET，多用于资料（如文件）传送。
 sock_dgram   是无保障的面向消息的socket　，　主要用于在网络上发广播信息。
 SOCK_STREAM是基于TCP的，数据传输比较有保障。SOCK_DGRAM是基于UDP的，专门用于局域网，基于广播
@@ -374,7 +374,7 @@ int shutdown(int sockfd, int how)
 1 - 不允许接收更多的数据 
 2 - 不允许发送更多的数据 
 3 - 不允许接收和发送更多的数据(和close()一样) 
-** 其他函数
+** 其他函数 获取站点名称获取地址，根据地址获取名称
 *** getpeerbyname
 服务器端得到与其链接的客户端信息。
 #+begin_src c
@@ -479,7 +479,49 @@ h_addr_list 应该以空指针结尾的主机地址的列表，返回的地址�
 为了保证其他旧的软件的兼容性，h_addr_list[0]被定义为宏h_addr。
 
 
-* Gdb 调试工具
+** select函数说明
+个人认为select函数的作用是循环检查几个文件描述符（套结字描述符）中是否有可以进行读、写，或者出现异常的描述符。
+它并不代表blocking 或者 nonblocking。
+blcoking是由函数调用所产生的。
+一般情况下，在使用select之前，需要把一个描述符设置成nonblocking的模式，使描述符在执行读、写或是连接的时候，不会发生程序的blocking。而是使程序的blcoking发生在select函数的调用的时候。
+
+#+begin_src C
+select 函数：
+select(int __nfds, fd_set *restrict __readfds, fd_set *restrict __writefds, fd_set *restrict __exceptfds, struct timeval *restrict __timeout)
+返回 0 : 在timeout结束时，没有任何描述符就绪，即没有任何描述符可读写。
+返回 -1: 出错
+返回>0 : 表示就绪的描述符的总数。
+
+
+FD_ZERO (fd_set *set); 将一个文件描述符集合清零
+FD_SET(int fd, fd_set *set); 将文件描述符fd加入到集合set中
+FD_CLR(int fd, fd_set *set); 将文件描述符fd从集合set中删除
+FD_ISSET(int fd, fd_set *set); 判断文件描述符fd是否存在于集合set中。
+
+#+end_src
+
+
+** 设置套结字描述符的非阻塞模式（nonblocking）
+使用fcntl()函数。
+#+begin_src C
+# include <unistd.h>
+# include <fcntl.h>
+
+
+int fcntl(int fd,   //文件描述符
+            int cmd , //不同的命令
+             struct flock *lock) //设置记录锁的具体状态
+
+sockfd = socket(AF_INET, SOCK_STREAM, 0);
+fcntl(sockfd, F_SETFL, O_NONBLOCK);
+
+#+end_src
+
+此函数功能强大的多，先写这么多。
+
+** fcntl 和 select函数的结合
+先用fcntl设置套结字的nonblocking模式，再用select循环检测套结字的可读写状态。
+* gdb 调试工具
 
 [[http://blog.csdn.net/liigo/archive/2006/01/17/582231.aspx][GDB 十分钟教程]]
 
