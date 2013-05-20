@@ -1,5 +1,24 @@
 ;;; wuxch-dired.el
 
+(defun diredp-subst-find-alternate-for-find ()
+  "Use find-alternate-file commands in place of find-file commands."
+  (substitute-key-definition 'dired-find-file 'diredp-find-file-reuse-dir-buffer dired-mode-map)
+  (substitute-key-definition 'diredp-mouse-find-file 'diredp-mouse-find-file-reuse-dir-buffer
+                             dired-mode-map)
+  (message "Accessing directories in Dired will REUSE the buffer"))
+
+(defun toggle-dired-find-file-reuse-dir (force-p)
+  "Toggle whether Dired `find-file' commands use alternate file.
+Non-nil prefix arg FORCE-P => Use alternate file iff FORCE-P >= 0."
+  (interactive "P")
+  (if force-p                           ; Force.
+      (if (natnump (prefix-numeric-value force-p))
+          (diredp-subst-find-alternate-for-find)
+        (diredp-subst-find-for-find-alternate))
+    (if (where-is-internal 'dired-find-file dired-mode-map 'ascii)
+        (diredp-subst-find-alternate-for-find)
+      (diredp-subst-find-for-find-alternate))))
+
 (if (equal 'windows-nt system-type)
     (progn
       (require 'w32-symlinks)
