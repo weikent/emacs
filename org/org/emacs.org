@@ -419,3 +419,6 @@ upcase-word (M-u)     ;; 整个单词转为大写
 downcase-word (M-l)   ;; 整个单词转为小写（注意，这里是 META － l(* 小写字母 L)）
 #+end_src
 
+
+** buffer 列表
+按 'd' 键，比较buffer删除。之后按 'x' 键，执行删除。可以关闭一个buffer。
