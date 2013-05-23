@@ -621,6 +621,187 @@ printf("i:%d\n",i);//i
 - 栈：由编译器自动分配释放。
 - 堆：有程序员分配释放。
 
+
+
+* C语言多线程
+线程相对与进程来说，比较节省资源。
+
+编译多线程程序的时候，要指定 '-lpthread' 参数， 用来调用静态链接库。因为pthread不是linux的默认库。
+
+引用头文件 pthread.h。
+
+** 创建线程
+pthread.h: extern int pthread_create (pthread_t* __newthread,const pthread_attr_t* __attr,void*,void* __arg)
+- 第一个参数是指向线程标识符的指针
+    标识符是pthread_t 类型，定义在/usr/include/bits/pthreadtypes.h中。
+    typedef unsigned long int pthread_t
+- 第二个参数是用来设置线程的属性
+- 第三个参数是线程的执行函数的起始地址
+- 第四个参数是线程的执行函数的参数
+    - 当参数是一个的时候，直接定义变量并传递给线程执行函数
+    #+begin_src C
+#include <iostream>
+#include <pthread.h>
+using namespace std;
+pthread_t thread;
+void fn(void *arg)
+{
+    int i = *(int *)arg;
+    cout<<"i = "<<i<<endl;
+    return ((void *)0);
+}
+int main()
+{
+    int err1;
+    int i=10;
+   err1 = pthread_create(&thread, NULL, fn, &i);
+    pthread_join(thread, NULL);
+}
+    
+    #+end_src
+
+    - 当参数多余一个的时候，就要定义一个结构来包含所有的参数，并传递给线程执行函数
+#+begin_src C
+首先定义一个结构体：
+
+struct  parameter
+
+{
+
+  int size,
+
+  int count;
+
+。。。。。
+
+。。。 
+};
+
+然后在main函数将这个结构体指针，作为void
+ *形参的实际参数传递
+
+struct parameter arg;
+
+
+通过如下的方式来调用函数：
+pthread_create(&ntid, NULL, fn,& (arg));
+函数中需要定义一个parameter类型的结构指针来引用这个参数 
+void fn(void *arg)
+{
+    int i = *(int *)arg;
+    cout<<"i = "<<i<<endl;
+    return ((void *)0);
+}
+
+
+void thr_fn(void *arg)
+{
+       struct parameter *pstru;
+       pstru = ( struct parameter *) arg;
+       然后在这个函数中就可以使用指针来使用相应的变量的值了。
+}
+
+
+#+end_src
+
+
+此创建线程的函数，返回0表示创建成功，非0表示失败。
+常见的错误
+- EAGAIN ： 系统限制创建新的线程。
+- EINVAL ： 表示设置的线程属性为非法。
+
+** 等待线程结束
+一个线程可以等待另一个线程结束
+int pthread_join __P ((pthread_t __th, void **__thread_return));
+- 第一个参数是被等待的线程标识符
+- 第二个参数是用户定义的指针，它可以用来存放被等待线程的返回值（当线程结束的时候返回返回值）
+
+当调用pthread_join的时候，线程将被阻塞，直到被等待的线程结束为止。
+
+#+begin_src C
+#include <stdio.h>
+#include <pthread.h>
+#include <stdlib.h>
+
+pthread_t       tid1, tid2; 
+void            *tret;  //线程的返回值，貌似可以是任何类型，先用void来表示，之后再强制转换类型
+
+ 
+
+void *
+thr_fn1(void *arg)
+{
+        sleep(1);//睡眠一秒，等待TID2结束。
+        pthread_join(tid2, &tret);//tid1一直阻赛，等到tid2的退出，获得TID2的退出码
+         printf("thread 2 exit code %d\n", (int)tret); //此处强制转换线程返回值为int型
+    printf("thread 1 returning\n");
+    return((void *)2);
+}
+
+void *
+thr_fn2(void *arg)
+{      
+    printf("thread 2 exiting\n");
+     pthread_exit((void *)3);
+}
+
+int
+main(void)
+{
+    int            err;
+
+    err = pthread_create(&tid1, NULL, thr_fn1, NULL);
+    if (err != 0)
+        printf("can't create thread 1\n");
+    err = pthread_create(&tid2, NULL, thr_fn2, NULL);
+    if (err != 0)
+        printf("can't create thread 2\n");
+    err = pthread_join(tid1, &tret);//祝线程一直阻赛，等待TID1的返回。
+    if (err != 0)
+        printf("can't join with thread 1\n");
+    printf("thread 1 exit code %d\n", (int)tret);
+      //err = pthread_join(tid2, &tret);
+    //if (err != 0)
+    //    printf("can't join with thread 2\n");
+//    printf("thread 2 exit code %d\n", (int)tret);
+    exit(0);
+}
+
+ 
+
+
+命令：＃gcc -lthread myfile11-3.c
+
+        ：＃./a.out
+
+运行结果：
+
+thread 2 exiting
+thread 2 exit code 3
+thread 1 returning
+thread 1 exit code 2
+
+#+end_src
+** 结束线程
+void pthread_exit(void *__retval)
+当参数retval不是null的时候。这个值就被传递给thread_return。
+同时一个线程不能被多个线程等待，否则第一个接收到信号的线程返回成功，其余线程返回错误代码ESRCH。
+
+** 线程的互斥锁
+当2个或多个线程需要访问同一个变量（资源）的时候，会造成变量的值（或是函数返回结果）的不确定性。甚至是灾难性的。
+*** pthread_mutex_init() 用来生成一个互斥锁
+pthread_mutex_init(pthread_mutex_t *__mutex, const pthread_mutexattr_t *__mutexattr)
+*** pthread_mutexattr_setpshared() 用来设置互斥锁的属性
+pthread_mutexattr_setpshared(pthread_mutexattr_t *__attr, int __pshared)
+- PTHREAD_PROCESS_PRIVATE ：用来不同进程间的线程同步
+- PTHREAD_PROCESS_SHARED : 用来同步本进程间的不同线程 （此为默认值）
+*** pthread_mutexattr_settype()用来设置互斥锁的类型
+pthread_mutexattr_settype(pthread_mutexattr_t *__attr, int __kind)
+- PTHREAD_MUTEX_NORMAL
+- PTHREAD_MUTEX_ERRORCHECK
+- PTHREAD_MUTEX_RECURSIVE
+- PTHREAD_MUTEX_DEFAULT （默认值）
+
 * end
 
 ----------
