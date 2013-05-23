@@ -23,6 +23,9 @@ using namespace std;
 msgqueue msg;
 
 int message_t;
+int main2ID;
+
+pthread_t thread[1]; 
 
 
 void hello(int i)
@@ -37,34 +40,52 @@ void clear(int i)
     exit(0);
 }
 
-int main(int argc,char ** argv)
+void *thread1(void *arg)
 {
     getOtherID otherID;
+    
+    const char * main2 = "main2";
+    for (; ; )
+    {
+	main2ID = otherID.getID(main2);
+//	printf ("%d\n",main2ID);
+	sleep(1);
+    }
+
+}
+
+
+int main(int argc,char ** argv)
+{
+    
     
     struct mymsgbuf qbuf;
 
     message_t = msg.create_queue();
 
-    int id;
+
+
+    int temp; 
+    memset(&thread, 0, sizeof(thread));          //comment1 
+    /*创建线程*/ 
+    if((temp = pthread_create(&thread[0], NULL, thread1, NULL)) != 0)       //comment2 
+	printf("线程1创建失败!\n"); 
+    else 
+	printf("线程1被创建\n"); 
+
 
     signal(SIGUSR1, hello);
     signal(SIGINT, clear);
     while(1)
     {
-	id = otherID.getID(argv[1]);
-
-	printf ("%d",id);
-
-	if (id > 0)
+	if (main2ID > 0)
 	{
-	    printf ("%d\n",id);
-	    cout<<id<<endl;
 	    char cmd[256];
 	    memset(cmd, 0, 256);
 	    printf ("please input a msessage:");
 	    fgets(cmd, 255, stdin);
 	    msg.send_message(message_t, (struct mymsgbuf *) &qbuf, 1, cmd);
-	    kill(id, SIGUSR1);
+	    kill(main2ID, SIGUSR1);
 //	    sleep(3);
 	}
     }

@@ -11,6 +11,7 @@
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/msg.h>
+#include <pthread.h> 
 
 #define MAXLINE 1024
 #define MAX_SEND_SIZE 80

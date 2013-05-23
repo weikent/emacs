@@ -10,11 +10,11 @@ public:
     getOtherID();
     virtual ~getOtherID();
 private:
-    int isdir(char *path);
-    char * getfile(char *path);
-    char *readstatus(char *filename);
+    int isdir(const char *path);
+    char * getfile(const char *path);
+    char *readstatus(const char *filename);
 public:
-    int getID(char *filename);
+    int getID(const char *filename);
 };
 
 #endif /* _GETOTHERID_H */

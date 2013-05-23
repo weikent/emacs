@@ -26,7 +26,7 @@ getOtherID::~getOtherID()
 {
 }
 
-int getOtherID::isdir(char *path)
+int getOtherID::isdir(const char *path)
 {
     struct stat buf;
     if(lstat(path,&buf)<0)
@@ -40,7 +40,7 @@ int getOtherID::isdir(char *path)
     }
     return 0;
 }
-char * getOtherID::getfile(char *path)
+char * getOtherID::getfile(const char *path)
 {
     static char filename[MAXLINE];
     char *tmp1,*tmp2,filepath[MAXLINE];
@@ -65,7 +65,7 @@ char * getOtherID::getfile(char *path)
     else return NULL;
     return filename;
 }
-char* getOtherID::readstatus(char *filename)
+char* getOtherID::readstatus(const char *filename)
 {
     FILE *file;
     static char buf[MAXLINE];
@@ -75,14 +75,14 @@ char* getOtherID::readstatus(char *filename)
     {
 	if(strncmp(buf,"State",5)==0)
 	{
-	    printf("%s\n",buf);
+//	    printf("%s\n",buf);
 	    break;
 	}
     }
     fclose(file);
 }
 
-int getOtherID::getID(char *filename)
+int getOtherID::getID(const char *filename)
 {
     char buf1[MAXLINE],buf2[MAXLINE];
     char path1[MAXLINE],path2[MAXLINE],*ptr,*str;
@@ -129,7 +129,7 @@ int getOtherID::getID(char *filename)
 			sprintf(path2,"%s/status",buf1);
 			ptr=readstatus(path2);
 			sprintf(buf1,"%s",p->d_name);
-			printf ("%s\n",buf1);
+//			printf ("%s\n",buf1);
 			int i;
 			i = atoi(buf1);
 			return i;
