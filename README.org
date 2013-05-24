@@ -68,7 +68,7 @@
 
    - 在ubuntu下
    
-       sudo apt-get install virtualenv-python
+       sudo apt-get install python-virtualenv
 	   
    - 在mac下
    
