@@ -791,6 +791,8 @@ void pthread_exit(void *__retval)
 当2个或多个线程需要访问同一个变量（资源）的时候，会造成变量的值（或是函数返回结果）的不确定性。甚至是灾难性的。
 *** pthread_mutex_init() 用来生成一个互斥锁
 pthread_mutex_init(pthread_mutex_t *__mutex, const pthread_mutexattr_t *__mutexattr)
+*** pthread_mutexattr_init() 初始化互斥锁属性对象
+ pthread_mutexattr_init(pthread_mutexattr_t *__attr)
 *** pthread_mutexattr_setpshared() 用来设置互斥锁的属性
 pthread_mutexattr_setpshared(pthread_mutexattr_t *__attr, int __pshared)
 - PTHREAD_PROCESS_PRIVATE ：用来不同进程间的线程同步
