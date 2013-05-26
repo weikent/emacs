@@ -4,11 +4,11 @@
 (setq path "/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin:/usr/local/bin")
 (setq path1 "/usr/local/bin")
 (setenv "PATH"
-		(concat
-		 "/usr/local/bin" ":"
-		 (getenv "PATH")
-		 )
-		)
+	(concat
+	 "/usr/local/bin" ":"
+	 (getenv "PATH")
+	 )
+	)
 (message (getenv "PATH"))
 
 
@@ -153,10 +153,13 @@
   (interactive)
   ;; (color-theme-initialize)  
   ;; (color-theme-calm-forest)
+  ;; (color-theme-dark-blue2)
   (require 'color-theme-settings)
-  (require 'ahei-face)
-  (require 'color-theme-ahei)
-  (require 'face-settings)
+  (color-theme-initialize)
+  (color-theme-calm-forest)
+;;  (require 'ahei-face)
+;;  (require 'color-theme-ahei)
+;;  (require 'face-settings)
   )
 
 
@@ -166,12 +169,12 @@
 
 ;; 有关界面和字体的配置
 (add-hook 'after-make-frame-functions
-		  (lambda (new-frame)
-			(select-frame new-frame)
-			(tool-bar-mode 0)
-			(scroll-bar-mode 0)
-			(my-color-settings)
-			))
+	  (lambda (new-frame)
+	    (select-frame new-frame)
+	    (tool-bar-mode 0)
+	    (scroll-bar-mode 0)
+	    (my-color-settings)
+	    ))
 
 
 
