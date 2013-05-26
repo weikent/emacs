@@ -185,6 +185,169 @@ in the evening ---強調 (從sunset到bedtime)的這個「時段」。
 註:時間介系詞的比較，部分內容參考自「溫世仁先生的動畫文法」。
 
 
+* for的用法
+** （表目的）为了
+They went out for a walk.
+What did you do that for?
+That's what we're here for.
+What's she gone for this time?
+He was waiting for the bus.
+
+说明： 在通常情况下，英语不用 for doing sth来表示目的。如：
+- 误： He went there for seeing his uncle.
+- 正： He went there for see his uncle.
+
+但是，若一个动名词已名词化，则可以与for连用表目的。如： 
+- He went there for swimming. 
+** （表利益）为了
+What can I do for you?
+We stduy hard for our motherland.
+Would you please carry this for me.
+Do more exercise fro the good of you health.
+
+说明： 
+- 有些后接双宾语的动词（如：buy, choose, fetch, find, get, order, prepare, sing, spare）， 当双宾语易位时，通常用for来引出间接宾语，表示间接宾语为受益者。
+    - She made her daughter a dress. / She made a dress for her daughter.
+    - He cooked us some potatoes. / He cooked some potatoes for us.
+
+- 注意不要按汉语字面意思，在一些及物动词后误加for:
+- 他们决定在电视上为他们的新产品打广告
+    - 误： They decided to advertise for their new produce on TV
+    - 正： They decided to advertise their new product on TV
+    说明： advertise 可用作及物动词，也可以用作不及物动词。
+           advertise sth = 为卖出某物而打广告。
+           advertise for sth = 为寻找某物而打广告。
+           如：advertise for a job = 登广告求职。
+
+** （表用途）用于，用来。
+- Knives are used for cutting things.
+- This knife is for cutting bread.
+- It's a machine for slicing bread.
+- The doctor gave her some medicine for her cold.
+
+** 为得到，为拿到，为取得
+- He went home for his book.
+- He went to his friend for advice.
+- She often asked her parents for money.
+- We all hope for success.
+- Are you coming in for some tea.
+
+
+** 给（某人），供（某人）用
+- That's for you.
+- Here is a letter for you.
+- Have you room for me there?
+
+** （表原因，理由）因为，由于。
+- I am sorry for it.
+- Thank you for coming to see me.
+- He is famous for his poems.
+- He was sent to prison for robbery. 他因为抢劫而坐牢。
+- I could't speak for langhing.
+- He could't sleep for joy.
+- For several reason, I'd rather not meet her.
+
+此处有 As a [the] result of 是习语，表示原因。
+congratulate 后习惯接介词on表示原因。
+
+** （表目的，去向）
+- Is this bus for Chicago?
+- They'll leave for Beijing tomorrow.
+- They set off for the shops. 他们买东西去了。
+- Is this the train for Shanghai>
+- Passangers for Tianjing must change at Beijing.
+
+
+** （表时间，距离，数量等）达，计。
+- I'm going away for a few days.
+- I've been here for ten years.
+- He walked for ten miles.
+- The shop sent me a bill for $50.
+
+说明： for表示时间或距离的长度（尤其是紧跟在动词之后）时，有时可省略。
+The meeting lasted (for) three days.
+They walked (for) fifty miles.
+但是当for短语位于句首或在否定中时，for通常不宜省去。
+For ten years he lived here.
+We have not heard from him for a long time.
+
+** 对，对于
+Eggs are good for you.  
+Reading in bed is bad for you eyes.
+Fortunately for me, the train was also late.
+
+** （表适合）适合，适于。
+Do you have any books for children?
+He is the very person for the work.
+It's a good place for a camp.
+She bought some clothes for winter.
+
+** （表交换）换， 以.....作交换
+- He gave her some magazines for her dictionary.
+- She bought the shirt for $50.
+- I bought a pound of apple for 70 cents.
+- Don't translate word for word.
+
+** 作为， 当作
+- Don't take hime for a fool.
+- He mistook a rope for a snake.
+- He knew that for a fact.
+- The missing persons were given up for dead.
+
+说明： 用于此义时，有时相当于as, to be, as being.但要注意不同句型的搭配习惯。
+- I took him for an honest man. / I took him to be honest.
+- It was built for [as] a pleasure boat.
+
+** （表支持， 赞成）支持
+- Are you for or aganist the plan?
+- I'm all for the young enjoying themselves.
+
+** （表基准）就.....来说， 以.....而言。
+- He's done well for a beginner.
+- He is heavy for a small boy.
+- She was short for her age.
+- The day is cool for July.
+
+** （表比例） 每....就....
+- Plant three trees for every one that is cut down.
+- He has one enemy for a hundred friends.
+- For every five who passed, there were two who failed.
+- For every mistake you make, you'll lose half a mark. 你每犯一个错误，就 要扣掉半分。
+
+说明： 用于此义是， 通常与each, every或数词连用。
+
+** 代表，代替， 代理。
+- What's the English for "中国"?
+- What's the 'C' for in "BBC"?
+- Red is for danger.
+- Let me do it for you.
+- The lawyer acted for him during ht trial.
+
+** （表安排的时间）在，于。
+- The appointment is for 10:30.
+- We've invited our guests for 7 o'clock.
+- We've booked our holiday for the second week in July.
+- The next meeting was arranged for the tenth of May.
+
+说明： 用于此义时，for主要指安排或约定的时间，与to不同。
+- He gets up at six every day.
+- He was born in September, 1988.
+
+
+** （表让步）尽管，虽然，
+- For all his money, he's a very lonely man.
+- For all his efforts, he didn't succeed.
+- I love you, for all your shortcomings.
+
+
+** （与不定式连用，引出逻辑上的主语）
+- It is for you to decide.
+- All I want is for us to be together.
+- Is there any need for me to go?
+- He spoke too fast for her to follow.
+- It is a great pity fo him to leave here so soon.
+- It is dangerous for a small child to cross the road alone.
+- For a bridge to collapse like that is unbelievable.
 
 * what about 與 how about 有何差異性 
 - 在表達提出某種建議的意思時, 即"~怎麼樣;~好嗎?"時, what about 和 how about 是可以互換的,因為意思相同.例如:What should we go now?  How/What about going  to the movies? (我們現在要去哪呢?去看電影怎麼樣呢?)     比方說:How about taking a walk? (散個步好嗎?)
@@ -207,7 +370,7 @@ in the evening ---強調 (從sunset到bedtime)的這個「時段」。
 ** every 强调整体，只能做adj
 every 指三个或三个以上中的每一个。
 - every students (不能写为every of the student) 
-- every one of my fingers. 
+- every one of my fingers.  
 * either 和 neither
 在either...or, 或 neither...nor 连接2个主语时，其谓语动词要与其相近到那个主语相同。
 * any 和 some的区别
