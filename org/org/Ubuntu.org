@@ -1,0 +1,26 @@
+#+TITLE:  Ubuntu 笔记
+
+#+OPTIONS: ^:nil
+
+* 安装fcitx
+** 安装fcitx之前先卸载ibus
+- sudo apt-get purge ibus ibus-gtk ibus-gtk3
+- sudo apt-get purge ibus-pinyin ibus-table python-ibus
+- killall ibus-daemon
+- rm -rf ~/.config/ibus
+apt-get purge 表示干净的卸载软件包，包括配置文件。
+
+** 使用以下命令安装搜狗输入法
+- sudo add-apt-repository ppa:fcitx-team/nightly
+- sudo apt-get update
+- sudo apt-get install fcitx-sogoupinyin
+    可以安装fcitx-pinyin, fcitx-sunpinyin, fcitx-googlepinyin, 
+    五笔用户可以安装 fcitx-table, fcitx-table-wubi, fcitx-table-wbpy
+    也可以安装fcitx-table-all所有输入法。
+
+** 安装配置工具
+sudo apt-get install fcitx-config-gtk
+
+
+
+重新登录后，即可。
