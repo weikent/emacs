@@ -804,6 +804,72 @@ pthread_mutexattr_settype(pthread_mutexattr_t *__attr, int __kind)
 - PTHREAD_MUTEX_RECURSIVE
 - PTHREAD_MUTEX_DEFAULT （默认值）
 
+
+
+* Makefile
+ [[http://blog.csdn.net/liang13664759/article/details/1771246][跟我一起学makefile]]
+** Makefile的规则
+tartget:prerequisites...
+(tab)command
+
+...
+...
+
+- target 是一个目标文件，可以是Object File, 也可以是一个可执行文件，也可以是一个标签（label）,即伪目标。
+- prerequisites 是要生成那个target所需要的文件或是目标。
+- command 是make需要执行的命令。（任意的shell命令）。一般是生成target所需要执行的命令。
+
+这是一个文件的依赖关系，也就是说，target这一个或多个的目标文件依赖于prerequisites中的文件， 其生成规则定义在command中，说白一点，就是prerequisites中如果有一个以上文件比target文件要新的话，command所定义的命令就会被执行。
+
+
+此规则可以重复多次，第一个是最终目标，它的依赖文件可以是另一次的目标文件。一直到某个目标文件的依赖文件是.c/.h文件为止。
+
+#+BEGIN_SRC C
+edit:main.o a.o b.o c.o d.o
+cc -o edit main.o a.o b.o c.o d.o
+
+main.o:main.c main.h
+cc -c main.o main.c
+
+a.o:a.c a.h
+cc -c a.o a.c
+
+....
+#生成edit这个可执行文件，需要main.o a.o b.o c.o d.o这些文件。但是这些文件也需要依赖其它文件才可以生成，即生成main.o需要main.c、生成a.o需要a.c、生成b.o需要b.c...
+
+#+END_SRC
+
+** make是如何工作的
+1. make会在当前目录下找名字叫“Makefile”或“makefile”的文件。
+1. 如果找到，它会找文件中的第一个目标文件（target），在上面的例子中，他会找到“edit”这个文件，并把这个文件作为最终的目标文件。
+1. 如果edit文件不存在，或是edit所依赖的后面的 .o 文件的文件修改时间要比edit这个文件新，那么，他就会执行后面所定义的命令来生成edit这个文件。
+1. 如果edit所依赖的.o文件也不存在，那么make会在当前文件中找目标为.o文件的依赖性，如果找到则再根据那一个规则生成.o文件。（这有点像一个堆栈的过程）
+1. 当然，你的C文件和H文件是存在的啦，于是make会生成 .o 文件，然后再用 .o 文件生命make的终极任务，也就是执行文件edit了。
+
+** makefile中使用变量
+在makefile中可以使用变量，使变量等于某个target的prerequisites，或者等于某个命令的参数。然后就可以使用这个变量来代替这此文件或参数。
+
+#+BEGIN_SRC C
+objects = main.o a.o b.o c.o
+edit:$(objects)
+cc -o edit $(objects)
+
+#  $(objects) 就可以代替main.o a.o b.o c.o
+
+#+END_SRC
+** make的自动推导
+在生某个.o文件的时候，make命令可以自动推导出文件以及文件的依赖关系，和生成.o文件的命令。
+所以在生成.o文件的时候，只需要指出生成此.o文件的.h文件即可。
+#+BEGIN_SRC C
+main.o:main.c main.h **.h
+cc -c main.o main.c **.h
+
+可以写成
+main.o:main.h ***.h
+
+即可。
+
+#+END_SRC
 * end
 
 ----------
