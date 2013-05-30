@@ -3,7 +3,7 @@ h1 {
 }
 
 h2 {
-	color: #ffff00;
+	color: #0000cd;
 }
 
 h3{
@@ -16,17 +16,17 @@ h4{
 
 #table-of-contents h2
 {
-    color: lime;
+    color: #000080;
 }
 #table-of-contents
 {
-    color: lime;
+    color: #000080;
 }
 
 
 a:link,a:visited,a:hover,a:active {
     background-color: inherit;
-    color: lime;
+    color: #000080;
     font: inherit;
     text-decoration: inherit;
 }
@@ -103,8 +103,8 @@ a:link,a:visited,a:hover,a:active {
 /*           } */
 
 body {
-    color: #ffffff;
-    background-color: #000000;
+    color: #000000;
+    background-color: #87cefa;
 }
 .org-ac-candidate {
     /* ac-candidate-face */
@@ -1531,8 +1531,10 @@ table th{
 }
 
 .src {
-    background-color:black;
+    background-color:#20b2aa;
 }
+
+
 /* pre{ */
 /* background-color: #000; */
 /* } */
