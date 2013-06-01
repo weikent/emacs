@@ -1,5 +1,5 @@
 objects = msgqueue.o getOtherID.o comm.o
-
+VPATH = global
 comm:$(objects)
 	g++ -o comm $(objects) -lpthread
 
