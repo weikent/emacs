@@ -42,7 +42,7 @@ int msgqueue::read_message(int qid, struct mymsgbuf *qbuf, long type)
 	return -1;
     } 
 
-    printf ("Type: %ld Text: %s \n", qbuf->mtype, qbuf->mtext);
+//    printf ("Type: %ld Text: %s \n", qbuf->mtype, qbuf->mtext);
 
     return 0;
 }
