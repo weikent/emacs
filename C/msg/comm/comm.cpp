@@ -30,7 +30,7 @@
 using namespace std;
 
 #define MAX_DATA_SEND_TO_SERVER 1024
-
+#define HEARTINTERVAL 2
 
 msgqueue msg;
 
@@ -45,12 +45,39 @@ char dataForServer[MAX_DATA_SEND_TO_SERVER];
 
 int socketTOServer;
 
+
+
+
+int changeConnetModel(char *buff)
+{
+    char temp[10];
+    strncpy(temp, buff, 6);
+    if (strcmp(temp, "model0") == 0)
+    {
+	printf ("change connect mode to %d\n", 0);
+	close(socketTOServer);
+	return 0;
+    }
+    else if ((strcmp(temp, "model1") == 0) || (strcmp(temp, "heart") == 0))
+    {
+	printf ("change connect mode to %d\n", 1);
+	return 1;
+    }
+    else
+    {
+	close(socketTOServer);
+	printf ("change connect mode to %d\n", 0);
+	return 0;
+    }
+}
+
+
 void *connectServer(void *arg)
 {
 
     int recbytes;
     int sin_size;
-    char buffer[1024]={0};    /* 接受缓冲区 */
+    char buffer[MAX_DATA_SEND_TO_SERVER]={0};    /* 接受缓冲区 */
 
     unsigned short portnum=0x8888;  /* 服务端使用的通信端口，可以更改，需和服务端相同 */
 
@@ -89,10 +116,10 @@ void *connectServer(void *arg)
 	    }
 	    for ( ;  ;  )
 	    {
-		if(-1 == (recbytes = read(socketTOServer,buffer,1024)))
+		memset(buffer, 0, MAX_DATA_SEND_TO_SERVER);
+		if(-1 == (recbytes = read(socketTOServer,buffer,MAX_DATA_SEND_TO_SERVER)))
 		{
 		    printf("read data fail !\n");
-
 		}
 		printf("read ok\nREC:\n");
 
@@ -101,24 +128,71 @@ void *connectServer(void *arg)
 		break;
 	    }
 
+
+	    // char bbb[MAX_DATA_SEND_TO_SERVER];
+	    // strncpy(bbb, buffer, 5);
+	    // printf ("%d\n",strcmp(bbb,"model"));
+
+	    connectModel = changeConnetModel(buffer);
+
 	    printf ("close connect\n");
 	    close(socketTOServer);
 
-	    
-
-	    char bbb[1024];
-	    strncpy(bbb, buffer, 5);
-	    printf ("%d\n",strcmp(bbb,"model"));
-
-
-	    connectModel = 0;
 	}
 
-	if (connectModel == 0)//short socket connect.
+	if (connectModel == 0)//short socket connection
 	{
 	    if (hasDataToSend)
 	    {
 		//send data to server
+		printf ("has Data to send!\n");
+
+		socketTOServer = socket(AF_INET, SOCK_STREAM, 0);
+		if (socketTOServer == -1)
+		{
+		    //send message to local.
+		}
+
+		struct sockaddr_in s_add; 
+
+		bzero(&s_add,sizeof(struct sockaddr_in));
+		s_add.sin_family=AF_INET;
+		inet_pton(AF_INET, "127.0.0.1", &s_add.sin_addr);
+		s_add.sin_port=htons(portnum); 
+
+		if(-1 == connect(socketTOServer,(struct sockaddr *)(&s_add), sizeof(struct sockaddr)))
+		{
+		    printf("connect fail !\r\n");
+
+		}
+
+		printf ("%s\n",qbuf.mtext);
+		if (write(socketTOServer, qbuf.mtext, sizeof(qbuf.mtext)) == -1)
+		{
+		    printf ("write error\n");
+
+		}
+		for ( ;  ;  )
+		{
+		    memset(buffer, 0, MAX_DATA_SEND_TO_SERVER);
+		    if(-1 == (recbytes = read(socketTOServer,buffer,MAX_DATA_SEND_TO_SERVER)))
+		    {
+			printf("read data fail !\n");
+		    }
+		    printf("read ok\nREC:\n");
+
+		    buffer[recbytes]='\0';
+		    printf("%s\n",buffer);
+		    break;
+		}
+
+
+		printf ("close this short connect\n");
+		close(socketTOServer);
+		connectModel = changeConnetModel(buffer);
+
+		hasDataToSend = false;
+
 	    }
 	    else
 	    {
@@ -126,24 +200,153 @@ void *connectServer(void *arg)
 	    }
 	}
 
-	if (connectModel == 1)
+	if (connectModel == 1)// long socket connection
 	{
-	    if (hasDataToSend)
+
+	    //send data to server
+	    printf ("has Data to send!\n");
+
+	    socketTOServer = socket(AF_INET, SOCK_STREAM, 0);
+	    if (socketTOServer == -1)
 	    {
-		//send data to server
+		//send message to local.
 	    }
-	    else
+
+	    struct sockaddr_in s_add; 
+
+	    bzero(&s_add,sizeof(struct sockaddr_in));
+	    s_add.sin_family=AF_INET;
+	    inet_pton(AF_INET, "127.0.0.1", &s_add.sin_addr);
+	    s_add.sin_port=htons(portnum); 
+
+	    if(-1 == connect(socketTOServer,(struct sockaddr *)(&s_add), sizeof(struct sockaddr)))
 	    {
-		//心跳数据
+		printf("connect fail !\r\n");
+
+	    }
+
+	    long int li = HEARTINTERVAL;
+
+	    fd_set fdsr;
+	    struct timeval tv;
+	    int maxsock;
+	    maxsock = socketTOServer;
+
+	    while(connectModel == 1)
+	    {
+		
+		FD_ZERO(&fdsr);
+
+		FD_SET(socketTOServer, &fdsr);
+
+		// timeout setting
+		tv.tv_sec = 5;
+		tv.tv_usec = 0;
+
+
+		ret = select(maxsock + 1, &fdsr, NULL, NULL, &tv);
+
+		if (ret < 0) {
+		    perror("select");
+		    break;
+		} else if (ret == 0) {
+		    printf("timeout\n");
+		    continue;
+		}
+
+
+		if (FD_ISSET(socketTOServer, &fdsr))
+		{
+
+		    ret = read(socketTOServer, buffer, MAX_DATA_SEND_TO_SERVER);
+
+		    if (ret <= 0)
+		    {        // server close this socket connect.
+
+			printf("server close\n", i);
+
+			close(socketTOServer);
+			connectModel = 0;
+
+		    } 
+		    else
+		    {        // receive data from server
+
+			if (ret < MAX_DATA_SEND_TO_SERVER)
+			{
+			    memset(&buffer[ret], '\0', 1);
+			}
+			printf("%s\n", buffer);
+//			send(fd_A[i], buf, sizeof(buf), 0);
+		    }
+		}
+
+
+		
+		if (hasDataToSend && connectModel == 1)
+		{
+		    //send data to server
+		    printf ("%s\n",qbuf.mtext);
+		    if (write(socketTOServer, qbuf.mtext, sizeof(qbuf.mtext)) == -1)
+		    {
+			printf ("write error\n");
+
+		    }
+		    for ( ;  ;  )
+		    {
+			memset(buffer, 0, MAX_DATA_SEND_TO_SERVER);
+			if(-1 == (recbytes = read(socketTOServer,buffer,MAX_DATA_SEND_TO_SERVER)))
+			{
+			    printf("read data fail !\n");
+			}
+			printf("read ok\nREC:\n");
+
+			buffer[recbytes]='\0';
+			printf("%s\n",buffer);
+			connectModel = changeConnetModel(buffer);
+			break;
+		    }
+
+		    hasDataToSend = false;
+		}
+		else if (connectModel == 1)
+		{
+		    sleep(5);
+		    //心跳数据
+
+		    if (li == HEARTINTERVAL)
+		    {
+			li = 0;
+			if (write(socketTOServer, "heart", 5) == -1)
+			{
+			    printf ("write error\n");
+
+			}
+
+
+			memset(buffer, 0, MAX_DATA_SEND_TO_SERVER);
+			if(-1 == (recbytes = read(socketTOServer,buffer,MAX_DATA_SEND_TO_SERVER)))
+			{
+			    printf("read data fail !\n");
+			}
+			printf("read ok\nREC:\n");
+
+			buffer[recbytes]='\0';
+			printf("%s\n",buffer);
+			connectModel = changeConnetModel(buffer);			    
+			printf ("one connect finish-----------------------------\n");
+		    }
+		    li++;
+		}
 	    }
 	}
     }
-
 }
 
 void localData(int i)
 {
     msg.read_message(message_t, (struct mymsgbuf *) &qbuf, 2);
+    hasDataToSend = true;
 }
 
 void clear(int i)
@@ -202,7 +405,7 @@ int main(int argc,char ** argv)
     while(1)
     {
 
-//注释此些行，不用这些来发数据给local，而是等server发来数据之后，再发给local。
+//注释此些行，不用这些代码来发数据给local，而是等server发来数据之后，再发给local。
 // 	if (localID > 0)
 // 	{
 // 	    char cmd[256];
