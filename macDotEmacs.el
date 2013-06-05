@@ -157,10 +157,10 @@
   (require 'color-theme-settings)
   (color-theme-initialize)
   ;; (color-theme-calm-forest)
-  (color-theme-dark-blue2)
-;;  (require 'ahei-face)
-;;  (require 'color-theme-ahei)
-;;  (require 'face-settings)
+  (color-theme-dark-green)
+  ;;  (require 'ahei-face)
+  ;;  (require 'color-theme-ahei)
+  ;;  (require 'face-settings)
   )
 
 
@@ -174,9 +174,14 @@
 	    (select-frame new-frame)
 	    (tool-bar-mode 0)
 	    (scroll-bar-mode 0)
-	    (my-color-settings)
+	    ;;	    (my-color-settings)
 	    ))
 
 
+(require 'color-theme-settings)
+(color-theme-initialize)
+(color-theme-calm-forest)
+;;(color-theme-dark-blue2)
+;;(color-theme-dark-green)
 
 (require 'init_initjedi)
