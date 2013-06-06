@@ -145,3 +145,14 @@ from mysite.views import hello 或者 import mysite.views
 ** empty module name
 此问题我是在设置数据库信息的时候，把”django.db.backends.mysql“错误的写成”django.db.backends.mysql.”
 最后多了一个@<font color="#ff0000">点号@</font>
+** 安裝MySQLdb
+- 有时会遇到找不到mysql_config的问题
+     可以安装 sudo apt-get install libmysqld-dev
+     之后再修改site.cfg文件，将mysql_config指向正确的位置。
+- 有时会遇到Python.h这个文件不存在
+     可以安装 sudo apt-get install python-dev
+- 有时会遇到没有setuptools
+     安装即可。
+- 有可能还需要安装libmysqlclient-dev
+     sudo apt-get install libmysqlclient-dev
+     否则import模块时会出错。
