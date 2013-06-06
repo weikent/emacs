@@ -37,9 +37,10 @@
   (c-set-offset 'brace-list-open '+)   ; all "opens" should be indented by the c-indent-level
   (c-set-offset 'case-label '+))       ; indent case labels by c-indent-level, too
 (add-hook 'c-mode-hook 'my-c-mode-hook)
+
+(add-hook 'c++-mode-hook
+          (lambda () (setq comment-start "/* " comment-end " */")))
 (add-hook 'c++-mode-hook 'my-c-mode-hook)
-
-
 
 (provide 'C-settings)
 
