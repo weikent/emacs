@@ -32,21 +32,26 @@ using namespace std;
 #define MAX_DATA_SEND_TO_SERVER 1024
 #define HEARTINTERVAL 2
 
+
+
 msgqueue msg;
 
-int message_t;
-int localID;
-struct mymsgbuf qbuf;
+int message_t;  //消息队列
+int localID;   //本地进程ID
+struct mymsgbuf qbuf;   // 消息队列的结构体，用来保存消息队列中的信息。
 int connectModel = -1;   // 0: 短连接    1:长连接   -1:程序首次启动
-bool hasDataToSend = false; 
-
-pthread_t thread[2];  // thread1: getotherID,  thread2: send data to server
-char dataForServer[MAX_DATA_SEND_TO_SERVER];
-
-int socketTOServer;
-
+int sameLAN = 0;    //0:不在同一个LAN   1:在同一个LAN
+bool hasDataToSend = false; // 本地层是不是有信息要发到服务器。
+pthread_t thread[3];  // thread1: getotherID,  thread2: send data to server   thread3: the same LAN, start this thread to create a socket server.
+//char dataForServer[MAX_DATA_SEND_TO_SERVER];  //
+int socketTOServer;  //与服务器连接的socket描述符。
 
 
+
+/********************************************************/
+/* 检查从服务器接收的数据，是不是要改变程序的连接模式。 */
+/* 即设置长/短连接				        */
+/********************************************************/
 
 int changeConnetModel(char *buff)
 {
@@ -54,21 +59,39 @@ int changeConnetModel(char *buff)
     strncpy(temp, buff, 6);
     if (strcmp(temp, "model0") == 0)
     {
-	printf ("change connect mode to %d\n", 0);
+	printf ("change connect mode to short connection!\n", 0);
 	close(socketTOServer);
 	return 0;
     }
     else if ((strcmp(temp, "model1") == 0) || (strcmp(temp, "heart") == 0))
     {
-	printf ("change connect mode to %d\n", 1);
+	printf ("change connect mode to long connection!\n", 1);
 	return 1;
     }
     else
     {
 	close(socketTOServer);
-	printf ("change connect mode to %d\n", 0);
+	printf ("change connect mode to short connection!\n", 0);
 	return 0;
     }
+}
+
+int checkIsTheSameLAN(char *buff)
+{
+    char temp[10];
+    strncpy(temp, buff, 4);
+    if (strcmp(temp, "same") == 0)
+    {
+	//same LAN
+	return 1;
+    }
+    else
+    {
+	// not the same LAN
+        // close thread.
+	return 0;
+    }
+    return 0;
 }
 
 
@@ -209,6 +232,7 @@ void *connectServer(void *arg)
 	    socketTOServer = socket(AF_INET, SOCK_STREAM, 0);
 	    if (socketTOServer == -1)
 	    {
+		//create socket failed.
 		//send message to local.
 	    }
 
