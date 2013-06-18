@@ -272,4 +272,9 @@
 ;;IN html-helper-mode , NOT auto indents
 (setq html-helper-never-indent 't)
 
+
+
+(global-set-key (kbd "C-SPC") 'nil)
+
+
 (provide 'my-global-key-settings)
