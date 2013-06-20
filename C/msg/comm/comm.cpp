@@ -56,7 +56,9 @@ int socketTOServer;  //与服务器连接的socket描述符。
 int changeConnetModel(char *buff)
 {
     char temp[10];
+    bzero(temp, sizeof(temp));
     strncpy(temp, buff, 6);
+    printf ("%s\n",temp);
     if (strcmp(temp, "model0") == 0)
     {
 	printf ("change connect mode to short connection!\n", 0);
@@ -79,6 +81,7 @@ int changeConnetModel(char *buff)
 int checkIsTheSameLAN(char *buff)
 {
     char temp[10];
+    bzero(temp, sizeof(temp));
     strncpy(temp, buff, 4);
     if (strcmp(temp, "same") == 0)
     {
@@ -102,6 +105,7 @@ void *connectServer(void *arg)
     int sin_size;
     char buffer[MAX_DATA_SEND_TO_SERVER]={0};    /* 接受缓冲区 */
 
+    int ret;
     unsigned short portnum=0x8888;  /* 服务端使用的通信端口，可以更改，需和服务端相同 */
 
 
@@ -226,7 +230,7 @@ void *connectServer(void *arg)
 	if (connectModel == 1)// long socket connection
 	{
 
-	    //send data to server
+	    //send data to server, Although local app not send data, the comm app need send "heart" to server.
 	    printf ("has Data to send!\n");
 
 	    socketTOServer = socket(AF_INET, SOCK_STREAM, 0);
@@ -249,6 +253,7 @@ void *connectServer(void *arg)
 
 	    }
 
+	    // use for when the first time change to long connection, send a "heart" to server.
 	    long int li = HEARTINTERVAL;
 
 	    fd_set fdsr;
@@ -275,8 +280,9 @@ void *connectServer(void *arg)
 		    break;
 		} else if (ret == 0) {
 		    printf("timeout\n");
-		    continue;
+//		    continue;
 		}
+
 
 
 		if (FD_ISSET(socketTOServer, &fdsr))
@@ -287,7 +293,7 @@ void *connectServer(void *arg)
 		    if (ret <= 0)
 		    {        // server close this socket connect.
 
-			printf("server close\n", i);
+			printf("server close\n");
 
 			close(socketTOServer);
 			connectModel = 0;
@@ -306,9 +312,9 @@ void *connectServer(void *arg)
 		}
 
 
-		
-		if (hasDataToSend && connectModel == 1)
+		if (hasDataToSend && (connectModel == 1))
 		{
+
 		    //send data to server
 		    printf ("%s\n",qbuf.mtext);
 		    if (write(socketTOServer, qbuf.mtext, sizeof(qbuf.mtext)) == -1)
@@ -335,9 +341,10 @@ void *connectServer(void *arg)
 		}
 		else if (connectModel == 1)
 		{
-		    sleep(5);
-		    //心跳数据
+		    /* sleep(5); */
 
+
+		    //心跳数据
 		    if (li == HEARTINTERVAL)
 		    {
 			li = 0;
@@ -346,7 +353,6 @@ void *connectServer(void *arg)
 			    printf ("write error\n");
 
 			}
-
 
 			memset(buffer, 0, MAX_DATA_SEND_TO_SERVER);
 			if(-1 == (recbytes = read(socketTOServer,buffer,MAX_DATA_SEND_TO_SERVER)))
