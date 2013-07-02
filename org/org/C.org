@@ -1259,6 +1259,53 @@ $(warning TEXT…)
 函数功能：函数“warning”类似于函数“error”，区别在于它不会导致致命错误（make不退出），而只是提示“TEXT…”，make的执行过程继续。
 返回值：空字符
 函数说明：用法和“error”类似，展开过程相同。
+* access 函数
+access()函数用来判断用户是否具有访问某个文件的权限(或判断某个文件是否存在).
+ 
+#include<unistd.h>
+
+int access(const char *pathname,int mode)
+ 
+参数:
+         pathname:表示要测试的文件的路径
+ 
+         mode:表示测试的模式可能的值有:
+ 
+                 R_OK:是否具有读权限
+ 
+                 W_OK:是否具有可写权限
+ 
+                 X_OK:是否具有可执行权限
+ 
+                 F_OK:文件是否存在
+ 
+返回值:若测试成功则返回0,否则返回-1
+
+* strtok 函数
+头文件：#include <string.h>
+
+定义函数：char * strtok(char *s, const char *delim);
+
+函数说明：strtok()用来将字符串分割成一个个片段. 参数s 指向欲分割的字符串, 参数delim 则为分割字符串,当strtok()在参数s 的字符串中发现到参数delim 的分割字符时则会将该字符改为\0 字符. 在第一次调用时,strtok()必需给予参数s 字符串, 往后的调用则将参数s 设置成NULL. 每次调用成功则返回下一个分割后的字符串指针.
+
+返回值：返回下一个分割后的字符串指针, 如果已无从分割则返回NULL.
+
+#+BEGIN_SRC C
+#include <string.h>
+main()
+{
+    char s[] = "aaaa/bbbbb/cccc/dddd";
+
+    char *p;
+    printf("%s ", strtok(s, "/"));
+    printf("--------------");
+    while((p = strtok(NULL, "/")))
+        printf("%s ", p);
+    printf("\n");
+}
+
+//输出aaaa bbbb cccc dddd
+#+END_SRC
 * end
 
 ----------
