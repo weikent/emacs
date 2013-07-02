@@ -48,11 +48,44 @@ int socketTOServer;  //与服务器连接的socket描述符。
 
 
 
+/**************************/
+/* 解析从服务器获取的数据 */
+/**************************/
+int serverDataAnalyze(const char *data)
+{
+    
+    return 0;
+}
+
+/**************************************/
+/* 服务器数据重新打包成本地层可用数据 */
+/**************************************/
+int serverDataRePackage(const char *data, char *newData)
+{
+    return 0;
+}
+
+/**************************/
+/* 解析从本地层获取的数据 */
+/**************************/
+int localDataAnalyze(const char *data)
+{
+    return 0;
+}
+
+/********************************************/
+/* 本地层数据重新打包成服务器可以解析的数据 */
+/********************************************/
+int localDataRePackage(const char *data, char *newData)
+{
+    return 0;
+}
+
+
 /********************************************************/
 /* 检查从服务器接收的数据，是不是要改变程序的连接模式。 */
 /* 即设置长/短连接				        */
 /********************************************************/
-
 int changeConnetModel(char *buff)
 {
     char temp[10];
@@ -78,6 +111,10 @@ int changeConnetModel(char *buff)
     }
 }
 
+
+/*****************************/
+/* 检查是否与手机在同一个LAN */
+/*****************************/
 int checkIsTheSameLAN(char *buff)
 {
     char temp[10];
@@ -97,7 +134,9 @@ int checkIsTheSameLAN(char *buff)
     return 0;
 }
 
-
+/**************************/
+/* 与服务器连接的主要函数 */
+/**************************/
 void *connectServer(void *arg)
 {
 
@@ -114,6 +153,7 @@ void *connectServer(void *arg)
 
     for ( ;  ;  )
     {
+
 	if (connectModel == -1)
 	{
 	    //一次socket 连接到server, 通知server
@@ -155,18 +195,12 @@ void *connectServer(void *arg)
 		break;
 	    }
 
-
-	    // char bbb[MAX_DATA_SEND_TO_SERVER];
-	    // strncpy(bbb, buffer, 5);
-	    // printf ("%d\n",strcmp(bbb,"model"));
-
 	    connectModel = changeConnetModel(buffer);
 
 	    printf ("close connect\n");
 	    close(socketTOServer);
 
 	}
-
 	if (connectModel == 0)//short socket connection
 	{
 	    if (hasDataToSend)
@@ -342,8 +376,6 @@ void *connectServer(void *arg)
 		else if (connectModel == 1)
 		{
 		    /* sleep(5); */
-
-
 		    //心跳数据
 		    if (li == HEARTINTERVAL)
 		    {
