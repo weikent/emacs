@@ -40,20 +40,31 @@ int getOtherID::isdir(const char *path)
     }
     return 0;
 }
+
+/********************************/
+/* 用来得到字符串path中的文件名 */
+/********************************/
 char * getOtherID::getfile(const char *path)
 {
     static char filename[MAXLINE];
     char *tmp1,*tmp2,filepath[MAXLINE];
+
+
     if(path==NULL)return NULL;
+
+
     memset(filepath,0,sizeof(filepath));
     strcpy(filepath,path);
     tmp2=tmp1=strtok(filepath,"/");
+
+    //此while循环执行道最后的时候tmp1会被赋值为NULL。所以需要tmp2来记录最后一个 "/" 后面的字符串
     while((tmp1=strtok(NULL,"/")))
     {
 	tmp2=tmp1;
     }
-    memset(filename,0,sizeof(filename));
 
+
+    memset(filename,0,sizeof(filename));
 
     if(tmp2)
     {
@@ -65,35 +76,36 @@ char * getOtherID::getfile(const char *path)
     else return NULL;
     return filename;
 }
-char* getOtherID::readstatus(const char *filename)
-{
-    FILE *file;
-    static char buf[MAXLINE];
-    file=fopen(filename,"r");
-    if(!file)return NULL;
-    while(fgets(buf,sizeof(buf),file))
-    {
-	if(strncmp(buf,"State",5)==0)
-	{
-//	    printf("%s\n",buf);
-	    break;
-	}
-    }
-    fclose(file);
-}
+/* char* getOtherID::readstatus(const char *filename) */
+/* { */
+/*     FILE *file; */
+/*     static char buf[MAXLINE]; */
+/*     file=fopen(filename,"r"); */
+/*     if(!file)return NULL; */
+/*     while(fgets(buf,sizeof(buf),file)) */
+/*     { */
+/* 	if(strncmp(buf,"State",5)==0) */
+/* 	{ */
+/* //	    printf("%s\n",buf); */
+/* 	    break; */
+/* 	} */
+/*     } */
+/*     fclose(file); */
+/* } */
 
+
+
+/*********************/
+/* 获取进程ID	     */
+/* filename:进程名称 */
+/* 返回进程ID	     */
+/*********************/
 int getOtherID::getID(const char *filename)
 {
     char buf1[MAXLINE],buf2[MAXLINE];
-    char path1[MAXLINE],path2[MAXLINE],*ptr,*str;
+    char path1[MAXLINE],path2[MAXLINE],*ptr;
     DIR *db,*directory;
     struct dirent *p;
-    // if(argc!=2)
-    // {
-    // 	printf("input file name .\nusage %s : filename \n",argv[0]);
-    // 	return 0;
-    // }
-
 
     db=opendir("/proc/");
 
@@ -110,31 +122,28 @@ int getOtherID::getID(const char *filename)
 	{
 	    memset(buf1,0,sizeof(buf1));
 	    sprintf(buf1,"/proc/%s",p->d_name);
-	    //printf ("%s\n",buf1);
+
 	    if(isdir(buf1))
 	    {
 		memset(buf2,0,sizeof(buf2));
 		sprintf(buf2,"%s/exe",buf1);
-		if(access(buf2,F_OK)==0)
+		if(access(buf2,F_OK)==0) // 文件存在 或者是有权限访问
 		{
 		    memset(path1,0,sizeof(path1));
 		    if(readlink(buf2,path1,sizeof(path1))==-1)
 			continue;
 		    ptr=getfile(path1);
-		    //printf ("1111\n");
-//					printf ("%s\n",ptr);
+
 		    if(strcmp(ptr,filename)==0)
 		    {
-			memset(path2,0,sizeof(path2));
-			sprintf(path2,"%s/status",buf1);
-			ptr=readstatus(path2);
+			/* memset(path2,0,sizeof(path2)); */
+			/* sprintf(path2,"%s/status",buf1); */
+			/* ptr=readstatus(path2); */
 			sprintf(buf1,"%s",p->d_name);
-//			printf ("%s\n",buf1);
+
 			int i;
 			i = atoi(buf1);
 			return i;
-			// printf ("%d\n",i);
-			// kill(i, SIGUSR1);
 		    }
 		}
 	    }
