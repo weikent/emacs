@@ -31,7 +31,7 @@ void commData(int i)
 {
 //    printf ("%d\n",i);
     msg.read_message(message_t, (struct mymsgbuf *) &qbuf, 1);
-    printf ("Type: %ld Text: %s \n", qbuf->mtype, qbuf->mtext);
+    printf ("Type: %ld Text: %s \n", qbuf.mtype, qbuf.mtext);
 
 }
 
@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
 
 
     message_t = msg.create_queue();
-    printf ("%d\n",message_t);
+    printf ("message_t = %d\n",message_t);
     while(1)
     {
 	if (commID > 0)
