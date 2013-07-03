@@ -9,6 +9,7 @@
 #include "msgqueue.h"
 
 #include "global/global.h"
+#include "dataParse.h"
 
 
 #include <unistd.h>
@@ -439,7 +440,8 @@ void *getlocalID(void *arg)
 int main(int argc,char ** argv)
 {
     struct mymsgbuf qbuf;
-
+    /* char text6[] = "{\"sysID\":\"1\",\"seqOfIns\":\"1\",\"numOfDev\":\"1\",\"optCode\":\"0050\",\"timeout\":\"1234756609589\",\"devArray\":[{\"devID\":\"aa00ddeeffhh\",\"numOfCont\":\"1\",\"contArray\":[{\"contID\":\"0\",\"contType\":\"500\",\"numOfAct\":\"1\",\"actArray\":[{\"actID\":\"0\",\"actValue\":\"0\"}]}]}]}"; */
+    /* serverDataParse(text6); */
     message_t = create_queue();
 
     printf ("message_t = %d\n",message_t);
