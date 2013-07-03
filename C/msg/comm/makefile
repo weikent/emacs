@@ -1,7 +1,11 @@
-objects = msgqueue.o getOtherID.o comm.o 
+objects = msgqueue.o getOtherID.o comm.o cJSON.o dataParse.o
 VPATH = global
 comm:$(objects)
-	g++ -o comm $(objects) -lpthread
+	g++ -o comm $(objects) -lpthread -lm
+
+cJSON.o:cJSON.h
+
+dataParse.o:dataParse.h
 
 comm.o:global.h
 
