@@ -10,6 +10,8 @@
 
 #include "global/global.h"
 
+#include "dataParse.h"
+
 
 #include <unistd.h>
 #include <dirent.h>
@@ -436,8 +438,11 @@ int main(int argc,char ** argv)
 {
     struct mymsgbuf qbuf;
 
+    dataParse data;
     message_t = msg.create_queue();
 
+    char text6[] = "{\"sysID\":\"1\",\"seqOfIns\":\"1\",\"numOfDev\":\"1\",\"optCode\":\"0050\",\"timeout\":\"1234756609589\",\"devArray\":[{\"devID\":\"aa00ddeeffhh\",\"numOfCont\":\"1\",\"contArray\":[{\"contID\":\"0\",\"contType\":\"500\",\"numOfAct\":\"1\",\"actArray\":[{\"actID\":\"0\",\"actValue\":\"0\"}]}]}]}";
+    data.serverDataParse(text6);
 
 
     int temp; 
