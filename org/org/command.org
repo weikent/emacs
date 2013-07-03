@@ -38,6 +38,10 @@ man find 中
 
 ** 根据进程名获取进程id
 ps -ax  ¦ grep "进程名"  ¦ awk '{print $1}'
+** 修改目录权限
+chmod 777 * -R  
+结果：全部子目录及文件权限改为 777
+
 * Windows
 ** 修改文件隐藏属性
 
