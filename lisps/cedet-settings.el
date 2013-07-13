@@ -39,9 +39,10 @@
 (require 'ecb)
  
 ;;;; 自动启动ecb，并且不显示每日提示
-;; (setq ecb-auto-activate t
-;;       ecb-tip-of-the-day nil)
-(setq ecb-tip-of-the-day nil)
+;; ecb需要使用到semantic，才能在编辑C/C++代码的时候，分析代码，并在函数列表窗口现实函数。
+(setq ecb-auto-activate t
+      ecb-tip-of-the-day nil)
+;;(setq ecb-tip-of-the-day nil)
 
 
 ;; ;;;; 各窗口间切换
