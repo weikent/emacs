@@ -57,7 +57,14 @@ int socketTOServer;  //与服务器连接的socket描述符。
 
 
 
-
+string& trim(string &str, string oldstr,string::size_type pos = 0)
+{
+    string delim = oldstr; //删除空格或者tab字符
+    pos = str.find_first_of(delim, pos);
+    if (pos == string::npos)
+        return str;
+    return trim(str.erase(pos, 1), delim);
+}
 /********************************************************/
 /* 检查从服务器接收的数据，是不是要改变程序的连接模式。 */
 /* 即设置长/短连接				        */
@@ -99,13 +106,13 @@ int checkIsTheSameLAN(char *buff)
     strncpy(temp, buff, 4);
     if (strcmp(temp, "same") == 0)
     {
-	//same LAN
+//same LAN
 	return 1;
     }
     else
     {
-	// not the same LAN
-        // close thread.
+// not the same LAN
+// close thread.
 	return 0;
     }
     return 0;
@@ -123,7 +130,7 @@ int socketConnect(char *ip, int portnum)
 
     bzero(&s_add,sizeof(struct sockaddr_in));
     s_add.sin_family=AF_INET;
-    inet_pton(AF_INET, "192.168.1.199", &s_add.sin_addr);
+    inet_pton(AF_INET, "192.168.1.152", &s_add.sin_addr);
     s_add.sin_port=htons(portnum); 
 
     if(-1 == connect(socketTOServer,(struct sockaddr *)(&s_add), sizeof(struct sockaddr)))
@@ -131,29 +138,67 @@ int socketConnect(char *ip, int portnum)
 	printf("connect fail !\r\n");
 	return -1;
     }
-
     
     return 0;
 }
+
 
 /**************************/
 /* 与服务器连接的主要函数 */
 /**************************/
 void *connectServer(void *arg)
 {
-    /* char text6[] = "{\"sysID\":\"1\",\"seqOfIns\":\"1\",\"numOfDev\":\"1\",\"optCode\":\"0050\",\"timeout\":\"1234756609589\",\"devArray\":[{\"devID\":\"aa00ddeeffhh\",\"numOfCont\":\"1\",\"contArray\":[{\"contID\":\"0\",\"contType\":\"500\",\"numOfAct\":\"1\",\"actArray\":[{\"actID\":\"0\",\"actValue\":\"0\"}]}]},{\"devID\":\"aa00ddeeffhh\",\"numOfCont\":\"1\",\"contArray\":[{\"contID\":\"0\",\"contType\":\"500\",\"numOfAct\":\"1\",\"actArray\":[{\"actID\":\"0\",\"actValue\":\"0\"}]}]}]}"; */
+    /* char text6[] = "{\"sysID\":\"1\",\"seqOfIns\":\"1\",\"numOfDev\":\"1\",\"optCode\":\"0050\",\"timeout\":\"1234756609589\",\"devArray\":[{\"devID\":\"aa00ddeeffhh\",\"numOfCont\":\"1\",\"contArray\":[{\"contID\":\"0\",\"contType\":\"500\",\"numOfAct\":\"1\",\"actArray\":[{\"actType\":\"0\",\"actValue\":\"0\"}]}]},{\"devID\":\"aa00ddeeffhh\",\"numOfCont\":\"1\",\"contArray\":[{\"contID\":\"0\",\"contType\":\"500\",\"numOfAct\":\"1\",\"actArray\":[{\"actType\":\"0\",\"actValue\":\"0\"}]}]}]}"; */
 
     /* dp.parse(text6); */
     /* dp.parse(text6); */
     /* dp.parse(text6); */
     /* dp.parse(text6); */
 
+    char text6[] = "{\"sysID\":\"1\",\"seqOfIns\":\"1\",\"numOfDev\":\"2\",\"optCode\":\"0050\",\"timeout\":\"1234756609589\",\"devArray\":[{\"devID\":\"aa00ddeeffhe\",\"numOfCont\":\"2\",\"contArray\":[{\"contID\":\"0\",\"contType\":\"500\",\"numOfAct\":\"2\",\"actArray\":[{\"actType\":\"0\",\"actValue\":\"0\"},{\"actType\":\"1\",\"actValue\":\"0\"}]},{\"contID\":\"1\",\"contType\":\"500\",\"numOfAct\":\"1\",\"actArray\":[{\"actType\":\"0\",\"actValue\":\"0\"}]}]},{\"devID\":\"aa00ddeeffhh\",\"numOfCont\":\"2\",\"contArray\":[{\"contID\":\"0\",\"contType\":\"500\",\"numOfAct\":\"2\",\"actArray\":[{\"actType\":\"1\",\"actValue\":\"0\"},{\"actType\":\"2\",\"actValue\":\"0\"}]},{\"contID\":\"1\",\"contType\":\"500\",\"numOfAct\":\"2\",\"actArray\":[{\"actType\":\"1\",\"actValue\":\"0\"},{\"actType\":\"2\",\"actValue\":\"0\"}]}]}]}"; 
 
+    cout << "parse data" << endl;
+
+    dp.parse(text6);
+    
+    string str;
+    dp.packageMutipleCtrl(dp.cmdQueue, str);
+    
+    string oldstr = "\n";
+    trim(str,oldstr, 0);
+    oldstr = "\t";
+    trim(str, oldstr, 0);
+    oldstr = " ";
+    trim(str, oldstr, 0);
+    oldstr = "\r";
+    trim(str, oldstr, 0);
+
+    char temp[4];
+    sprintf(temp, "%04d", str.length());
+    //str = temp+str;
+    cout <<"str == " << str << endl;
+
+
+//    dp.parse(str.c_str());
+    
     int recbytes;
     int sin_size;
+
     char buffer[MAX_DATA_SEND_TO_SERVER]={0};    /* 接受缓冲区 */
 
-    char heart[] = "{\"optCode\":\"heart\",\"devID\":\"aa\"}";
+    //char heart[] = "{\"optCode\":\"heart\",\"devID\":\"34bca6010203\"}";
+    
+    int strlen = str.length();
+    char heart[MAX_DATA_SEND_TO_SERVER] = {0};
+
+    int aa = str.length();
+    strncpy(heart, str.c_str(), aa);
+    
+    heart[aa] = '\0';
+    cout << "heart = " << heart << endl;
+//    strcpy(heart, str.c_str());
+
+//    char *heart = const_cast<char *>(str.c_str());
     int ret;
 //    unsigned short portnum=0x8888;  /* 服务端使用的通信端口，可以更改，需和服务端相同 */
     unsigned short portnum=14567;
@@ -167,18 +212,18 @@ void *connectServer(void *arg)
 	if (connectModel == -1)
 	{
 	    printf ("connect init\n");
-	    //一次socket 连接到server, 通知server
+//一次socket 连接到server, 通知server
 	    socketTOServer = socket(AF_INET, SOCK_STREAM, 0);
 	    if (socketTOServer == -1)
 	    {
-		//send message to local.
+//send message to local.
 	    }
 
 	    struct sockaddr_in s_add; 
 
 	    bzero(&s_add,sizeof(struct sockaddr_in));
 	    s_add.sin_family=AF_INET;
-	    inet_pton(AF_INET, "192.168.1.199", &s_add.sin_addr);
+	    inet_pton(AF_INET, "192.168.1.152", &s_add.sin_addr);
 	    s_add.sin_port=htons(portnum); 
 
 	    if(-1 == connect(socketTOServer,(struct sockaddr *)(&s_add), sizeof(struct sockaddr)))
@@ -211,7 +256,7 @@ void *connectServer(void *arg)
 
 	    if (dp.parse(buffer) == 0)
 	    {
-	    	//need send to local app.
+//need send to local app.
 	    }
 
 
@@ -224,7 +269,7 @@ void *connectServer(void *arg)
 	{
 	    if (hasDataToSend)
 	    {
-		//send data to server
+//send data to server
 		printf ("has Data to send!\n");
 
 		socketTOServer = socket(AF_INET, SOCK_STREAM, 0);
@@ -237,7 +282,7 @@ void *connectServer(void *arg)
 
 		bzero(&s_add,sizeof(struct sockaddr_in));
 		s_add.sin_family=AF_INET;
-		inet_pton(AF_INET, "192.168.1.199", &s_add.sin_addr);
+		inet_pton(AF_INET, "192.168.1.152", &s_add.sin_addr);
 		s_add.sin_port=htons(portnum); 
 
 		if(-1 == connect(socketTOServer,(struct sockaddr *)(&s_add), sizeof(struct sockaddr)))
@@ -247,12 +292,12 @@ void *connectServer(void *arg)
 		}
 
 //need
-		/* printf ("%s\n",qbuf.mtext); */
-		/* if (write(socketTOServer, qbuf.mtext, sizeof(qbuf.mtext)) == -1) */
-		/* { */
-		/*     printf ("write error\n"); */
+/* printf ("%s\n",qbuf.mtext); */
+/* if (write(socketTOServer, qbuf.mtext, sizeof(qbuf.mtext)) == -1) */
+/* { */
+/*     printf ("write error\n"); */
 
-		/* } */
+/* } */
 		for ( ;  ;  )
 		{
 		    memset(buffer, 0, MAX_DATA_SEND_TO_SERVER);
@@ -301,7 +346,7 @@ void *connectServer(void *arg)
 
 	    bzero(&s_add,sizeof(struct sockaddr_in));
 	    s_add.sin_family=AF_INET;
-	    inet_pton(AF_INET, "192.168.1.199", &s_add.sin_addr);
+	    inet_pton(AF_INET, "192.168.1.152", &s_add.sin_addr);
 	    s_add.sin_port=htons(portnum); 
 
 	    if(-1 == connect(socketTOServer,(struct sockaddr *)(&s_add), sizeof(struct sockaddr)))
@@ -335,7 +380,7 @@ void *connectServer(void *arg)
 
 		// timeout setting
 		tv.tv_sec = 9;
-		tv.tv_usec = 500000;
+		tv.tv_usec = 0;
 
 
 		ret = select(maxsock + 1, &fdsr, NULL, NULL, &tv);
@@ -344,7 +389,7 @@ void *connectServer(void *arg)
 		    perror("select");
 		    break;
 		} else if (ret == 0) {
-		    printf("timeout\n");
+//		    printf("timeout\n");
 		    /* continue; */
 		}
 
@@ -392,7 +437,7 @@ void *connectServer(void *arg)
 
 		    /* } */
 
-                    /* 以后可以试试不用下面的代码，而使用select来查询是否有服务器的数据。 */
+		    /* 以后可以试试不用下面的代码，而使用select来查询是否有服务器的数据。 */
 		    for ( ;  ;  )
 		    {
 			memset(buffer, 0, MAX_DATA_SEND_TO_SERVER);
@@ -418,7 +463,7 @@ void *connectServer(void *arg)
 		    if (li == HEARTINTERVAL)
 		    {
 			li = 0;
-			if (write(socketTOServer, heart, sizeof(heart)) == -1)
+			if (write(socketTOServer, heart, aa) == -1)
 			{
 			    printf ("write error\n");
 
@@ -467,58 +512,62 @@ void *sendmessage(void *arg)
     MsgCmd tMsgCmd;
     while(1)
     {
-	printf ("sendmessage\n");
-	sleep(5);
+//	printf ("sendmessage\n");
+	usleep(182000);
     
-	printf ("dp.cmdQueue.size() = %d \n", dp.cmdQueue.size());
-		
+//	printf ("dp.cmdQueue.size() = %d \n", dp.cmdQueue.size());
+
 	while(dp.cmdQueue.size())
 	{
-	    printf ("pop_front()\n");
-
+//	    printf ("pop_front()\n");
 	    tMsgCmd.msg_type = sizMsg;
-	    strcpy(tMsgCmd.msg_text.sysID, dp.cmdQueue.front().sysID);
-	    tMsgCmd.msg_text.insSeqNo = dp.cmdQueue.front().insSeqNo;
-	    tMsgCmd.msg_text.devNo = dp.cmdQueue.front().devNo;
-	    strcpy(tMsgCmd.msg_text.opCode, dp.cmdQueue.front().opCode);
-	    strcpy(tMsgCmd.msg_text.devID, dp.cmdQueue.front().devID);
-	    tMsgCmd.msg_text.ctrlNo = dp.cmdQueue.front().ctrlNo;
+	    strcpy(tMsgCmd.msg_text.sys_id, dp.cmdQueue.front().sys_id);
+	    tMsgCmd.msg_text.ins_seq_no = dp.cmdQueue.front().ins_seq_no;
+	    tMsgCmd.msg_text.dev_no = dp.cmdQueue.front().dev_no;
+	    strcpy(tMsgCmd.msg_text.op_code, dp.cmdQueue.front().op_code);
+	    strcpy(tMsgCmd.msg_text.dev_id, dp.cmdQueue.front().dev_id);
+	    tMsgCmd.msg_text.ctrl_no = dp.cmdQueue.front().ctrl_no;
 
-	    strcpy(tMsgCmd.msg_text.ctrlID, dp.cmdQueue.front().ctrlID);
-	    strcpy(tMsgCmd.msg_text.ctrlTyp, dp.cmdQueue.front().ctrlTyp);
-	    tMsgCmd.msg_text.actNo = dp.cmdQueue.front().actNo;
+	    strcpy(tMsgCmd.msg_text.ctrl_id, dp.cmdQueue.front().ctrl_id);
+	    strcpy(tMsgCmd.msg_text.ctrl_typ, dp.cmdQueue.front().ctrl_typ);
+	    tMsgCmd.msg_text.act_no = dp.cmdQueue.front().act_no;
 	
-	    strcpy(tMsgCmd.msg_text.actTyp, dp.cmdQueue.front().actTyp);
-	    strcpy(tMsgCmd.msg_text.actVal, dp.cmdQueue.front().actVal);
-	    strcpy(tMsgCmd.msg_text.actUnit, dp.cmdQueue.front().actUnit);
-	    tMsgCmd.msg_text.actTime, dp.cmdQueue.front().actTime;
-	    tMsgCmd.msg_text.actPrecs = dp.cmdQueue.front().actPrecs;
-	    tMsgCmd.msg_text.actMin = dp.cmdQueue.front().actMin;
-	    tMsgCmd.msg_text.actMax = dp.cmdQueue.front().actMax;
-	    strcpy(tMsgCmd.msg_text.actStat, dp.cmdQueue.front().actStat);
-	    tMsgCmd.msg_text.actStatTime = dp.cmdQueue.front().actStatTime;
+	    strcpy(tMsgCmd.msg_text.act_typ, dp.cmdQueue.front().act_typ);
+	    strcpy(tMsgCmd.msg_text.act_val, dp.cmdQueue.front().act_val);
+	    strcpy(tMsgCmd.msg_text.act_unit, dp.cmdQueue.front().act_unit);
+	    tMsgCmd.msg_text.act_time, dp.cmdQueue.front().act_time;
+	    tMsgCmd.msg_text.act_precs = dp.cmdQueue.front().act_precs;
+	    tMsgCmd.msg_text.act_min = dp.cmdQueue.front().act_min;
+	    tMsgCmd.msg_text.act_max = dp.cmdQueue.front().act_max;
+	    strcpy(tMsgCmd.msg_text.act_stat, dp.cmdQueue.front().act_stat);
+	    tMsgCmd.msg_text.act_stat_time = dp.cmdQueue.front().act_stat_time;
+
+	    //用来测试
+	    /* string str; */
+	    /* dp.packageSignalCtrl(dp.cmdQueue.front(), str); */
+	    /* cout << str << endl; */
 
 
-
+	    /* ========== */
 	    /* cout << tMsgCmd.msg_type << endl; */
-	    /* cout << tMsgCmd.msg_text.sysID << ": "; */
-	    /* cout << tMsgCmd.msg_text.insSeqNo << ": "; */
-	    /* cout << tMsgCmd.msg_text.devNo << ": "; */
-	    /* cout << tMsgCmd.msg_text.opCode << ": "; */
-	    /* cout << tMsgCmd.msg_text.devID << ": "; */
-	    /* cout << tMsgCmd.msg_text.ctrlNo << ": "; */
-	    /* cout << tMsgCmd.msg_text.ctrlID << ": "; */
-	    /* cout << tMsgCmd.msg_text.ctrlTyp << ": "; */
-	    /* cout << tMsgCmd.msg_text.actNo << ": "; */
-	    /* cout << tMsgCmd.msg_text.actTyp << ": "; */
-	    /* cout << tMsgCmd.msg_text.actVal << ": "; */
-	    /* cout << tMsgCmd.msg_text.actUnit << ": "; */
-	    /* cout << tMsgCmd.msg_text.actTime << ": "; */
-	    /* cout << tMsgCmd.msg_text.actPrecs << ": "; */
-	    /* cout << tMsgCmd.msg_text.actMin << ": "; */
-	    /* cout << tMsgCmd.msg_text.actMax << ": "; */
-	    /* cout << tMsgCmd.msg_text.actStat << ": "; */
-	    /* cout << tMsgCmd.msg_text.actStatTime << endl; */
+	    /* cout << tMsgCmd.msg_text.sys_id << ": "; */
+	    /* cout << tMsgCmd.msg_text.ins_seq_no << ": "; */
+	    /* cout << tMsgCmd.msg_text.dev_no << ": "; */
+	    /* cout << tMsgCmd.msg_text.op_code << ": "; */
+	    /* cout << tMsgCmd.msg_text.dev_id << ": "; */
+	    /* cout << tMsgCmd.msg_text.ctrl_no << ": "; */
+	    /* cout << tMsgCmd.msg_text.ctrl_id << ": "; */
+	    /* cout << tMsgCmd.msg_text.ctrl_typ << ": "; */
+	    /* cout << tMsgCmd.msg_text.act_no << ": "; */
+	    /* cout << tMsgCmd.msg_text.act_typ << ": "; */
+	    /* cout << tMsgCmd.msg_text.act_val << ": "; */
+	    /* cout << tMsgCmd.msg_text.act_unit << ": "; */
+	    /* cout << tMsgCmd.msg_text.act_time << ": "; */
+	    /* cout << tMsgCmd.msg_text.act_precs << ": "; */
+	    /* cout << tMsgCmd.msg_text.act_min << ": "; */
+	    /* cout << tMsgCmd.msg_text.act_max << ": "; */
+	    /* cout << tMsgCmd.msg_text.act_stat << ": "; */
+	    /* cout << tMsgCmd.msg_text.act_stat_time << endl; */
 
 	    msgsnd.send_msg(tMsgCmd, sizMsg);
 	   
@@ -544,16 +593,55 @@ void *sendmessage(void *arg)
 
 int main(int argc,char ** argv)
 {
+    /* char text6[] = "{\"sysID\":\"1\",\"seqOfIns\":\"1\",\"numOfDev\":\"2\",\"optCode\":\"0050\",\"timeout\":\"1234756609589\",\"devArray\":[{\"devID\":\"aa00ddeeffhe\",\"numOfCont\":\"2\",\"contArray\":[{\"contID\":\"0\",\"contType\":\"500\",\"numOfAct\":\"2\",\"actArray\":[{\"actType\":\"0\",\"actValue\":\"0\"},{\"actType\":\"1\",\"actValue\":\"0\"}]},{\"contID\":\"1\",\"contType\":\"500\",\"numOfAct\":\"1\",\"actArray\":[{\"actType\":\"0\",\"actValue\":\"0\"}]}]},{\"devID\":\"aa00ddeeffhh\",\"numOfCont\":\"2\",\"contArray\":[{\"contID\":\"0\",\"contType\":\"500\",\"numOfAct\":\"2\",\"actArray\":[{\"actType\":\"1\",\"actValue\":\"0\"},{\"actType\":\"2\",\"actValue\":\"0\"}]},{\"contID\":\"1\",\"contType\":\"500\",\"numOfAct\":\"2\",\"actArray\":[{\"actType\":\"1\",\"actValue\":\"0\"},{\"actType\":\"2\",\"actValue\":\"0\"}]}]}]}"; */
 
-    /*   struct mymsgbuf qbuf; */
+    /* cout << "parse data" << endl; */
 
-/*     //  dataParse data; */
-/*     message_t = msg.create_queue(); */
+    /* dp.parse(text6); */
+    
+    /* string str; */
+    /* dp.packageMutipleCtrl(dp.cmdQueue, str); */
+    /* string oldstr = "\n"; */
+    /* trim(str,oldstr, 0); */
+    /* oldstr = "\t"; */
+    /* trim(str, oldstr, 0); */
+    /* cout <<"str == " << str << endl; */
 
-/*     char text6[] = "{\"sysID\":\"1\",\"seqOfIns\":\"1\",\"numOfDev\":\"1\",\"optCode\":\"0050\",\"timeout\":\"1234756609589\",\"devArray\":[{\"devID\":\"aa00ddeeffhh\",\"numOfCont\":\"1\",\"contArray\":[{\"contID\":\"0\",\"contType\":\"500\",\"numOfAct\":\"1\",\"actArray\":[{\"actID\":\"0\",\"actValue\":\"0\"}]}]}]}"; */
-/* //    data.serverDataParse(text6); */
+    /* dp.parse(str.c_str()); */
+
+    /* while(dp.cmdQueue.size()) */
+    /* { */
+    /* 	printf ("pop_front()\n"); */
+
+    /* 	//用来测试 */
+    /* 	/\* string str; *\/ */
+    /* 	/\* dp.packageSignalCtrl(dp.cmdQueue.front(), str); *\/ */
+    /* 	/\* cout << str << endl; *\/ */
 
 
+
+
+    /* 	cout << dp.cmdQueue.front().sys_id << ": "; */
+    /* 	cout << dp.cmdQueue.front().ins_seq_no << ": "; */
+    /* 	cout << dp.cmdQueue.front().dev_no << ": "; */
+    /* 	cout << dp.cmdQueue.front().op_code << ": "; */
+    /* 	cout << dp.cmdQueue.front().dev_id << ": "; */
+    /* 	cout << dp.cmdQueue.front().ctrl_no << ": "; */
+    /* 	cout << dp.cmdQueue.front().ctrl_id << ": "; */
+    /* 	cout << dp.cmdQueue.front().ctrl_typ << ": "; */
+    /* 	cout << dp.cmdQueue.front().act_no << ": "; */
+    /* 	cout << dp.cmdQueue.front().act_typ << ": "; */
+    /* 	cout << dp.cmdQueue.front().act_val << ": "; */
+    /* 	cout << dp.cmdQueue.front().act_unit << ": "; */
+    /* 	cout << dp.cmdQueue.front().act_time << ": "; */
+    /* 	cout << dp.cmdQueue.front().act_precs << ": "; */
+    /* 	cout << dp.cmdQueue.front().act_min << ": "; */
+    /* 	cout << dp.cmdQueue.front().act_max << ": "; */
+    /* 	cout << dp.cmdQueue.front().act_stat << ": "; */
+    /* 	cout << dp.cmdQueue.front().act_stat_time << endl; */
+    /* 	dp.cmdQueue.pop_front(); */
+    /* } */
+    /* return 0; */
 
     int temp; 
     memset(&thread, 0, sizeof(thread));
@@ -581,7 +669,7 @@ int main(int argc,char ** argv)
     /* signal(SIGINT, clear); */
     while(1)
     {
-
+	sleep(10);
 //注释此些行，不用这些代码来发数据给local，而是等server发来数据之后，再发给local。
 // 	if (localID > 0)
 // 	{
