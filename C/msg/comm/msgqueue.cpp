@@ -7,7 +7,20 @@
 
 //#include <config.h>
 #include "msgqueue.h"
-#include "global/global.h"
+//#include "global/global.h"
+#include "message.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/msg.h>
+#include <pthread.h> 
+
+#define MAXLINE 1024
+#define MAX_SEND_SIZE 1024
+
 
 
 msgqueue::msgqueue()
@@ -19,13 +32,15 @@ msgqueue::~msgqueue()
 }
 
 
-int msgqueue::send_message(int qid, struct mymsgbuf *qbuf, long type, char *text)
+int msgqueue::send_message(int qid, struct MsgData *qbuf, long type, char *text)
 {
     printf ("Sending a message....\n");
-    qbuf->mtype = type;
-    strcpy(qbuf->mtext, text);
 
-    if ((msgsnd(qid, (struct msgbuf *)qbuf,strlen(qbuf->mtext) + 1, 0)) == -1)
+    qbuf->msg_type = type;
+    strcpy(qbuf->msg_text, text);
+
+
+    if ((msgsnd(qid, (struct MsgData *)qbuf,strlen(qbuf->msg_text) + 1, 0)) == -1)
     {
 	return -1;
     }
@@ -33,16 +48,16 @@ int msgqueue::send_message(int qid, struct mymsgbuf *qbuf, long type, char *text
 }
 
 
-int msgqueue::read_message(int qid, struct mymsgbuf *qbuf, long type)
+int msgqueue::read_message(int qid, struct MsgData *qbuf, long type)
 {
     printf ("Reading a message....\n");
-    qbuf->mtype = type;
-    if ((msgrcv(qid, (struct msgbuf *) qbuf, MAX_SEND_SIZE, type , 0)) == -1)
+    qbuf->msg_type = type;
+    if ((msgrcv(qid, (struct MsgData*) qbuf, MAX_SEND_SIZE, type , 0)) == -1)
     {
 	return -1;
     } 
 
-    printf ("Type: %ld Text: %s \n", qbuf->mtype, qbuf->mtext);
+    printf ("Type: %ld Text: %s \n", qbuf->msg_type, qbuf->msg_text);
 
     return 0;
 }
@@ -62,7 +77,7 @@ int msgqueue::create_queue()
     key_t key;
     int msgqueue_id;
 
-    key = ftok("~", 'm');
+    key = ftok("ctl_snd_tpt_rcv", 'a');
 	
     if ((msgqueue_id = msgget(key, IPC_CREAT | 0660)) == -1)
     {

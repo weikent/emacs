@@ -11,8 +11,8 @@ public:
     virtual ~msgqueue();
 public:
     int create_queue();
-    int send_message(int qid, struct mymsgbuf *qbuf, long type, char *text);
-    int read_message(int qid, struct mymsgbuf *qbuf, long type);
+    int send_message(int qid, struct MsgData *qbuf, long type, char *text);
+    int read_message(int qid, struct MsgData *qbuf, long type);
 
     int remove_queue(int qid);
 };

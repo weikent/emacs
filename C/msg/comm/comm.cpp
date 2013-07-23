@@ -26,35 +26,128 @@
 #include <sys/types.h>
 //#include <linux/in.h>
 #include <arpa/inet.h>
-
+#include <fcntl.h>
+#include <errno.h>
 #include "msgsnd_cmd.h"
+#include "msgrcv_data.h"
 #include "dataparse.h"
+
+
+
+#include "msgqueue.h"
+//#include "global/global.h"
+
+
 
 using namespace std;
 
 #define MAX_DATA_SEND_TO_SERVER 1024
 
-#define HEARTINTERVAL 2
 
+msgqueue msg;
 
-
-/* msgqueue msg; */
-
-/* int message_t;  //消息队列 */
+int message_t;  //消息队列
 //int localID;   //本地进程ID
 //struct mymsgbuf qbuf;   // 消息队列的结构体，用来保存消息队列中的信息。
 
 dataparse dp;
 
 
+int msg_qid;
+key_t key;
 
-int connectModel = 1;   // 0: 短连接    1:长连接   -1:程序首次启动
+
+
+int connectModel = 0;   // 0: 短连接    1:长连接   -1:程序首次启动
+int connectIsOK = 0;   //判断连接是否成功
 int sameLAN = 0;    //0:不在同一个LAN   1:在同一个LAN
 bool hasDataToSend = false; // 本地层是不是有信息要发到服务器。
-pthread_t thread[2];  // thread1: getotherID(deleted),  thread2: send data to server   thread3: the same LAN, start this thread to create a socket server.
+pthread_t thread[3];  // thread1: getotherID(deleted),  thread2: send data to server   thread3: the same LAN, start this thread to create a socket server.
 //char dataForServer[MAX_DATA_SEND_TO_SERVER];  //
-int socketTOServer;  //与服务器连接的socket描述符。
+int socketTOServer = -1;  //与服务器连接的socket描述符。
 
+char buffer[MAX_DATA_SEND_TO_SERVER]={0};    //接收与发送的缓冲区。
+
+char *serverIP = "192.168.5.74";
+int serverPort = 14567;
+
+bool initialized = false;
+
+Msg_recv* msgrecv_thrd = NULL;
+
+
+
+
+
+void *sendHeart(void *arg);
+void filterData(const char *data);
+int changeConnetModel(char *buff);
+void closeConnect();
+void sendmessageToLocal();
+void *serverToLocal(void *arg);
+
+
+
+
+
+void filterData(const char *data)
+{
+    char *optcode = dp.checkOptCode(data);
+
+    char temp[10];
+    bzero(temp, sizeof(temp));
+    strncpy(temp, optcode, 4);
+    printf ("%s\n",temp);
+    if (strcmp(temp, "0080") == 0)
+    {
+	printf ("change connect mode to short connection!\n", 0);
+
+	closeConnect();
+	connectModel = 0;
+	connectIsOK = 0;
+    }
+    else if (strcmp(temp, "0070") == 0)
+    {
+	int threadok = -1;
+	printf ("change connect mode to long connection!\n", 1);
+	closeConnect();
+	connectModel = 1;
+	if ((threadok = pthread_create(&thread[2], NULL, serverToLocal, NULL)) != 0)
+	{
+	    printf ("create thread for serverToLocal failed !\n");
+	}
+	else
+	{
+	    printf ("create thread for serverToLocal successed !\n");
+	}
+
+	// 发送心跳
+	if((threadok = pthread_create(&thread[0], NULL, sendHeart, NULL)) != 0)
+	    printf("create thread for send heart failed !\n");
+	else
+	    printf("create thread for send heart successed !\n");
+    }
+    else
+    {
+
+	if (dp.parse(buffer) == -1)
+	{
+			
+	}
+	else
+	{
+
+	    sendmessageToLocal();
+	}
+    }
+}
+
+
+void closeConnect()
+{
+    close(socketTOServer);
+    socketTOServer = -1;
+}
 
 
 string& trim(string &str, string oldstr,string::size_type pos = 0)
@@ -65,6 +158,8 @@ string& trim(string &str, string oldstr,string::size_type pos = 0)
         return str;
     return trim(str.erase(pos, 1), delim);
 }
+
+
 /********************************************************/
 /* 检查从服务器接收的数据，是不是要改变程序的连接模式。 */
 /* 即设置长/短连接				        */
@@ -74,51 +169,124 @@ int changeConnetModel(char *buff)
     char temp[10];
 
     bzero(temp, sizeof(temp));
-    strncpy(temp, buff, 6);
+    strncpy(temp, buff, 4);
     printf ("%s\n",temp);
-    if (strcmp(temp, "model0") == 0)
+    if (strcmp(temp, "0080") == 0)
     {
 	printf ("change connect mode to short connection!\n", 0);
-	close(socketTOServer);
+	closeConnect();
 	return 0;
     }
-    else if ((strcmp(temp, "model1") == 0) || (strcmp(temp, "heart") == 0))
+    else if (strcmp(temp, "0070") == 0)
     {
 	printf ("change connect mode to long connection!\n", 1);
 	return 1;
     }
     else
     {
-	close(socketTOServer);
+	closeConnect();
 	printf ("change connect mode to short connection!\n", 0);
 	return 0;
     }
 }
 
-
-/*****************************/
-/* 检查是否与手机在同一个LAN */
-/*****************************/
-int checkIsTheSameLAN(char *buff)
-{
-    char temp[10];
-    bzero(temp, sizeof(temp));
-    strncpy(temp, buff, 4);
-    if (strcmp(temp, "same") == 0)
-    {
-//same LAN
-	return 1;
-    }
-    else
-    {
-// not the same LAN
-// close thread.
-	return 0;
-    }
-    return 0;
+void destroy_msgrecv_thrd () {
+    msgrecv_thrd->stop();
+    cout << "msgrecv_thrd->stop() is called." << endl;
+    delete msgrecv_thrd;
 }
 
-int socketConnect(char *ip, int portnum)
+
+void sendmessageToLocal()
+{
+    cout << "sending...." << endl;
+    Msg_send msgsnd("tpt_snd_ctl_rcv");
+
+    size_t sizMsg = sizeof(SrvCmd)+sizeof(long);
+    MsgCmd tMsgCmd;
+
+
+    cout << "dddddddddddd" << endl;
+    /* usleep(182000); */
+    /* printf ("dp.cmdQueue.size() = %d \n", dp.cmdQueue.size()); */
+
+
+
+
+
+    cout << "1" << endl;
+    while(dp.cmdQueue.size())
+    {
+	cout << "2" << endl;
+	/* printf ("pop_front()\n"); */
+	tMsgCmd.msg_type = sizMsg;
+	strcpy(tMsgCmd.msg_text.sys_id, dp.cmdQueue.front().sys_id);
+	tMsgCmd.msg_text.ins_seq_no = dp.cmdQueue.front().ins_seq_no;
+	tMsgCmd.msg_text.dev_no = dp.cmdQueue.front().dev_no;
+	strcpy(tMsgCmd.msg_text.op_code, dp.cmdQueue.front().op_code);
+	strcpy(tMsgCmd.msg_text.dev_id, dp.cmdQueue.front().dev_id);
+	tMsgCmd.msg_text.ctrl_no = dp.cmdQueue.front().ctrl_no;
+
+	strcpy(tMsgCmd.msg_text.ctrl_id, dp.cmdQueue.front().ctrl_id);
+	strcpy(tMsgCmd.msg_text.ctrl_typ, dp.cmdQueue.front().ctrl_typ);
+	tMsgCmd.msg_text.act_no = dp.cmdQueue.front().act_no;
+	
+	strcpy(tMsgCmd.msg_text.act_typ, dp.cmdQueue.front().act_typ);
+	strcpy(tMsgCmd.msg_text.act_val, dp.cmdQueue.front().act_val);
+	strcpy(tMsgCmd.msg_text.act_unit, dp.cmdQueue.front().act_unit);
+	tMsgCmd.msg_text.act_time, dp.cmdQueue.front().act_time;
+	tMsgCmd.msg_text.act_precs = dp.cmdQueue.front().act_precs;
+	tMsgCmd.msg_text.act_min = dp.cmdQueue.front().act_min;
+	tMsgCmd.msg_text.act_max = dp.cmdQueue.front().act_max;
+	strcpy(tMsgCmd.msg_text.act_stat, dp.cmdQueue.front().act_stat);
+	tMsgCmd.msg_text.act_stat_time = dp.cmdQueue.front().act_stat_time;
+
+	//用来测试
+	/* string str; */
+	/* dp.packageSignalCtrl(dp.cmdQueue.front(), str); */
+	/* cout << str << endl; */
+
+
+	/* ========== */
+	cout << tMsgCmd.msg_type << endl;
+	cout << tMsgCmd.msg_text.sys_id << ": ";
+	cout << tMsgCmd.msg_text.ins_seq_no << ": ";
+	cout << tMsgCmd.msg_text.dev_no << ": ";
+	cout << tMsgCmd.msg_text.op_code << ": ";
+	cout << tMsgCmd.msg_text.dev_id << ": ";
+	cout << tMsgCmd.msg_text.ctrl_no << ": ";
+	cout << tMsgCmd.msg_text.ctrl_id << ": ";
+	cout << tMsgCmd.msg_text.ctrl_typ << ": ";
+	cout << tMsgCmd.msg_text.act_no << ": ";
+	cout << tMsgCmd.msg_text.act_typ << ": ";
+	cout << tMsgCmd.msg_text.act_val << ": ";
+	cout << tMsgCmd.msg_text.act_unit << ": ";
+	cout << tMsgCmd.msg_text.act_time << ": ";
+	cout << tMsgCmd.msg_text.act_precs << ": ";
+	cout << tMsgCmd.msg_text.act_min << ": ";
+	cout << tMsgCmd.msg_text.act_max << ": ";
+	cout << tMsgCmd.msg_text.act_stat << ": ";
+	cout << tMsgCmd.msg_text.act_stat_time << endl;
+
+	msgsnd.send_msg(tMsgCmd, sizMsg);
+	   
+	/* msgsnd.send_msg(tMsgCmd, sizMsg); */
+
+	dp.cmdQueue.pop_front();
+    }
+    /* } */
+    /* else */
+    /* { */
+    /* 	// send message for get ip, port, ssid, password. etc. */
+    /* 	// 在此处发送一个结构，告诉本地层，需要获取保存在本地的服务器的ip 端口。 */
+	
+    /* } */
+
+
+}
+
+
+int socketConnect()
 {
     socketTOServer = socket(AF_INET, SOCK_STREAM, 0);
     if (socketTOServer == -1)
@@ -130,17 +298,326 @@ int socketConnect(char *ip, int portnum)
 
     bzero(&s_add,sizeof(struct sockaddr_in));
     s_add.sin_family=AF_INET;
-    inet_pton(AF_INET, "192.168.1.152", &s_add.sin_addr);
-    s_add.sin_port=htons(portnum); 
+    inet_pton(AF_INET, serverIP, &s_add.sin_addr);
+    s_add.sin_port=htons(serverPort); 
 
     if(-1 == connect(socketTOServer,(struct sockaddr *)(&s_add), sizeof(struct sockaddr)))
     {
 	printf("connect fail !\r\n");
 	return -1;
     }
-    
+
     return 0;
 }
+
+void *commToLocal(void *arg)
+{
+    //send message to local
+    // sendmessageToLocal
+}
+
+
+// 返回的str字符串，需要dp.parese 解包之后，再判断是不是需要通讯层处理的。
+int readLocalMessage(string &str)
+{
+    MsgData tmsg;
+    /* memset(&tmsg.msg_text, 0, sizeof(tmsg.msg_text)); */
+    /* if (!msgrecv_thrd->msg_is_empty()) { */
+    /* 	tmsg = msgrecv_thrd->get_cur_msg(); */
+    /* 	str = (char*)tmsg.msg_text; */
+    /* 	return 0; */
+    /* } */
+
+    msg.read_message(message_t, &tmsg, 1);
+    str = (char*)tmsg.msg_text;
+
+    cout << str << endl;
+    return 0;
+}
+
+void *localToServer(void *arg)
+{
+    MsgData tmsg;
+    for ( ;  ;  )
+    {
+	string str;
+	cout << "44444read message" << endl;
+	readLocalMessage(str);
+
+//	sleep(10);
+	cout << " str = " << str << endl;
+
+	/* if(need to Send to server) */
+	/* { */
+
+	if (str.length() > 0)
+	{
+	    if (connectModel == 0)
+	    {
+		socketTOServer = socket(AF_INET, SOCK_STREAM, 0);
+		if (socketTOServer == -1)
+		{
+//send message to local.
+		}
+
+		struct sockaddr_in s_add; 
+
+		bzero(&s_add,sizeof(struct sockaddr_in));
+		s_add.sin_family=AF_INET;
+		inet_pton(AF_INET, serverIP, &s_add.sin_addr);
+		s_add.sin_port=htons(serverPort); 
+
+		if(-1 == connect(socketTOServer,(struct sockaddr *)(&s_add), sizeof(struct sockaddr)))
+		{
+		    printf("connect fail !\r\n");
+
+		}
+
+		if (write(socketTOServer, str.c_str(), strlen(str.c_str())) == -1)
+		{
+		    printf ("write error 4\n");
+
+		}
+		int recbytes;
+		for ( ;  ;  )
+		{
+		    printf ("readind..............\n");
+		    memset(buffer, 0, MAX_DATA_SEND_TO_SERVER);
+		    if(-1 == (recbytes = read(socketTOServer,buffer,MAX_DATA_SEND_TO_SERVER)))
+		    {
+			printf("read data fail !\n");
+			break;
+		    }
+		    printf("read ok\nREC:\n");
+
+		    buffer[recbytes]='\0';
+		    printf("%s\n",buffer);
+
+		    /* strcpy(buffer, text6); */
+		    filterData(buffer);
+		    break;
+		}
+
+		cout << "shorconnect" << endl;
+		closeConnect();
+
+	    }
+	    else if (connectModel == 1)
+	    {
+//		alarm(0);
+		cout << "socketToServer = " << socketTOServer << endl;
+		if (socketTOServer == -1) // -1 meaning the socket is closed.
+		{
+		    socketConnect();
+		}
+		if (write(socketTOServer, str.c_str(), str.length()) == -1)
+		{
+		    printf ("write error 2\n");
+		}
+//		signal(SIGALRM, sendHeart);
+//		alarm(10);
+		//cout << "write ok" << endl;
+	    }
+
+	    /* } */
+	    /* else */
+	    /* { */
+	    /* process by comm app */
+	    /* } */
+
+	}
+
+    }
+}
+
+void *serverToLocal(void *arg)
+{
+    /* Msg_send msgsnd("tpt_snd_ctl_rcv"); */
+
+    /* size_t sizMsg = sizeof(SrvCmd)+sizeof(long); */
+    /* MsgCmd tMsgCmd; */
+
+
+    /* char text6[] = "{\"sysID\":\"1\",\"seqOfIns\":\"1\",\"numOfDev\":\"2\",\"optCode\":\"0050\",\"timeout\":\"1234756609589\",\"devArray\":[{\"devID\":\"aa00ddeeffhe\",\"numOfCont\":\"2\",\"contArray\":[{\"contID\":\"0\",\"contType\":\"500\",\"numOfAct\":\"2\",\"actArray\":[{\"actType\":\"0\",\"actValue\":\"0\"},{\"actType\":\"1\",\"actValue\":\"0\"}]},{\"contID\":\"1\",\"contType\":\"500\",\"numOfAct\":\"1\",\"actArray\":[{\"actType\":\"0\",\"actValue\":\"0\"}]}]},{\"devID\":\"aa00ddeeffhh\",\"numOfCont\":\"2\",\"contArray\":[{\"contID\":\"0\",\"contType\":\"500\",\"numOfAct\":\"2\",\"actArray\":[{\"actType\":\"1\",\"actValue\":\"0\"},{\"actType\":\"2\",\"actValue\":\"0\"}]},{\"contID\":\"1\",\"contType\":\"500\",\"numOfAct\":\"2\",\"actArray\":[{\"actType\":\"1\",\"actValue\":\"0\"},{\"actType\":\"2\",\"actValue\":\"0\"}]}]}]}";  */
+
+    /* cout << "parse data" << endl; */
+
+    /* dp.parse(text6); */
+    
+    /* string str; */
+    /* dp.packageMutipleCtrl(dp.cmdQueue, str); */
+    
+    /* string oldstr = "\n"; */
+    /* trim(str,oldstr, 0); */
+    /* oldstr = "\t"; */
+    /* trim(str, oldstr, 0); */
+    /* oldstr = " "; */
+    /* trim(str, oldstr, 0); */
+    /* oldstr = "\r"; */
+    /* trim(str, oldstr, 0); */
+
+    /* char temp[4]; */
+    /* sprintf(temp, "%04d", str.length()); */
+    /* //str = temp+str; */
+    /* cout <<"str == " << str << endl; */
+
+
+
+    
+/*     int recbytes; */
+/*     int sin_size; */
+
+/*     char buffer[MAX_DATA_SEND_TO_SERVER]={0};    /\* 接受缓冲区 *\/ */
+
+/*     //char heart[] = "{\"optCode\":\"heart\",\"devID\":\"34bca6010203\"}"; */
+    
+/*     int strlen = str.length(); */
+/*     char heart[MAX_DATA_SEND_TO_SERVER] = {0}; */
+
+/*     int aa = str.length(); */
+/*     strncpy(heart, str.c_str(), aa); */
+    
+/*     heart[aa] = '\0'; */
+/*     cout << "heart = " << heart << endl; */
+
+/*     int ret; */
+/*     unsigned short portnum=0x8888;  /\* 服务端使用的通信端口，可以更改，需和服务端相同 *\/ */
+/* //    unsigned short portnum=14567; */
+
+    for ( ;  ;  )
+    {
+	sleep(1);
+	if (connectModel == 1)
+	{
+	    connectIsOK = 0; 
+
+	    closeConnect();
+
+	    printf ("has Data to send!\n");
+
+	    socketTOServer = socket(AF_INET, SOCK_STREAM, 0);
+	    if (socketTOServer == -1)
+	    {
+		//create socket failed.
+		//send message to local.
+	    }
+
+	    struct sockaddr_in s_add; 
+
+	    bzero(&s_add,sizeof(struct sockaddr_in));
+	    s_add.sin_family=AF_INET;
+	    inet_pton(AF_INET, serverIP, &s_add.sin_addr);
+	    s_add.sin_port=htons(serverPort); 
+
+	    if(-1 == connect(socketTOServer,(struct sockaddr *)(&s_add), sizeof(struct sockaddr)))
+	    {
+		printf("connect fail !\r\n");
+		continue;
+	    }
+
+	    cout << "connecct OK" << endl;
+	    // connect successful, set connectIsOK = 1
+	    connectIsOK = 1;
+
+	    //comment this code, do not send init at first.
+	    /* if (write(socketTOServer, "init", 4) == -1) */
+	    /* { */
+	    /* 	printf ("write error\n"); */
+
+	    /* } */
+
+	    fd_set fdsr;
+	    struct timeval tv;
+	    int maxsock;
+	    maxsock = socketTOServer;
+
+	    int ret = -1;
+	    while(1 == connectIsOK)
+	    {
+		FD_ZERO(&fdsr);
+
+		FD_SET(socketTOServer, &fdsr);
+
+		// timeout setting
+		tv.tv_sec = 9;
+		tv.tv_usec = 0;
+
+		ret = select(maxsock + 1, &fdsr, NULL, NULL, &tv);
+
+		if (ret < 0) {
+		    perror("select");
+		    break;
+		} else if (ret == 0) {
+//		    printf("timeout\n");
+		    /* continue; */
+		}
+
+		cout << "3333" << endl;
+		if (FD_ISSET(socketTOServer, &fdsr))
+		{
+
+		    ret = read(socketTOServer, buffer, MAX_DATA_SEND_TO_SERVER);
+
+		    if (ret <= 0)
+		    {        
+			/* server close this socket connect. */
+			printf("server close\n");
+
+			closeConnect();
+			connectIsOK = 0;
+		    } 
+		    else
+		    {        
+			/* receive data from server */
+			if (ret < MAX_DATA_SEND_TO_SERVER)
+			{
+			    memset(&buffer[ret], '\0', 1);
+			}
+			printf("-----------%s------------\n", buffer);
+			filterData(buffer);
+		    }
+		}
+	    }
+	}
+	else
+	{
+	    return NULL;
+	}
+    }
+}
+
+
+
+void *sendHeart(void *arg)
+{
+    char heart[] = "{\"optCode\":\"heart\",\"devID\":\"34bca6010203\"}";
+
+    while(1)
+    {
+	sleep(10);
+	if (1 == connectIsOK && 1 == connectModel)
+	{
+	    cout << "heart" << endl;
+	    try{
+		if (write(socketTOServer, heart, sizeof(heart)) == -1)
+		{
+		    printf ("write error 3\n");
+		    cout << "errno = " << errno << endl;
+		}
+	    }	    
+	    catch(exception err)
+	    {
+
+	    }
+	}
+	else
+	{
+	    return NULL;
+	}
+    }
+}
+
+
 
 
 /**************************/
@@ -148,14 +625,19 @@ int socketConnect(char *ip, int portnum)
 /**************************/
 void *connectServer(void *arg)
 {
-    /* char text6[] = "{\"sysID\":\"1\",\"seqOfIns\":\"1\",\"numOfDev\":\"1\",\"optCode\":\"0050\",\"timeout\":\"1234756609589\",\"devArray\":[{\"devID\":\"aa00ddeeffhh\",\"numOfCont\":\"1\",\"contArray\":[{\"contID\":\"0\",\"contType\":\"500\",\"numOfAct\":\"1\",\"actArray\":[{\"actType\":\"0\",\"actValue\":\"0\"}]}]},{\"devID\":\"aa00ddeeffhh\",\"numOfCont\":\"1\",\"contArray\":[{\"contID\":\"0\",\"contType\":\"500\",\"numOfAct\":\"1\",\"actArray\":[{\"actType\":\"0\",\"actValue\":\"0\"}]}]}]}"; */
+    Msg_send msgsnd("tpt_snd_ctl_rcv");
+
+    size_t sizMsg = sizeof(SrvCmd)+sizeof(long);
+    MsgCmd tMsgCmd;
+
+    /* char text6[] = "{\"sysID\":\"1\",\"seqOfIns\":\"1\",\"numOfDev\":\"1\",\"optCode\":\"0050\",\"timeout\":\"1234756609589\",\"devArray\":[{\"devID\":\"34bca6010203\",\"numOfCont\":\"1\",\"contArray\":[{\"contID\":\"0\",\"contType\":\"500\",\"numOfAct\":\"1\",\"actArray\":[{\"actType\":\"0\",\"actValue\":\"0\"}]}]},{\"devID\":\"34bca6010203\",\"numOfCont\":\"1\",\"contArray\":[{\"contID\":\"0\",\"contType\":\"500\",\"numOfAct\":\"1\",\"actArray\":[{\"actType\":\"0\",\"actValue\":\"0\"}]}]}]}"; */
 
     /* dp.parse(text6); */
     /* dp.parse(text6); */
     /* dp.parse(text6); */
     /* dp.parse(text6); */
 
-    char text6[] = "{\"sysID\":\"1\",\"seqOfIns\":\"1\",\"numOfDev\":\"2\",\"optCode\":\"0050\",\"timeout\":\"1234756609589\",\"devArray\":[{\"devID\":\"aa00ddeeffhe\",\"numOfCont\":\"2\",\"contArray\":[{\"contID\":\"0\",\"contType\":\"500\",\"numOfAct\":\"2\",\"actArray\":[{\"actType\":\"0\",\"actValue\":\"0\"},{\"actType\":\"1\",\"actValue\":\"0\"}]},{\"contID\":\"1\",\"contType\":\"500\",\"numOfAct\":\"1\",\"actArray\":[{\"actType\":\"0\",\"actValue\":\"0\"}]}]},{\"devID\":\"aa00ddeeffhh\",\"numOfCont\":\"2\",\"contArray\":[{\"contID\":\"0\",\"contType\":\"500\",\"numOfAct\":\"2\",\"actArray\":[{\"actType\":\"1\",\"actValue\":\"0\"},{\"actType\":\"2\",\"actValue\":\"0\"}]},{\"contID\":\"1\",\"contType\":\"500\",\"numOfAct\":\"2\",\"actArray\":[{\"actType\":\"1\",\"actValue\":\"0\"},{\"actType\":\"2\",\"actValue\":\"0\"}]}]}]}"; 
+    char text6[] = "{\"sysID\":\"1\",\"seqOfIns\":\"1\",\"numOfDev\":\"2\",\"optCode\":\"0050\",\"timeout\":\"1234756609589\",\"devArray\":[{\"devID\":\"aa00ddeeffhe\",\"numOfCont\":\"2\",\"contArray\":[{\"contID\":\"0\",\"contType\":\"500\",\"numOfAct\":\"2\",\"actArray\":[{\"actType\":\"0\",\"actValue\":\"0\"},{\"actType\":\"1\",\"actValue\":\"0\"}]},{\"contID\":\"1\",\"contType\":\"500\",\"numOfAct\":\"1\",\"actArray\":[{\"actType\":\"0\",\"actValue\":\"0\"}]}]},{\"devID\":\"34bca6010203\",\"numOfCont\":\"2\",\"contArray\":[{\"contID\":\"0\",\"contType\":\"500\",\"numOfAct\":\"2\",\"actArray\":[{\"actType\":\"1\",\"actValue\":\"0\"},{\"actType\":\"2\",\"actValue\":\"0\"}]},{\"contID\":\"1\",\"contType\":\"500\",\"numOfAct\":\"2\",\"actArray\":[{\"actType\":\"1\",\"actValue\":\"0\"},{\"actType\":\"2\",\"actValue\":\"0\"}]}]}]}"; 
 
     cout << "parse data" << endl;
 
@@ -200,8 +682,8 @@ void *connectServer(void *arg)
 
 //    char *heart = const_cast<char *>(str.c_str());
     int ret;
-//    unsigned short portnum=0x8888;  /* 服务端使用的通信端口，可以更改，需和服务端相同 */
-    unsigned short portnum=14567;
+    unsigned short portnum=0x8888;  /* 服务端使用的通信端口，可以更改，需和服务端相同 */
+//    unsigned short portnum=14567;
 
     printf ("%s\n",*(char**)arg);
 
@@ -223,7 +705,7 @@ void *connectServer(void *arg)
 
 	    bzero(&s_add,sizeof(struct sockaddr_in));
 	    s_add.sin_family=AF_INET;
-	    inet_pton(AF_INET, "192.168.1.152", &s_add.sin_addr);
+	    inet_pton(AF_INET, "127.0.0.1", &s_add.sin_addr);
 	    s_add.sin_port=htons(portnum); 
 
 	    if(-1 == connect(socketTOServer,(struct sockaddr *)(&s_add), sizeof(struct sockaddr)))
@@ -234,7 +716,7 @@ void *connectServer(void *arg)
 
 	    if (write(socketTOServer, "init", 4) == -1)
 	    {
-		printf ("write error\n");
+		printf ("write error 4\n");
 
 	    }
 	    for ( ;  ;  )
@@ -262,7 +744,7 @@ void *connectServer(void *arg)
 
 	    printf ("close connect\n");
 	    connectModel = 1;
-	    close(socketTOServer);
+	    closeConnect();
 
 	}
 	if (connectModel == 0)//short socket connection
@@ -282,7 +764,7 @@ void *connectServer(void *arg)
 
 		bzero(&s_add,sizeof(struct sockaddr_in));
 		s_add.sin_family=AF_INET;
-		inet_pton(AF_INET, "192.168.1.152", &s_add.sin_addr);
+		inet_pton(AF_INET, "127.0.0.1", &s_add.sin_addr);
 		s_add.sin_port=htons(portnum); 
 
 		if(-1 == connect(socketTOServer,(struct sockaddr *)(&s_add), sizeof(struct sockaddr)))
@@ -309,12 +791,14 @@ void *connectServer(void *arg)
 
 		    buffer[recbytes]='\0';
 		    printf("%s\n",buffer);
+		    dp.parse(buffer);
+		    sendmessageToLocal();
 		    break;
 		}
 
 
 		printf ("close this short connect\n");
-		close(socketTOServer);
+		closeConnect();
 //		connectModel = changeConnetModel(buffer);
 
 		hasDataToSend = false;
@@ -330,8 +814,10 @@ void *connectServer(void *arg)
 	{
 	    //send data to server, Although local app not send data, the comm app need send "heart" to server.
 
-	    int connectIsOK = 0;
-	    close(socketTOServer);
+
+	    int connectIsOK = 0; 
+
+	    closeConnect();
 
 	    printf ("has Data to send!\n");
 
@@ -342,11 +828,12 @@ void *connectServer(void *arg)
 		//send message to local.
 	    }
 
+
 	    struct sockaddr_in s_add; 
 
 	    bzero(&s_add,sizeof(struct sockaddr_in));
 	    s_add.sin_family=AF_INET;
-	    inet_pton(AF_INET, "192.168.1.152", &s_add.sin_addr);
+	    inet_pton(AF_INET, "127.0.0.1", &s_add.sin_addr);
 	    s_add.sin_port=htons(portnum); 
 
 	    if(-1 == connect(socketTOServer,(struct sockaddr *)(&s_add), sizeof(struct sockaddr)))
@@ -354,26 +841,25 @@ void *connectServer(void *arg)
 		printf("connect fail !\r\n");
 		continue;
 	    }
+
+	    // connect successful, set connectIsOK = 1
 	    connectIsOK = 1;
+
+	    //comment this code, do not send init at first.
 	    /* if (write(socketTOServer, "init", 4) == -1) */
 	    /* { */
 	    /* 	printf ("write error\n"); */
 
 	    /* } */
 
-	    // use for when the first time change to long connection, send a "heart" to server.
-	    long int li = HEARTINTERVAL;
 
 	    fd_set fdsr;
 	    struct timeval tv;
 	    int maxsock;
 	    maxsock = socketTOServer;
 
-
-
 	    while(1 == connectIsOK)
 	    {
-		
 		FD_ZERO(&fdsr);
 
 		FD_SET(socketTOServer, &fdsr);
@@ -381,7 +867,6 @@ void *connectServer(void *arg)
 		// timeout setting
 		tv.tv_sec = 9;
 		tv.tv_usec = 0;
-
 
 		ret = select(maxsock + 1, &fdsr, NULL, NULL, &tv);
 
@@ -393,8 +878,6 @@ void *connectServer(void *arg)
 		    /* continue; */
 		}
 
-
-
 		if (FD_ISSET(socketTOServer, &fdsr))
 		{
 
@@ -405,11 +888,11 @@ void *connectServer(void *arg)
 			/* server close this socket connect. */
 			printf("server close\n");
 
-			close(socketTOServer);
+			closeConnect();
 			connectIsOK = 0;
+
 			/* connectModel = 0; */
 			connectModel = 1;
-
 		    } 
 		    else
 		    {        
@@ -420,7 +903,7 @@ void *connectServer(void *arg)
 			}
 			printf("-----------%s------------\n", buffer);
 			dp.parse(buffer);
-//			send(fd_A[i], buf, sizeof(buf), 0);
+			sendmessageToLocal();
 		    }
 		}
 
@@ -455,36 +938,7 @@ void *connectServer(void *arg)
 
 		    hasDataToSend = false;
 		}
-		else
-		{
-		    /* sleep(5); */
-		    cout << "heart" << endl;
-		    //心跳数据
-		    if (li == HEARTINTERVAL)
-		    {
-			li = 0;
-			if (write(socketTOServer, heart, aa) == -1)
-			{
-			    printf ("write error\n");
 
-			}
-
-// 此处代码注释掉，使用上面的select来接收服务器端数据。
-/* 			memset(buffer, 0, MAX_DATA_SEND_TO_SERVER); */
-/* 			if(-1 == (recbytes = read(socketTOServer,buffer,MAX_DATA_SEND_TO_SERVER))) */
-/* 			{ */
-/* 			    printf("read data fail !\n"); */
-/* 			} */
-/* 			printf("read ok\nREC:\n"); */
-
-/* 			buffer[recbytes]='\0'; */
-/* 			printf("%s\n",buffer); */
-/* //			connectModel = changeConnetModel(buffer); */
-/* 			dp.parse(buffer); */
-/* 			printf ("one connect finish-----------------------------\n"); */
-		    }
-		    li++;
-		}
 	    }
 	}
     }
@@ -503,80 +957,7 @@ void *connectServer(void *arg)
 /*     exit(0); */
 /* } */
 
-void *sendmessage(void *arg)
-{
 
-    Msg_send msgsnd("tpt_snd_ctl_rcv");
-
-    size_t sizMsg = sizeof(SrvCmd)+sizeof(long);
-    MsgCmd tMsgCmd;
-    while(1)
-    {
-//	printf ("sendmessage\n");
-	usleep(182000);
-    
-//	printf ("dp.cmdQueue.size() = %d \n", dp.cmdQueue.size());
-
-	while(dp.cmdQueue.size())
-	{
-//	    printf ("pop_front()\n");
-	    tMsgCmd.msg_type = sizMsg;
-	    strcpy(tMsgCmd.msg_text.sys_id, dp.cmdQueue.front().sys_id);
-	    tMsgCmd.msg_text.ins_seq_no = dp.cmdQueue.front().ins_seq_no;
-	    tMsgCmd.msg_text.dev_no = dp.cmdQueue.front().dev_no;
-	    strcpy(tMsgCmd.msg_text.op_code, dp.cmdQueue.front().op_code);
-	    strcpy(tMsgCmd.msg_text.dev_id, dp.cmdQueue.front().dev_id);
-	    tMsgCmd.msg_text.ctrl_no = dp.cmdQueue.front().ctrl_no;
-
-	    strcpy(tMsgCmd.msg_text.ctrl_id, dp.cmdQueue.front().ctrl_id);
-	    strcpy(tMsgCmd.msg_text.ctrl_typ, dp.cmdQueue.front().ctrl_typ);
-	    tMsgCmd.msg_text.act_no = dp.cmdQueue.front().act_no;
-	
-	    strcpy(tMsgCmd.msg_text.act_typ, dp.cmdQueue.front().act_typ);
-	    strcpy(tMsgCmd.msg_text.act_val, dp.cmdQueue.front().act_val);
-	    strcpy(tMsgCmd.msg_text.act_unit, dp.cmdQueue.front().act_unit);
-	    tMsgCmd.msg_text.act_time, dp.cmdQueue.front().act_time;
-	    tMsgCmd.msg_text.act_precs = dp.cmdQueue.front().act_precs;
-	    tMsgCmd.msg_text.act_min = dp.cmdQueue.front().act_min;
-	    tMsgCmd.msg_text.act_max = dp.cmdQueue.front().act_max;
-	    strcpy(tMsgCmd.msg_text.act_stat, dp.cmdQueue.front().act_stat);
-	    tMsgCmd.msg_text.act_stat_time = dp.cmdQueue.front().act_stat_time;
-
-	    //用来测试
-	    /* string str; */
-	    /* dp.packageSignalCtrl(dp.cmdQueue.front(), str); */
-	    /* cout << str << endl; */
-
-
-	    /* ========== */
-	    /* cout << tMsgCmd.msg_type << endl; */
-	    /* cout << tMsgCmd.msg_text.sys_id << ": "; */
-	    /* cout << tMsgCmd.msg_text.ins_seq_no << ": "; */
-	    /* cout << tMsgCmd.msg_text.dev_no << ": "; */
-	    /* cout << tMsgCmd.msg_text.op_code << ": "; */
-	    /* cout << tMsgCmd.msg_text.dev_id << ": "; */
-	    /* cout << tMsgCmd.msg_text.ctrl_no << ": "; */
-	    /* cout << tMsgCmd.msg_text.ctrl_id << ": "; */
-	    /* cout << tMsgCmd.msg_text.ctrl_typ << ": "; */
-	    /* cout << tMsgCmd.msg_text.act_no << ": "; */
-	    /* cout << tMsgCmd.msg_text.act_typ << ": "; */
-	    /* cout << tMsgCmd.msg_text.act_val << ": "; */
-	    /* cout << tMsgCmd.msg_text.act_unit << ": "; */
-	    /* cout << tMsgCmd.msg_text.act_time << ": "; */
-	    /* cout << tMsgCmd.msg_text.act_precs << ": "; */
-	    /* cout << tMsgCmd.msg_text.act_min << ": "; */
-	    /* cout << tMsgCmd.msg_text.act_max << ": "; */
-	    /* cout << tMsgCmd.msg_text.act_stat << ": "; */
-	    /* cout << tMsgCmd.msg_text.act_stat_time << endl; */
-
-	    msgsnd.send_msg(tMsgCmd, sizMsg);
-	   
-	    /* msgsnd.send_msg(tMsgCmd, sizMsg); */
-
-	    dp.cmdQueue.pop_front();
-	}
-    }
-}
 /* void *getlocalID(void *arg) */
 /* { */
 /*     getOtherID otherID; */
@@ -590,83 +971,264 @@ void *sendmessage(void *arg)
 /*     } */
 /* } */
 
+int shortConnect()
+{
+    printf ("connect init\n");
+//一次socket 连接到server, 通知server
+    socketTOServer = socket(AF_INET, SOCK_STREAM, 0);
+    if (socketTOServer == -1)
+    {
+//send message to local.
+    }
+
+    struct sockaddr_in s_add; 
+
+    bzero(&s_add,sizeof(struct sockaddr_in));
+    s_add.sin_family=AF_INET;
+    inet_pton(AF_INET, serverIP, &s_add.sin_addr);
+    s_add.sin_port=htons(serverPort); 
+
+    if(-1 == connect(socketTOServer,(struct sockaddr *)(&s_add), sizeof(struct sockaddr)))
+    {
+	printf("connect fail !\r\n");
+
+    }
+
+    if (write(socketTOServer, buffer, strlen(buffer)) == -1)
+    {
+	printf ("write error 5\n");
+    }
+}
+
+
+/* get some info from local app */
+int initialize()
+{
+    // 因为现在还不存在本地层保存信息的功能，所以可以把getInfo设置为true。
+    /* bool getInfo = false; */
+    bool getInfo = true;
+    
+    while(!getInfo)
+    {
+	// 1. send message to local
+//	sendmessageToLocal();
+	// 2. read message      get serverIP, Port, ssid, password, 
+	// 第二步可以使用线程 localToServer
+	// 3. Assign the variables serverIP and serverPort, 
+	// 4. test connect. connect server once.
+	// 5. getInfo = true
+    }
+
+    cout << "set initialize" << endl;
+    initialized = true;
+    return 0;
+}
 
 int main(int argc,char ** argv)
 {
-    /* char text6[] = "{\"sysID\":\"1\",\"seqOfIns\":\"1\",\"numOfDev\":\"2\",\"optCode\":\"0050\",\"timeout\":\"1234756609589\",\"devArray\":[{\"devID\":\"aa00ddeeffhe\",\"numOfCont\":\"2\",\"contArray\":[{\"contID\":\"0\",\"contType\":\"500\",\"numOfAct\":\"2\",\"actArray\":[{\"actType\":\"0\",\"actValue\":\"0\"},{\"actType\":\"1\",\"actValue\":\"0\"}]},{\"contID\":\"1\",\"contType\":\"500\",\"numOfAct\":\"1\",\"actArray\":[{\"actType\":\"0\",\"actValue\":\"0\"}]}]},{\"devID\":\"aa00ddeeffhh\",\"numOfCont\":\"2\",\"contArray\":[{\"contID\":\"0\",\"contType\":\"500\",\"numOfAct\":\"2\",\"actArray\":[{\"actType\":\"1\",\"actValue\":\"0\"},{\"actType\":\"2\",\"actValue\":\"0\"}]},{\"contID\":\"1\",\"contType\":\"500\",\"numOfAct\":\"2\",\"actArray\":[{\"actType\":\"1\",\"actValue\":\"0\"},{\"actType\":\"2\",\"actValue\":\"0\"}]}]}]}"; */
 
-    /* cout << "parse data" << endl; */
 
-    /* dp.parse(text6); */
+    // 测试packageMutipleCtrl
+    /* char text6[] = "{\"sysID\":\"1\",\"seqOfIns\":\"1\",\"numOfDev\":\"2\",\"optCode\":\"0050\",\"timeout\":\"1234756609589\",\"devArray\":[{\"devID\":\"aa00ddeeffhe\",\"numOfCont\":\"2\",\"contArray\":[{\"contID\":\"0\",\"contType\":\"500\",\"numOfAct\":\"2\",\"actArray\":[{\"actType\":\"0\",\"actValue\":\"0\"},{\"actType\":\"1\",\"actValue\":\"0\"}]},{\"contID\":\"1\",\"contType\":\"500\",\"numOfAct\":\"1\",\"actArray\":[{\"actType\":\"0\",\"actValue\":\"0\"}]}]},{\"devID\":\"34bca6010203\",\"numOfCont\":\"2\",\"contArray\":[{\"contID\":\"0\",\"contType\":\"500\",\"numOfAct\":\"2\",\"actArray\":[{\"actType\":\"1\",\"actValue\":\"0\"},{\"actType\":\"2\",\"actValue\":\"0\"}]},{\"contID\":\"1\",\"contType\":\"500\",\"numOfAct\":\"2\",\"actArray\":[{\"actType\":\"1\",\"actValue\":\"0\"},{\"actType\":\"2\",\"actValue\":\"0\"}]}]}]}"; */
+
+
+/*     char text6[] = "{\"sysID\":\"1\",\"seqOfIns\":\"1\",\"numOfDev\":\"1\",\"optCode\":\"0050\",\"timeout\":\"1234756609589\",\"devArray\":[{\"devID\":\"34bca6010203\",\"numOfCont\":\"1\",\"contArray\":[{\"contID\":\"0\",\"contType\":\"500\",\"numOfAct\":\"1\",\"actArray\":[{\"actType\":\"0\",\"actValue\":\"0\"}]}]}]}"; */
+
+
+
+/*     cout << "parse data" << endl; */
+
+/*     dp.parse(text6); */
     
+/*     string str; */
+/*     dp.packageMutipleCtrl(dp.cmdQueue, str); */
+/*     /\* string oldstr = "\n"; *\/ */
+/*     /\* trim(str,oldstr, 0); *\/ */
+/*     /\* oldstr = "\t"; *\/ */
+/*     /\* trim(str, oldstr, 0); *\/ */
+/*     cout <<"str == " << str << endl; */
+
+/* //    dp.parse(str.c_str()); */
+/*     return 0; */
+    // 测试packageMutipleCtrl结束
+
+
+
+    //====================================================================================================
+    // 测试packageMutipleSensor
+
+
+/* {"sysID":"1","seqOfIns":"1","numOfDev":"1","optCode":"0030","timeout":"1234756609589", */
+/*     "devArray":[{"devID":"34bca6010203","numOfCont
+":"1", */
+/*         "senArray":[{"senID":"0","senType":"0005","numOfParam":"1", */
+/* 			"paramArray":[{"paramType":"0055","paramValue":"220"},{"paramType":"0060","paramValue":"10"}]}]}]} */
+
+    /* deque<MeteringData> dataQue; */
+    /* MeteringData meterData; */
+
+    /* strcpy(meterData.sys_id, "1"); */
+    /* meterData.dev_no = 1; */
+    /* strcpy(meterData.op_code, "0040"); */
+    
+    /* strcpy(meterData.dev_id, "aabbccddeeff"); */
+    /* meterData.sensor_no = 2; */
+
+    /* strcpy(meterData.sensor_id, "1"); */
+    /* strcpy(meterData.sensor_typ, "1type"); */
+    /* meterData.param_no = 2; */
+    
+    /* strcpy(meterData.param_typ, "partyp"); */
+    /* strcpy(meterData.param_Val, "parval"); */
+    
+    /* dataQue.push_back(meterData); */
+
+    /* strcpy(meterData.sys_id, "1"); */
+    /* meterData.dev_no = 1; */
+    /* strcpy(meterData.op_code, "0040"); */
+    
+    /* strcpy(meterData.dev_id, "aabbccddeeff"); */
+    /* meterData.sensor_no = 2; */
+
+    /* strcpy(meterData.sensor_id, "1"); */
+    /* strcpy(meterData.sensor_typ, "1type"); */
+    /* meterData.param_no = 2; */
+    
+    /* strcpy(meterData.param_typ, "partyp2"); */
+    /* strcpy(meterData.param_Val, "parval2"); */
+
+    /* dataQue.push_back(meterData);     */
+
+    /* strcpy(meterData.sys_id, "1"); */
+    /* meterData.dev_no = 1; */
+    /* strcpy(meterData.op_code, "0040"); */
+    
+    /* strcpy(meterData.dev_id, "aabbccddeeff"); */
+    /* meterData.sensor_no = 2; */
+
+    /* strcpy(meterData.sensor_id, "1"); */
+    /* strcpy(meterData.sensor_typ, "1type"); */
+    /* meterData.param_no = 2; */
+    
+    /* strcpy(meterData.param_typ, "partyp3"); */
+    /* strcpy(meterData.param_Val, "parval3"); */
+    
+    /* dataQue.push_back(meterData); */
+
+    /* strcpy(meterData.sys_id, "1"); */
+    /* meterData.dev_no = 1; */
+    /* strcpy(meterData.op_code, "0040"); */
+    
+    /* strcpy(meterData.dev_id, "aabbccddeeff"); */
+    /* meterData.sensor_no = 2; */
+
+    /* strcpy(meterData.sensor_id, "2"); */
+    /* strcpy(meterData.sensor_typ, "2type"); */
+    /* meterData.param_no = 2; */
+    
+    /* strcpy(meterData.param_typ, "partyp4"); */
+    /* strcpy(meterData.param_Val, "parval4"); */
+
+    /* dataQue.push_back(meterData);     */
+
+    /* /\* while(dataQue.size()) *\/ */
+    /* /\* { *\/ */
+    /* /\* 	cout << dataQue.front().param_typ << endl; *\/ */
+    /* /\* 	dataQue.pop_front(); *\/ */
+    /* /\* } *\/ */
     /* string str; */
-    /* dp.packageMutipleCtrl(dp.cmdQueue, str); */
-    /* string oldstr = "\n"; */
-    /* trim(str,oldstr, 0); */
-    /* oldstr = "\t"; */
-    /* trim(str, oldstr, 0); */
-    /* cout <<"str == " << str << endl; */
+    /* dp.packageMutipleSensor(dataQue, str); */
 
-    /* dp.parse(str.c_str()); */
+    /* cout << "str = " << str << endl; */
 
-    /* while(dp.cmdQueue.size()) */
-    /* { */
-    /* 	printf ("pop_front()\n"); */
-
-    /* 	//用来测试 */
-    /* 	/\* string str; *\/ */
-    /* 	/\* dp.packageSignalCtrl(dp.cmdQueue.front(), str); *\/ */
-    /* 	/\* cout << str << endl; *\/ */
-
-
-
-
-    /* 	cout << dp.cmdQueue.front().sys_id << ": "; */
-    /* 	cout << dp.cmdQueue.front().ins_seq_no << ": "; */
-    /* 	cout << dp.cmdQueue.front().dev_no << ": "; */
-    /* 	cout << dp.cmdQueue.front().op_code << ": "; */
-    /* 	cout << dp.cmdQueue.front().dev_id << ": "; */
-    /* 	cout << dp.cmdQueue.front().ctrl_no << ": "; */
-    /* 	cout << dp.cmdQueue.front().ctrl_id << ": "; */
-    /* 	cout << dp.cmdQueue.front().ctrl_typ << ": "; */
-    /* 	cout << dp.cmdQueue.front().act_no << ": "; */
-    /* 	cout << dp.cmdQueue.front().act_typ << ": "; */
-    /* 	cout << dp.cmdQueue.front().act_val << ": "; */
-    /* 	cout << dp.cmdQueue.front().act_unit << ": "; */
-    /* 	cout << dp.cmdQueue.front().act_time << ": "; */
-    /* 	cout << dp.cmdQueue.front().act_precs << ": "; */
-    /* 	cout << dp.cmdQueue.front().act_min << ": "; */
-    /* 	cout << dp.cmdQueue.front().act_max << ": "; */
-    /* 	cout << dp.cmdQueue.front().act_stat << ": "; */
-    /* 	cout << dp.cmdQueue.front().act_stat_time << endl; */
-    /* 	dp.cmdQueue.pop_front(); */
-    /* } */
     /* return 0; */
+
+    // 测试packageMutipleSensor 结束
+    // ====================================================================================================
+
+
+
+
+
+
+    /************************************************************************
+    /* char text6[] = "{\"sysID\":\"1\",\"seqOfIns\":\"1\",\"numOfDev\":\"1\",\"optCode\":\"0050\",\"timeout\":\"1234756609589\"}"; */
+
+
+
+    /* string optCode = dp.checkOptCode(text6); */
+    /* cout << optCode << endl; */
+
+    /* return 0; */
+
+
+
+    // 此处创建消息队列，用来读取本地层发送的信息
+    message_t = msg.create_queue();
+    cout << "id = " << message_t << endl;
+
+
+    /* ============================== */
+    // 创建与本地层交互的消息队列   会启动一个线程循环读取此消息队列，并把消息暂存在msgrecv_thrd对象中。
+    msgrecv_thrd = new Msg_recv("tpt_snd_ctl_rcv_data");
+    atexit(destroy_msgrecv_thrd);
+    /* cout << "Msg_recv created" << endl; */
+    msgrecv_thrd->start();
+    /* cout << "Msg_recv started" << endl; */
+
+    /* int flag = fcntl(0, F_GETFL, 0); */
+    /* flag |= O_NONBLOCK; */
+    /* if (fcntl(0, F_SETFL, flag) < 0) {      /\* fgetc no-block now *\/ */
+    /* 	cerr << "fcntl() error: Set stdin to non-block fails." << strerror(errno) << endl; */
+    /* } */
 
     int temp; 
     memset(&thread, 0, sizeof(thread));
 
-    if((temp = pthread_create(&thread[0], NULL, sendmessage, NULL)) != 0)
-    	printf("create thread for send message to local app failed !\n");
+    /* // 发送心跳 */
+    /* if((temp = pthread_create(&thread[0], NULL, sendHeart, NULL)) != 0) */
+    /* 	printf("create thread for send heart failed !\n"); */
+    /* else */
+    /* 	printf("create thread for send heart successed !\n"); */
+
+    // 读取消息队列   读取msgrecv_thrd中保存的消息。
+    if((temp = pthread_create(&thread[1], NULL, localToServer, NULL)) != 0)
+	printf("create thread for localToServer failed !\n");
     else
-    	printf("create thread for send message to local app successed !\n");
+	printf("create thread for localToServer successed !\n");
 
 
-    char *aa = argv[2];
-//    printf ("%s\n",aa);
-
-    if ((temp = pthread_create(&thread[0], NULL, connectServer, &aa)) != 0)
+    while(1)
     {
-	printf ("create thread for connectServer failed !\n");
-    }
-    else
-    {
-	printf ("create thread for connectServer successed !\n");
+	if (!initialized)
+	{
+	    if (initialize() == 0)
+	    {
+		/* if ((temp = pthread_create(&thread[2], NULL, serverToLocal, NULL)) != 0) */
+		/* { */
+		/*     printf ("create thread for serverToLocal failed !\n"); */
+		/* } */
+		/* else */
+		/* { */
+		/*     printf ("create thread for serverToLocal successed !\n"); */
+		/* } */
+	    }
+	    else
+	    {
+		// AP model  or  LED flash
+	    }
+	}
+	else
+	{
+	    break;
+	}
     }
 
 
     /* signal(SIGUSR1, localData); */
     /* signal(SIGINT, clear); */
+
+
     while(1)
     {
 	sleep(10);
