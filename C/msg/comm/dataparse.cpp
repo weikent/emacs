@@ -341,7 +341,7 @@ int dataparse::packageMutipleSensor(deque<MeteringData> dataQue, string &str)
 //    chTemp = const_cast<char *>(intToStr(dataQue.front().ins_seq_no).c_str());
 //    cJSON_AddItemToObject(sys, "seqOfIns", cJSON_CreateString(chTemp));
     chTemp = const_cast<char *>(intToStr(dataQue.front().dev_no).c_str());
-    cJSON_AddItemToObject(sys, "numOfSensor", cJSON_CreateString(chTemp));
+    cJSON_AddItemToObject(sys, "numOfDev", cJSON_CreateString(chTemp));
     cJSON_AddItemToObject(sys, "optCode", cJSON_CreateString(dataQue.front().op_code));
 
 

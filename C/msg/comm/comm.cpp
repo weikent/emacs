@@ -8,7 +8,6 @@
 /* #include "getOtherID.h" */
 /* #include "msgqueue.h" */
 
-//#include "global/global.h"
 
 #include <iostream>
 #include <string>
@@ -32,11 +31,22 @@
 #include "msgrcv_data.h"
 #include "dataparse.h"
 
+#include "global.h"
 
+
+//for switch AP/Client 
+/* #include "common.h" */
+/* #include "wpa_supplicant_i.h" */
+/* #include "customopt.h" */
+/* #include "wifitypes.h" */
+/* #include "apoperation.h" */
+#include "APModel.h"
+
+
+#include "utility.h"
 
 #include "msgqueue.h"
 //#include "global/global.h"
-
 
 
 using namespace std;
@@ -44,38 +54,39 @@ using namespace std;
 #define MAX_DATA_SEND_TO_SERVER 1024
 
 
+utility utility;
 msgqueue msg;
-
 int message_t;  //消息队列
+
 //int localID;   //本地进程ID
 //struct mymsgbuf qbuf;   // 消息队列的结构体，用来保存消息队列中的信息。
 
+
+/* int msg_qid; */
+/* key_t key; */
+
 dataparse dp;
-
-
-int msg_qid;
-key_t key;
-
-
-
+APModel apmodel;
 int connectModel = 0;   // 0: 短连接    1:长连接   -1:程序首次启动
-int connectIsOK = 0;   //判断连接是否成功
-int sameLAN = 0;    //0:不在同一个LAN   1:在同一个LAN
+int connectIsOK = 0;   //判断连接是否成功 长链接时使用，短连接时一般不判断此值
+/* int sameLAN = 0;    //0:不在同一个LAN   1:在同一个LAN */
+
 bool hasDataToSend = false; // 本地层是不是有信息要发到服务器。
-pthread_t thread[3];  // thread1: getotherID(deleted),  thread2: send data to server   thread3: the same LAN, start this thread to create a socket server.
-//char dataForServer[MAX_DATA_SEND_TO_SERVER];  //
+
+
+pthread_t thread[3];  // thread1: sendHeart ,  thread2: localToServer   thread3: serverToLocal
+
+
 int socketTOServer = -1;  //与服务器连接的socket描述符。
 
 char buffer[MAX_DATA_SEND_TO_SERVER]={0};    //接收与发送的缓冲区。
 
-char *serverIP = "192.168.5.74";
+char serverIP[] = "192.168.5.74";
 int serverPort = 14567;
 
-bool initialized = false;
+
 
 Msg_recv* msgrecv_thrd = NULL;
-
-
 
 
 
@@ -87,9 +98,9 @@ void sendmessageToLocal();
 void *serverToLocal(void *arg);
 
 
+extern enum deviceModel deviceModel;
 
-
-
+/* 过滤数据，检查是否需要通讯层处理 */
 void filterData(const char *data)
 {
     char *optcode = dp.checkOptCode(data);
@@ -199,25 +210,18 @@ void destroy_msgrecv_thrd () {
 
 void sendmessageToLocal()
 {
-    cout << "sending...." << endl;
+    /* cout << "sending...." << endl; */
     Msg_send msgsnd("tpt_snd_ctl_rcv");
 
     size_t sizMsg = sizeof(SrvCmd)+sizeof(long);
     MsgCmd tMsgCmd;
 
 
-    cout << "dddddddddddd" << endl;
     /* usleep(182000); */
     /* printf ("dp.cmdQueue.size() = %d \n", dp.cmdQueue.size()); */
 
-
-
-
-
-    cout << "1" << endl;
     while(dp.cmdQueue.size())
     {
-	cout << "2" << endl;
 	/* printf ("pop_front()\n"); */
 	tMsgCmd.msg_type = sizMsg;
 	strcpy(tMsgCmd.msg_text.sys_id, dp.cmdQueue.front().sys_id);
@@ -341,11 +345,11 @@ void *localToServer(void *arg)
     for ( ;  ;  )
     {
 	string str;
-	cout << "44444read message" << endl;
+//	cout << "44444read message" << endl;
 	readLocalMessage(str);
 
 //	sleep(10);
-	cout << " str = " << str << endl;
+//	cout << " str = " << str << endl;
 
 	/* if(need to Send to server) */
 	/* { */
@@ -388,10 +392,10 @@ void *localToServer(void *arg)
 			printf("read data fail !\n");
 			break;
 		    }
-		    printf("read ok\nREC:\n");
+		    /* printf("read ok\nREC:\n"); */
 
-		    buffer[recbytes]='\0';
-		    printf("%s\n",buffer);
+		    /* buffer[recbytes]='\0'; */
+		    /* printf("%s\n",buffer); */
 
 		    /* strcpy(buffer, text6); */
 		    filterData(buffer);
@@ -552,7 +556,6 @@ void *serverToLocal(void *arg)
 		    /* continue; */
 		}
 
-		cout << "3333" << endl;
 		if (FD_ISSET(socketTOServer, &fdsr))
 		{
 
@@ -1002,27 +1005,6 @@ int shortConnect()
 
 
 /* get some info from local app */
-int initialize()
-{
-    // 因为现在还不存在本地层保存信息的功能，所以可以把getInfo设置为true。
-    /* bool getInfo = false; */
-    bool getInfo = true;
-    
-    while(!getInfo)
-    {
-	// 1. send message to local
-//	sendmessageToLocal();
-	// 2. read message      get serverIP, Port, ssid, password, 
-	// 第二步可以使用线程 localToServer
-	// 3. Assign the variables serverIP and serverPort, 
-	// 4. test connect. connect server once.
-	// 5. getInfo = true
-    }
-
-    cout << "set initialize" << endl;
-    initialized = true;
-    return 0;
-}
 
 int main(int argc,char ** argv)
 {
@@ -1060,7 +1042,7 @@ int main(int argc,char ** argv)
 
 /* {"sysID":"1","seqOfIns":"1","numOfDev":"1","optCode":"0030","timeout":"1234756609589", */
 /*     "devArray":[{"devID":"34bca6010203","numOfCont
-":"1", */
+       ":"1", */
 /*         "senArray":[{"senID":"0","senType":"0005","numOfParam":"1", */
 /* 			"paramArray":[{"paramType":"0055","paramValue":"220"},{"paramType":"0060","paramValue":"10"}]}]}]} */
 
@@ -1097,7 +1079,7 @@ int main(int argc,char ** argv)
     /* strcpy(meterData.param_typ, "partyp2"); */
     /* strcpy(meterData.param_Val, "parval2"); */
 
-    /* dataQue.push_back(meterData);     */
+    /* dataQue.push_back(meterData); */
 
     /* strcpy(meterData.sys_id, "1"); */
     /* meterData.dev_no = 1; */
@@ -1106,8 +1088,8 @@ int main(int argc,char ** argv)
     /* strcpy(meterData.dev_id, "aabbccddeeff"); */
     /* meterData.sensor_no = 2; */
 
-    /* strcpy(meterData.sensor_id, "1"); */
-    /* strcpy(meterData.sensor_typ, "1type"); */
+    /* strcpy(meterData.sensor_id, "2"); */
+    /* strcpy(meterData.sensor_typ, "2type"); */
     /* meterData.param_no = 2; */
     
     /* strcpy(meterData.param_typ, "partyp3"); */
@@ -1129,7 +1111,7 @@ int main(int argc,char ** argv)
     /* strcpy(meterData.param_typ, "partyp4"); */
     /* strcpy(meterData.param_Val, "parval4"); */
 
-    /* dataQue.push_back(meterData);     */
+    /* dataQue.push_back(meterData); */
 
     /* /\* while(dataQue.size()) *\/ */
     /* /\* { *\/ */
@@ -1145,7 +1127,6 @@ int main(int argc,char ** argv)
 
     // 测试packageMutipleSensor 结束
     // ====================================================================================================
-
 
 
 
@@ -1170,10 +1151,10 @@ int main(int argc,char ** argv)
 
     /* ============================== */
     // 创建与本地层交互的消息队列   会启动一个线程循环读取此消息队列，并把消息暂存在msgrecv_thrd对象中。
-    msgrecv_thrd = new Msg_recv("tpt_snd_ctl_rcv_data");
-    atexit(destroy_msgrecv_thrd);
-    /* cout << "Msg_recv created" << endl; */
-    msgrecv_thrd->start();
+    /* msgrecv_thrd = new Msg_recv("tpt_snd_ctl_rcv_data"); */
+    /* atexit(destroy_msgrecv_thrd); */
+    /* /\* cout << "Msg_recv created" << endl; *\/ */
+    /* msgrecv_thrd->start(); */
     /* cout << "Msg_recv started" << endl; */
 
     /* int flag = fcntl(0, F_GETFL, 0); */
@@ -1185,7 +1166,7 @@ int main(int argc,char ** argv)
     int temp; 
     memset(&thread, 0, sizeof(thread));
 
-    /* // 发送心跳 */
+    /* 发送心跳 */
     /* if((temp = pthread_create(&thread[0], NULL, sendHeart, NULL)) != 0) */
     /* 	printf("create thread for send heart failed !\n"); */
     /* else */
@@ -1198,33 +1179,16 @@ int main(int argc,char ** argv)
 	printf("create thread for localToServer successed !\n");
 
 
-    while(1)
-    {
-	if (!initialized)
-	{
-	    if (initialize() == 0)
-	    {
-		/* if ((temp = pthread_create(&thread[2], NULL, serverToLocal, NULL)) != 0) */
-		/* { */
-		/*     printf ("create thread for serverToLocal failed !\n"); */
-		/* } */
-		/* else */
-		/* { */
-		/*     printf ("create thread for serverToLocal successed !\n"); */
-		/* } */
-	    }
-	    else
-	    {
-		// AP model  or  LED flash
-	    }
-	}
-	else
-	{
-	    break;
-	}
-    }
+    deviceModel = AP;
 
-
+//    apmodel.start();
+    apmodel.run();
+    cout << "ap end: " << endl;
+    /* toap(); */
+    /* cout << "sleep(10)" << endl; */
+    /* sleep(10); */
+    /* startSocketServer(); */
+    
     /* signal(SIGUSR1, localData); */
     /* signal(SIGINT, clear); */
 
@@ -1232,6 +1196,7 @@ int main(int argc,char ** argv)
     while(1)
     {
 	sleep(10);
+
 //注释此些行，不用这些代码来发数据给local，而是等server发来数据之后，再发给local。
 // 	if (localID > 0)
 // 	{
