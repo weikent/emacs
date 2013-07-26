@@ -30,3 +30,6 @@ sudo apt-get install fcitx-config-gtk
 - ssh/ssl 证书管理
 - 在授权中心导入goagent/local 目录下的CA.crt证书。
 - 全部trust选中。
+* ubuntu
+
+命令填写 python2 /home/xxx/goagent/local/proxy.py即可
