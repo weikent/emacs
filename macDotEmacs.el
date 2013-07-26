@@ -147,21 +147,24 @@
 (require 'C-settings)
 
 
-;; color theme Emacs主题 
-;; color-theme-calm-forset 也听不错的。
-(defun my-color-settings()
-  (interactive)
-  ;; (color-theme-initialize)  
-  ;; (color-theme-calm-forest)
-  ;; (color-theme-dark-blue2)
-  (require 'color-theme-settings)
-  (color-theme-initialize)
-  ;; (color-theme-calm-forest)
-  (color-theme-dark-green)
-  ;;  (require 'ahei-face)
-  ;;  (require 'color-theme-ahei)
-  ;;  (require 'face-settings)
-  )
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;; color theme Emacs主题 		   ;;
+;; ;; color-theme-calm-forset 也听不错的。 ;;
+;; (defun my-color-settings()		   ;;
+;;   (interactive)			   ;;
+;;   ;; (color-theme-initialize)  	   ;;
+;;   ;; (color-theme-calm-forest)	   ;;
+;;   ;; (color-theme-dark-blue2)	   ;;
+;;   (require 'color-theme-settings)	   ;;
+;;   (color-theme-initialize)		   ;;
+;;   ;; (color-theme-calm-forest)	   ;;
+;;   ;; (color-theme-dark-green)	   ;;
+;;   (color-theme-dark-blue2)		   ;;
+;;   ;;  (require 'ahei-face)		   ;;
+;;   ;;  (require 'color-theme-ahei)	   ;;
+;;   ;;  (require 'face-settings)	   ;;
+;;   )					   ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 ;; ;; 字体配置
@@ -177,11 +180,16 @@
 	    ;;	    (my-color-settings)
 	    ))
 
-
-(require 'color-theme-settings)
+(require 'color-theme)
 (color-theme-initialize)
-(color-theme-calm-forest)
-;;(color-theme-dark-blue2)
-;;(color-theme-dark-green)
+(color-theme-digital-ofs1)
+;;(color-theme-robin-hood)
 
 (require 'init_initjedi)
+
+
+;;(set-default-font "courier 10 pitch-12")
+(set-default-font "DejaVu Sans Mono-12")
+
+
+;;(set-default-font "Courier New-12") 
