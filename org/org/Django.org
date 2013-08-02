@@ -21,7 +21,7 @@
 
 1. 创建一个目录专门用来存放django到代码。
 1. 在创建到目录中运行 
-#+BEGIN_SRC python
+#+BEGIN_SRC c
  django-admin.py startproject mysite
 #+END_SRC
 mysite是项目到名称，可以换做其他名称
@@ -68,7 +68,7 @@ django使用视图来显示页面信息。
 
 视图的名称无关紧要，django都可以找到，但建议写成views.py
 
-#+BEGIN_SRC python
+#+BEGIN_SRC c
 
 from django.http import HttpResponse
 

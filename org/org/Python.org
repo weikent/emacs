@@ -2,11 +2,11 @@
 
 
 * shelve
-#+BEGIN_SRC python
+#+BEGIN_SRC c
 
-import shelve
-instanceName = shelve.open('fileName')
-print 1+1
+    import shelve
+    instanceName = shelve.open('fileName')
+    print 1+1
 
 ##use instanceName['key'], can assert the data.
 
