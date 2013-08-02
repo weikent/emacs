@@ -30,6 +30,51 @@ sudo apt-get install fcitx-config-gtk
 - ssh/ssl 证书管理
 - 在授权中心导入goagent/local 目录下的CA.crt证书。
 - 全部trust选中。
-* ubuntu
+* ubuntu 开机启动goagent
 
 命令填写 python2 /home/xxx/goagent/local/proxy.py即可
+
+
+* ubuntu 安装配置tftp服务器
+
+配置tftp服务的步骤： 
+ 1. 安装相关软件包：tftpd（服务端），tftp（客户端），xinetd 
+    sudo apt-get install tftpd tftp xinetd
+
+ 2. 建立配置文件（蓝色的目录是可以更改为其他地址的，例如/home/user/tftpboot） 
+    在/etc/xinetd.d/下建立一个配置文件tftp 
+    sudo vi tftp 
+    在文件中输入以下内容： 
+    #+BEGIN_SRC c
+service tftp 
+{ 
+socket_type = dgram 
+protocol = udp 
+wait = yes 
+user = root 
+server = /usr/sbin/in.tftpd 
+server_args = -s /tftpboot 
+disable = no 
+per_source = 11 
+cps = 100 2 
+flags = IPv4 
+} 
+保存退出
+    #+END_SRC
+ 3. 建立tftp服务文件目录（上传文件与下载文件的位置），并且更改其权限 
+    sudo mkdir /tftpboot     好像只能在根目录创建。
+
+    sudu chmod 777 /tftpboot
+
+ 4. 重新启动服务 
+
+    sudo /etc/init.d/xinetd restart 
+    至此tftp服务已经安装完成了，下面可以对其进行一下测试。（假设在当前目录下有一个测试文件test.txt） 
+    $tftp 192.168.16.2 (本机的ip地址) 
+    tftp> get test.txt 
+    tftp> quit 
+    $
+
+    通过get命令，可以把当前目录下的test.txt文件，通过tftp上传到它的服务文件目录。这时，在/tftpboot下面会出现test.txt文件。通过put命令，可以从/tftpboot下,下载test.txt文件。这样就验证了tftp服务配置的正确性。当文件上传与下载结束后，可以通过quit命令退出。
+
+    严格按照以上步骤配置tftp服务，一般都可以成功。如果出现无法get或者put的时候，可以查看一下防火墙是否关闭。
