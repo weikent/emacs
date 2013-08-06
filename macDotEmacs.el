@@ -149,7 +149,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ;; color theme Emacs主题 		   ;;
-;; ;; color-theme-calm-forset 也听不错的。 ;;
+;;                                         ;;
 ;; (defun my-color-settings()		   ;;
 ;;   (interactive)			   ;;
 ;;   ;; (color-theme-initialize)  	   ;;
@@ -180,16 +180,21 @@
 	    ;;	    (my-color-settings)
 	    ))
 
-(require 'color-theme)
-(color-theme-initialize)
-(color-theme-digital-ofs1)
-;;(color-theme-robin-hood)
+;; (require 'color-theme)
+;; (color-theme-initialize)
+;; (color-theme-digital-ofs1)
+
+
+(require 'color-theme-settings)
+(require 'ahei-face)
+(require 'color-theme-ahei)
+(require 'face-settings)
 
 (require 'init_initjedi)
 
 
 ;;(set-default-font "courier 10 pitch-12")
-(set-default-font "DejaVu Sans Mono-12")
+;;(set-default-font "DejaVu Sans Mono-12")
 
-
-;;(set-default-font "Courier New-12") 
+;;(set-default-font "-unknown-AR PL UMing HK-light-normal-normal-*-17-*-*-*-*-0-iso10646-1")
+(set-default-font "Inconsolata-12")
