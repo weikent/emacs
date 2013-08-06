@@ -2,7 +2,7 @@
 
 
 * shelve
-#+BEGIN_SRC c
+#+BEGIN_SRC python
 
     import shelve
     instanceName = shelve.open('fileName')
