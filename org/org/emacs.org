@@ -49,6 +49,9 @@ emacs自带的org即可，配置文件就是lisps目录中的org-mode-settings.e
 
 ipython可以通过easy_install 安装。同时需要安装readline。
 sudo easy_install ipython readline
+    安装时如果遇到“Modules/2.x/readline.c:8:20: 致命错误： Python.h：没有那个文件或目录” 
+    需要执行 apt-get install python-dev
+
 
 python-mode可以在[[https://launchpad.net/python-mode/][官网]] 直接下载使用。
 
@@ -422,3 +425,10 @@ downcase-word (M-l)   ;; 整个单词转为小写（注意，这里是 META － 
 
 ** buffer 列表
 按 'd' 键，比较buffer删除。之后按 'x' 键，执行删除。可以关闭一个buffer。
+* emacs 字体
+inconsolata 确实是很帅的字体。
+
+使用 sudo apt-get install ttf-inconsolata
+安装 inconsolata字体
+
+在.emacs文件中 (set-default-font "Inconsolata-12") 设置emacs的默认字体。
