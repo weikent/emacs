@@ -137,6 +137,7 @@
 (require 'orgMode-settings)
 ;; ;;;(require 'htmlize)
 
+
 (require 'cedet-settings)
 
 (require 'xcscope-settings)
@@ -192,9 +193,6 @@
 
 (require 'init_initjedi)
 
+(require 'my-font-settings)
 
-;;(set-default-font "courier 10 pitch-12")
-;;(set-default-font "DejaVu Sans Mono-12")
-
-;;(set-default-font "-unknown-AR PL UMing HK-light-normal-normal-*-17-*-*-*-*-0-iso10646-1")
-(set-default-font "Inconsolata-12")
+(require 'my-paren-settings.el) 
