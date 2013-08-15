@@ -78,3 +78,7 @@ flags = IPv4
     通过get命令，可以把当前目录下的test.txt文件，通过tftp上传到它的服务文件目录。这时，在/tftpboot下面会出现test.txt文件。通过put命令，可以从/tftpboot下,下载test.txt文件。这样就验证了tftp服务配置的正确性。当文件上传与下载结束后，可以通过quit命令退出。
 
     严格按照以上步骤配置tftp服务，一般都可以成功。如果出现无法get或者put的时候，可以查看一下防火墙是否关闭。
+
+* man 的使用
+man -a sleep
+可以列出所有sleep的信息。
