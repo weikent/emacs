@@ -140,7 +140,7 @@
 
 (require 'cedet-settings)
 
-(require 'xcscope-settings)
+;;(require 'xcscope-settings)
 
 
 (require 'highlight-symbol-settings)
@@ -195,4 +195,6 @@
 
 (require 'my-font-settings)
 
-(require 'my-paren-settings.el) 
+;;(require 'my-paren-settings) 
+;;(add-to-list 'auto-mode-alist '("*makefile*" . yas/minor-mode))
+(add-to-list 'auto-mode-alist '("\\.mak\\'" . yas/minor-mode))
