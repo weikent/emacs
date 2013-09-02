@@ -842,7 +842,18 @@ pthread_mutexattr_settype(pthread_mutexattr_t *__attr, int __kind)
 - PTHREAD_MUTEX_DEFAULT （默认值）
 
 
+** pthread_detach
+创建一个线程默认的状态是joinable, 如果一个线程结束运行但没有被join,则它的状态类似于进程中的Zombie Process,即还有一部分资源没有被回收（退出状态码），所以创建线程者应该调用pthread_join来等待线程运行结束，并可得到线程的退出代 码，回收其资源（类似于wait,waitpid) 　　但是调用pthread_join(pthread_id)后，如果该线程没有运行结束，调用 者会被阻塞，在有些情况下我们并不希望如此，比如在Web服务器中当主线程为每个新来的链接创建一个子线程进行处理的时候，主线程并不希望因为调用 pthread_join而阻塞（因为还要继续处理之后到来的链接），这时可以在子线程中加入代码 
 
+#+BEGIN_SRC C
+pthread_detach(pthread_self()) 　　
+#+END_SRC
+               或者父线程调用
+#+BEGIN_SRC C
+pthread_detach(thread_id)（非阻塞，可立即返回）
+#+END_SRC
+                    
+这将该子线程的状态设置为detached,则该线程运行结束后会自动释放所有资源。
 * Makefile
  [[http://blog.csdn.net/liang13664759/article/details/1771246][跟我一起学makefile]]
 ** Makefile的规则
