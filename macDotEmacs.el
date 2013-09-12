@@ -1,4 +1,3 @@
-
 ;; path
 (message (getenv "PATH"))
 (setq path "/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin:/usr/local/bin")
@@ -22,8 +21,6 @@
 ;;设置PYTHONPATH  export PYTHONPATH=/Users/weishijian/emacs/python:$PYTHONPATH in .bash_profile or other environment variables set files.
 ;; HOME 路径不能用 ~/... 这样添加不成功，
 (setenv "PYTHONPATH" pythonModulePath)
-
-
 
 
 
@@ -140,7 +137,7 @@
 
 (require 'cedet-settings)
 
-;;(require 'xcscope-settings)
+(require 'xcscope-settings)
 
 
 (require 'highlight-symbol-settings)
