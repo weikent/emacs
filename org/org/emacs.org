@@ -576,3 +576,24 @@ M-m
           'comint-watch-for-password-prompt)
 
 #+END_SRC
+** emacs中强制使用空格代替TAB
+    在emacs中可以强制使用空格代替TAB，网上也有许多资料了，我这里说到的是有时在.emacs文件中加入了(setq indent-tabs-mode nil)之后也不管用，编辑时依然会插入TAB。
+    我在配置cc-mode时就出现了这样的问题，配置文件中加入了(setq indent-tabs-mode nil)，但依然插入TAB。
+    这时其实应该查看下这个变量的值，是不是真的已经设置为了nil。用C-h v再输入indent-tabs-mode查看之后，应该这个值还是t。即它并没有被设置为nil。
+    如果你使用了cc-mode的配置，会发现在cc-mode的style定义中加入(setq indent-tabs-mode nil)是无效的，而在其hook定义中加入就是有效的：
+(defconst mystyle
+   '((setq indent-tabs-mode nil))
+    "mystyle" )
+(c-add-style "mystyle" mystyle)
+(defun myhook()
+(c-set-style "mystyle"))
+(add-hook 'c++-mode-hook 'myhook)
+    这样设置后，打开一个新文件，查看indent-tabs-mode的值，还是t。如下的设置才是正确的设置：
+(defconst mystyle
+   '(......)
+    "mystyle" )
+(c-add-style "mystyle" mystyle)
+(defun myhook()
+   (setq indent-tabs-mode nil)
+(c-set-style "mystyle"))
+(add-hook 'c++-mode-hook 'myhook)
