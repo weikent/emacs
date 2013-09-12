@@ -12,7 +12,7 @@
 ;;(semantic-load-enable-gaudy-code-helpers)
 (semantic-load-enable-excessive-code-helpers)
 ;;(semantic-load-enable-semantic-debugging-helpers)
- 
+
 ;;;; 使函数体能够折叠或展开
 ;; Enable source code folding
 (global-semantic-tag-folding-mode 1)
@@ -25,7 +25,7 @@
 ;;   (local-set-key "/C-cr" 'semantic-symref-symbol)
 ;;   (local-set-key "/C-cR" 'semantic-symref))
 ;; (add-hook 'c-mode-common-hook 'my-cedet-hook)
- 
+
 ;; ;;;; 当输入"."或">"时，在另一个窗口中列出结构体或类的成员
 ;; (defun my-c-mode-cedet-hook ()
 ;;   (local-set-key "." 'semantic-complete-self-insert)
@@ -37,24 +37,29 @@
 (setq stack-trace-on-error t)
 (add-to-list 'load-path (concat my-emacs-lisps-path "/ecb-2.40"))
 (require 'ecb)
- 
+(require 'ecb-autoloads) 
 ;;;; 自动启动ecb，并且不显示每日提示
 ;; ecb需要使用到semantic，才能在编辑C/C++代码的时候，分析代码，并在函数列表窗口现实函数。
 (setq ecb-auto-activate t
       ecb-tip-of-the-day nil)
-;;(setq ecb-tip-of-the-day nil)
+(setq ecb-tip-of-the-day nil)
 
+(setq ecb-auto-activate t 
+      ecb-tip-of-the-day nil 
+      inhibit-startup-message t 
+      ecb-auto-compatibility-check nil 
+      ecb-version-check nil)
 
 ;; ;;;; 各窗口间切换
 ;; (global-set-key [M-left] 'windmove-left)
 ;; (global-set-key [M-right] 'windmove-right)
 ;; (global-set-key [M-up] 'windmove-up)
 ;; (global-set-key [M-down] 'windmove-down)
- 
+
 ;; ;;;; 隐藏和显示ecb窗口
 ;; (define-key global-map [(control f1)] 'ecb-hide-ecb-windows)
 ;; (define-key global-map [(control f2)] 'ecb-show-ecb-windows)
- 
+
 ;; ;; ;;;; 使某一ecb窗口最大化
 ;; ;; (define-key global-map "/C-c1" 'ecb-maximize-window-directories)
 ;; ;; (define-key global-map "/C-c2" 'ecb-maximize-window-sources)
@@ -70,9 +75,9 @@
 ;;           (hippie-expand nil)
 ;;           (indent-for-tab-command))
 ;; )
- 
+
 ;; (global-set-key [(control tab)] 'my-indent-or-complete)
- 
+
 ;; (autoload 'senator-try-expand-semantic "senator")
 ;; (setq hippie-expand-try-functions-list
 ;;           '(
