@@ -1,5 +1,4 @@
 ;;; wuxch-dired.el
-
 (defun diredp-subst-find-alternate-for-find ()
   "Use find-alternate-file commands in place of find-file commands."
   (substitute-key-definition 'dired-find-file 'diredp-find-file-reuse-dir-buffer dired-mode-map)
@@ -18,6 +17,16 @@ Non-nil prefix arg FORCE-P => Use alternate file iff FORCE-P >= 0."
     (if (where-is-internal 'dired-find-file dired-mode-map 'ascii)
         (diredp-subst-find-alternate-for-find)
       (diredp-subst-find-for-find-alternate))))
+(defun diredp-find-file-reuse-dir-buffer ()
+  "Like `dired-find-file', but reuse buffer if target is a directory."
+  (interactive)
+  (set-buffer-modified-p nil)
+  (let ((file (dired-get-file-for-visit)))
+    (if (file-directory-p file)
+        (find-alternate-file file)
+      (find-file file))))
+
+
 
 (if (equal 'windows-nt system-type)
     (progn
@@ -26,15 +35,15 @@ Non-nil prefix arg FORCE-P => Use alternate file iff FORCE-P >= 0."
       )
   )
 
-(require 'dired-aux)
-(require 'dired+)
-;; use '(' key or  ')' key to toogle detail display mode
-(require 'dired-details+)
+;; (require 'dired-aux)
+;; (require 'dired+)
+;; ;; use '(' key or  ')' key to toogle detail display mode
+;; (require 'dired-details+)
 (require 'wdired)
-;; (require 'dired-isearch)
-(require 'find-dired+)
-(require 'ls-lisp+)
-(require 'cl)
+;; ;; (require 'dired-isearch)
+;; (require 'find-dired+)
+;; ;; (require 'ls-lisp+)
+;; (require 'cl)
 
 (define-key dired-mode-map "r" 'wuxch-wdired-change-to-wdired-mode)
 (define-key wdired-mode-map [return]   'ignore)

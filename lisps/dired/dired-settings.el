@@ -34,22 +34,21 @@
   (require 'wuxch-dired "my-wuxch-dired")
   (require 'wuxch-dired-copy-paste "my-wuxch-dired-copy-paste")
 
-  (require 'dired-details+)
-  (setq dired-details-initially-hide nil)
-
-  (require 'dired+-settings)
-  (require 'dired-x-settings)
+;;  (require 'dired-details+)
+;;  (setq dired-details-initially-hide nil)
+;;  (require 'dired+-settings)
+;;  (require 'dired-x-settings)
   (require 'dired-lis-settings)
 
   ;; dired中用T就把一个目录压缩为一个.tar.gz文件
-  (require 'dired-tar)
+;;  (require 'dired-tar)
 
   ;; wdired提供修改文件名的一种非常方便方法。它把dired-mode当作一般的
   ;; 文本处理，这样无论是修改一个文件，还是批量修改文件都不是一般的爽。
   (if is-before-emacs-21 (require 'wdired "wdired-for-21"))
 
   ;; 让你能够在dired-mode里面使用只对文件名部分执行i-search
-;;  (require 'dired-isearch "my-dired-isearch")
+  ;;  (require 'dired-isearch "my-dired-isearch")
   
   (defun his-dired-sort ()
     "dired-mode中让目录显示在文件前"
@@ -206,10 +205,10 @@ which is options for `diff'."
        ("/."          ywb-dired-filter-extension)
        ("C-q"         ywb-dired-quickview)
        ("r"           wdired-change-to-wdired-mode)
-;;       ("C-s"         dired-lis-isearch-forward-always?)
-;;       ("C-r"         dired-lis-isearch-backward-always?)
-;;       ("ESC C-s"     dired-lis-isearch-forward-regexp-always?)
-;;       ("ESC C-r"     dired-lis-isearch-backward-regexp-always?)
+       ;;       ("C-s"         dired-lis-isearch-forward-always?)
+       ;;       ("C-r"         dired-lis-isearch-backward-always?)
+       ;;       ("ESC C-s"     dired-lis-isearch-forward-regexp-always?)
+       ;;       ("ESC C-r"     dired-lis-isearch-backward-regexp-always?)
        ;; 让dired只使用一个buffer
        ("RET"         dired-lis-find-file-reuse-dir-buffer)
        ("<return>"    dired-lis-find-file-reuse-dir-buffer)
