@@ -8,7 +8,13 @@
 ;;不要自动在文件最后自动插入换行符
 ;;(setq auto-insert nil)
 
+
 (setq frame-title-format "emacs@weishijian'computer")
+
+(setq inhibit-startup-screen t)        ;去掉启动欢迎界面
+;;;; 关闭启动画面
+;;(setq inhibit-startup-message t)
+
 
 ;;y/n代替yes/no
 (fset 'yes-or-no-p 'y-or-n-p)
@@ -26,7 +32,9 @@
 ;;指针不闪，不恍花眼睛。
 (blink-cursor-mode -1)
 (transient-mark-mode 1)
- 
+
+
+(global-set-key (kbd "M-g") 'goto-line)
 
 ;;;;ecb 设置------------------------------
 ;;;; 各窗口间切换
@@ -46,8 +54,6 @@
 ;;;; 显示时间------------------------------------------------------------------------------------------------
 (display-time)
 
-;;;; 关闭启动画面
-;;(setq inhibit-startup-message t)
 
 ;;;;设置大的kill ring
 (setq kill-ring-max 2000)
@@ -276,5 +282,10 @@
 
 (global-set-key (kbd "C-SPC") 'nil)
 
+
+;; 密码之类的显示成**号
+(add-hook 'comint-output-filter-functions
+          'comint-watch-for-password-prompt)
+ 
 
 (provide 'my-global-key-settings)
