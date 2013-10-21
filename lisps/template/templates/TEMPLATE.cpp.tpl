@@ -1,10 +1,9 @@
 /* 
  *     Created:  (>>>DATE<<<) (>>>TIME<<<)
  *     Author:   (>>>AUTHOR<<<)
-       Description:  (>>>POINT<<<)
+ *     Description:  (>>>POINT<<<)
  */
 
-//#include <config.h>
 #include "(>>>FILE_SANS<<<).h"
 
 (>>>POINT<<<)
