@@ -487,3 +487,11 @@ It gets cool.get是普通实意联系动词。不能提前疑问，不能加not�
 
 - 相同点
     规则动词的过去式和过去分词长的一样，在句中分清哪个是过去式，哪个是过去分词也是动词概念清晰的标志之一。
+* like + to 与 like + ing
+都表示喜欢干什么
+** like + to 表达的是一个特殊情况
+i like to play football in my free time with my friends.
+可以理解为某次空闲时间喜欢和朋友踢足球，另一次空闲时间就喜欢干别的。
+** like + ing 表达的是一个普遍情况
+i like playing football in my free time with my friends.
+可以理解为任何空闲时间都喜欢和朋友踢足球。
