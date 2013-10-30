@@ -190,6 +190,14 @@
 
 (require 'init_initjedi)
 
+(require 'python)
+(require 'python-django)
+;; (global-set-key (kbd "C-x j") 'python-django-open-project)
+(require 'django-html-mode)
+(require 'django-mode)
+;; (yas/load-directory "path-to/django-mode/snippets")
+(add-to-list 'auto-mode-alist '("\\.djhtml$" . django-html-mode))
+
 (require 'my-font-settings)
 
 ;;(require 'my-paren-settings) 
