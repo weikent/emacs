@@ -2,7 +2,7 @@
 <html>
   <head>
     <title>(>>>title<<<)</title>
-    <meta name="author" content="(>>>USER_NAME<<<)">
+    <meta name="author" content="(>>>USER_NAME<<<)"/>
   </head>
 
   <body>
