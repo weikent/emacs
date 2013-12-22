@@ -107,13 +107,13 @@
 (require 'auto-complete-clang)    
 ;;(setq ac-clang-auto-save t)    
 ;; 设置不自动启动  
-(setq ac-auto-start nil)    
+(setq ac-auto-start t)
 ;; 设置响应时间 0.5  
 (setq ac-quick-help-delay 0.5)    
 ;;(ac-set-trigger-key "TAB")    
 ;;(define-key ac-mode-map  [(control tab)] 'auto-complete)    
 ;; 提示快捷键为 M-/  
-(define-key ac-mode-map  (kbd "M-/") 'auto-complete)   
+;; (define-key ac-mode-map  (kbd "M-/") 'auto-complete)   
 ;; (defun my-ac-config ()    
 ;;   (setq ac-clang-flags    
 ;;         (mapcar(lambda (item)(concat "-I" item))    
@@ -169,6 +169,7 @@
   (add-hook 'c-mode-common-hook 'ac-cc-mode-setup)    
   (add-hook 'ruby-mode-hook 'ac-ruby-mode-setup)    
   (add-hook 'css-mode-hook 'ac-css-mode-setup)    
+  (add-hook 'js2-mode-hook 'ac-js2-mode-setup)
   (add-hook 'auto-complete-mode-hook 'ac-common-setup)    
   (global-auto-complete-mode t))    
 (defun my-ac-cc-mode-setup ()    

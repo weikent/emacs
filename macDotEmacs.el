@@ -59,7 +59,7 @@
 
 (require 'init_yasnippet)
 
-(require 'init_ipython)
+;; (require 'init_ipython)
 
 
 
@@ -203,3 +203,8 @@
 ;;(require 'my-paren-settings) 
 ;;(add-to-list 'auto-mode-alist '("*makefile*" . yas/minor-mode))
 (add-to-list 'auto-mode-alist '("\\.mak\\'" . yas/minor-mode))
+
+
+(autoload 'js2-mode "js2-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode)) 
+
