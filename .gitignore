@@ -21,6 +21,7 @@
 # *.rar
 # *.tar
 # *.zip
+*.elc
 
 # Logs and databases #
 ######################
