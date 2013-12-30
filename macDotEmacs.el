@@ -205,6 +205,15 @@
 (add-to-list 'auto-mode-alist '("\\.mak\\'" . yas/minor-mode))
 
 
-(autoload 'js2-mode "js2-mode" nil t)
-(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode)) 
 
+;; (require 'js2-mode-settings)
+
+(add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
+(add-to-list 'package-archives '("elpa" . "http://tromey.com/elpa/"))
+(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
+
+;; emacs 做为javascripts的IDE。 放弃
+;; (autoload 'js2-mode "js2-mode" nil t)
+;; (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode)) 
+;; (require 'ac-js2)
+;; (add-hook 'js2-mode-hook 'ac-js2-mode)
