@@ -107,13 +107,14 @@
 (require 'auto-complete-clang)    
 ;;(setq ac-clang-auto-save t)    
 ;; 设置不自动启动  
-(setq ac-auto-start t)
+(setq ac-auto-start nil)  ;;ac-auto-start 可以设置为    t(开)    nil(关)    数字(输入几个字符开始补全)
+
 ;; 设置响应时间 0.5  
 (setq ac-quick-help-delay 0.5)    
 ;;(ac-set-trigger-key "TAB")    
 ;;(define-key ac-mode-map  [(control tab)] 'auto-complete)    
 ;; 提示快捷键为 M-/  
-;; (define-key ac-mode-map  (kbd "M-/") 'auto-complete)   
+(define-key ac-mode-map  (kbd "M-/") 'auto-complete)   
 ;; (defun my-ac-config ()    
 ;;   (setq ac-clang-flags    
 ;;         (mapcar(lambda (item)(concat "-I" item))    
@@ -158,6 +159,7 @@
  /usr/lib/gcc/i686-linux-gnu/4.7/include
  /usr/local/include
  /home/weishijian/isockets/common
+ /usr/include/python2.7
  /usr/lib/gcc/i686-linux-gnu/4.7/include-fixed
  /usr/include/i386-linux-gnu
  /usr/include
