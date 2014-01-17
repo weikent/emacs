@@ -17,6 +17,16 @@
 ;; Enable source code folding
 (global-semantic-tag-folding-mode 1)
 
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 当启用cedet，并编辑python文件的时候，尤其启用ecb的时候，senmantic会利用空闲时间 ;;
+;; 分析文件，会频繁调用ctags，来生成ctags。导致无法及时相应对文件的编辑操作。	   ;;
+;; 有下面这句话就可以避免这个问题，但以后就只能手动来分析文件了。		   ;;
+;; (global-semantic-idle-scheduler-mode nil)					   ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(global-semantic-idle-scheduler-mode nil)
+
 ;; ;; Key bindings
 ;; (defun my-cedet-hook ()
 ;;   (local-set-key [(control return)] 'semantic-ia-complete-symbol)
