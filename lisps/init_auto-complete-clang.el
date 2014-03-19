@@ -143,7 +143,7 @@
  /usr/local/include
  /Applications/Xcode.app/Contents/Developer/usr/llvm-gcc-4.2/lib/gcc/i686-apple-darwin11/4.2.1/include
  /usr/include
- /home/weishijian/isockets/common
+ /home/weikent/SRC/trunk/isockets/Comm_Platform/C/common
  /System/Library/Frameworks
  /Library/Frameworks
 "
@@ -158,7 +158,7 @@
  /usr/include/c++/4.7/backward
  /usr/lib/gcc/i686-linux-gnu/4.7/include
  /usr/local/include
- /home/weishijian/isockets/common
+ /home/weikent/SRC/trunk/isockets/Comm_Platform/C/common
  /usr/include/python2.7
  /usr/lib/gcc/i686-linux-gnu/4.7/include-fixed
  /usr/include/i386-linux-gnu
