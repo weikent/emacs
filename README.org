@@ -95,3 +95,11 @@
 ** 可以在系统启动时，添加启动项
 
    emacsclient -c -a "" 来启动emacs daemon
+
+* 2014-4-8
+** doxymacs的配置
+
+    - 在ubuntu下
+        sudo apt-get install doxymacs     这个好大啊。安装要600+MB
+        sudo apt-get install automake     用来el-get。
+        M-x el-get install RET doxymacs

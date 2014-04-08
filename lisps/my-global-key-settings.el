@@ -270,12 +270,12 @@
   (interactive)
   (insert "    "))
 
-;;(global-set-key (read-kbd-macro "<C-tab>") 'my-insert-tab) 
-
+;; (global-set-key (read-kbd-macro "<C-tab>") 'my-insert-tab) 
+(global-set-key (kbd "<f12> t") 'my-insert-tab)
 ;;删除的东西。
 ;;(global-set-key [(f2)] 'browse-kill-ring)
 (global-set-key (kbd "<f12> k") 'browse-kill-ring)
-;;IN html-helper-mode , NOT auto indents
+;;In html-helper-mode , NOT auto indents
 (setq html-helper-never-indent 't)
 
 
