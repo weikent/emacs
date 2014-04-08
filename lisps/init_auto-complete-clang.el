@@ -159,6 +159,7 @@
  /usr/lib/gcc/i686-linux-gnu/4.7/include
  /usr/local/include
  /home/weikent/SRC/trunk/isockets/Comm_Platform/C/common
+ /home/weikent/SRC/trunk/isockets/Comm_Platform/C1.1/common
  /usr/include/python2.7
  /usr/lib/gcc/i686-linux-gnu/4.7/include-fixed
  /usr/include/i386-linux-gnu
